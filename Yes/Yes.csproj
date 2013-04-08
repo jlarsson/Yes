@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1D2E1528-0158-4418-992D-8FBA4DD5D25E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Yes</RootNamespace>
+    <AssemblyName>Yes</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Context.cs" />
+    <Compile Include="ContextSyntax.cs" />
+    <Compile Include="IContext.cs" />
+    <Compile Include="Interpreter\Ast\ArithmeticOperatorFunctions.cs" />
+    <Compile Include="Interpreter\Ast\Assign.cs" />
+    <Compile Include="Interpreter\Ast\BinaryOperation.cs" />
+    <Compile Include="Interpreter\Ast\Break.cs" />
+    <Compile Include="Interpreter\Ast\ComparisonOperatorFunctions.cs" />
+    <Compile Include="Interpreter\Ast\Eeq.cs" />
+    <Compile Include="Interpreter\Ast\Eneq.cs" />
+    <Compile Include="Interpreter\Ast\Eq.cs" />
+    <Compile Include="Interpreter\Ast\For.cs" />
+    <Compile Include="Interpreter\Ast\Gt.cs" />
+    <Compile Include="Interpreter\Ast\Gte.cs" />
+    <Compile Include="Interpreter\Ast\IDefineBinaryOperatorFunctions.cs" />
+    <Compile Include="Interpreter\Ast\IEvaluateThisAndMember.cs" />
+    <Compile Include="Interpreter\Ast\IfThenElse.cs" />
+    <Compile Include="Interpreter\Ast\ILValue.cs" />
+    <Compile Include="Interpreter\Ast\INameAst.cs" />
+    <Compile Include="Interpreter\Ast\IPropertyName.cs" />
+    <Compile Include="Interpreter\Ast\Lt.cs" />
+    <Compile Include="Interpreter\Ast\Lte.cs" />
+    <Compile Include="Interpreter\Ast\Member.cs" />
+    <Compile Include="Interpreter\Ast\Neq.cs" />
+    <Compile Include="Interpreter\Ast\ObjectLiteral.cs" />
+    <Compile Include="Interpreter\Ast\Sub.cs" />
+    <Compile Include="Interpreter\Ast\Var.cs" />
+    <Compile Include="Interpreter\Ast\While.cs" />
+    <Compile Include="Interpreter\Error.cs" />
+    <Compile Include="Interpreter\IProtoTypes.cs" />
+    <Compile Include="Interpreter\Model\AbstractJsValue.cs" />
+    <Compile Include="Interpreter\Model\IJsFunction.cs" />
+    <Compile Include="Interpreter\Model\IJsBool.cs" />
+    <Compile Include="Interpreter\Model\IJsNull.cs" />
+    <Compile Include="Interpreter\Model\IJsNumber.cs" />
+    <Compile Include="Interpreter\Model\IJsObject.cs" />
+    <Compile Include="Interpreter\Model\IJsObjectMembers.cs" />
+    <Compile Include="Interpreter\Model\IJsUndefined.cs" />
+    <Compile Include="Interpreter\Model\IJsValue.cs" />
+    <Compile Include="Interpreter\Model\JsBool.cs" />
+    <Compile Include="Interpreter\Model\JsCommonObject.cs" />
+    <Compile Include="Interpreter\Model\JsError.cs" />
+    <Compile Include="Interpreter\Model\JsFunction.cs" />
+    <Compile Include="Interpreter\Model\JsHostFunction.cs" />
+    <Compile Include="Interpreter\Model\JsNull.cs" />
+    <Compile Include="Interpreter\Model\JsNumber.cs" />
+    <Compile Include="Interpreter\Model\JsObjectMembers.cs" />
+    <Compile Include="Interpreter\Model\JsPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsUndefined.cs" />
+    <Compile Include="Interpreter\Model\JsTypeCode.cs" />
+    <Compile Include="Interpreter\ProtoTypes.cs" />
+    <Compile Include="Interpreter\Scope.cs" />
+    <Compile Include="Interpreter\IScope.cs" />
+    <Compile Include="ParsingException.cs" />
+    <Compile Include="Interpreter\Ast\Apply.cs" />
+    <Compile Include="Interpreter\Ast\Block.cs" />
+    <Compile Include="Interpreter\Ast\Bool.cs" />
+    <Compile Include="Interpreter\Ast\Function.cs" />
+    <Compile Include="Interpreter\Ast\Name.cs" />
+    <Compile Include="Interpreter\Ast\Null.cs" />
+    <Compile Include="Interpreter\Ast\Return.cs" />
+    <Compile Include="Parsing\JavascriptLexer.cs" />
+    <Compile Include="Parsing\Tdop\ISymbol.cs" />
+    <Compile Include="Parsing\Tdop\Tdop.cs" />
+    <Compile Include="Interpreter\Ast\AbstractBinaryOperation.cs" />
+    <Compile Include="Interpreter\Ast\Add.cs" />
+    <Compile Include="Interpreter\Ast\Mul.cs" />
+    <Compile Include="Interpreter\Ast\IAst.cs" />
+    <Compile Include="Parsing\IAstFactory.cs" />
+    <Compile Include="Parsing\Tdop\ILexeme.cs" />
+    <Compile Include="Parsing\Tdop\Grammar.cs" />
+    <Compile Include="Parsing\Tdop\IGrammar.cs" />
+    <Compile Include="Interpreter\Ast\AstFactory.cs" />
+    <Compile Include="Interpreter\Ast\Number.cs" />
+    <Compile Include="Parsing\Tdop\IRule.cs" />
+    <Compile Include="Parsing\Tdop\ITdop.cs" />
+    <Compile Include="Parsing\JavascriptParser.cs" />
+    <Compile Include="Parsing\JavascriptGrammar.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

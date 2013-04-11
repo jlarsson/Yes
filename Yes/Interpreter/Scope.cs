@@ -127,6 +127,11 @@ namespace Yes.Interpreter
             return new JsCommonObject(this, members);
         }
 
+        public IJsValue CreateArray(IEnumerable<IAst> members)
+        {
+            return new JsArray(this, members);
+        }
+
         #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Yes.Interpreter;
@@ -11,6 +12,40 @@ namespace Yes.Tests
     [TestFixture]
     public class ExplorativeFixture
     {
+        [Test]
+        public void CustomInstance()
+        {
+            var context = new Context();
+            context.AddPrintFunction();
+
+            var console = context.Scope.CreateObject(
+                new Dictionary<string,IJsValue>()
+                    {
+                        {"log", context.Scope.CreateHostFunction(
+                            (scope,args) =>
+                                {
+                                    Console.Out.WriteLine(string.Join<IJsValue>("", args));
+                                    return scope.CreateUndefined();
+                                }
+                            )
+                            }
+                    }
+                    .Select(kv => Tuple.Create(kv.Key,kv.Value))
+                );
+            context.Scope.SetVariable("console", console);
+
+
+            context.Execute("var x = 1; console.log(x,2,3);");
+
+        }
+        [Test]
+        public void Array()
+        {
+            var context = new Context();
+            context.AddPrintFunction();
+            context.Execute("var x = [1,2,3,4,5,6,7,8];");
+        }
+
         [Test]
         public void This()
         {

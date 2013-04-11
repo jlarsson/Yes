@@ -244,6 +244,25 @@ namespace Yes.Parsing
 
                                 return p.Factory.Object(members);
                             });
+
+            Prefix("[", (p, l) =>
+                            {
+                                var members = new List<TAst>();
+                                while(!p.CanAdvance("]"))
+                                {
+                                    var member = p.Expression(0);
+                                    members.Add(member);
+
+                                    if (!p.CanAdvance(","))
+                                    {
+                                        break;
+                                    }
+                                    p.Advance();
+                                }
+                                p.Advance("]");
+                                return p.Factory.Array(members);
+
+                            });
         }
 
         protected StaticScope Scope

@@ -22,5 +22,6 @@ namespace Yes.Interpreter
         IJsFunction CreateFunction(string name, string[] arguments, IAst statements);
         IJsValue CreateHostFunction(Func<IScope, IJsValue[], IJsValue> function);
         IJsValue CreateObject(IEnumerable<Tuple<string, IJsValue>> members);
+        IJsValue CreateArray(IEnumerable<IAst> members);
     }
 }

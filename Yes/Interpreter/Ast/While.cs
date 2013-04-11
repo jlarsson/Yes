@@ -20,7 +20,7 @@ namespace Yes.Interpreter.Ast
             scope.Break = false;
             while (Condition.Evaluate(scope).IsTruthy())
             {
-                Condition.Evaluate(scope);
+                Statements.Evaluate(scope);
 
                 if (scope.Return || scope.Break)
                 {

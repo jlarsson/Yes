@@ -56,6 +56,11 @@ namespace Yes.Interpreter.Ast
             return new ObjectLiteral(members);
         }
 
+        public IAst Array(IEnumerable<IAst> members)
+        {
+            return new Array(members);
+        }
+
         public IAst Apply(IAst function, IEnumerable<IAst> arguments)
         {
             return new Apply(function, arguments.ToArray());

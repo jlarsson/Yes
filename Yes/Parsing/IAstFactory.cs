@@ -12,6 +12,7 @@ namespace Yes.Parsing
         TAst String(object value);
         TAst Function(TAst name, IEnumerable<TAst> arguments, TAst statements);
         TAst Object(IEnumerable<Tuple<TAst, TAst>> members);
+        TAst Array(IEnumerable<TAst> members);
         TAst Apply(TAst function, IEnumerable<TAst> arguments);
         TAst Member(TAst instance, TAst name);
         TAst Assign(TAst lhs, TAst rhs);

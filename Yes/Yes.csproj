@@ -44,6 +44,7 @@
     <Compile Include="ContextSyntax.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="Interpreter\Ast\ArithmeticOperatorFunctions.cs" />
+    <Compile Include="Interpreter\Ast\Array.cs" />
     <Compile Include="Interpreter\Ast\Assign.cs" />
     <Compile Include="Interpreter\Ast\BinaryOperation.cs" />
     <Compile Include="Interpreter\Ast\Break.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Interpreter\Error.cs" />
     <Compile Include="Interpreter\IProtoTypes.cs" />
     <Compile Include="Interpreter\Model\AbstractJsValue.cs" />
+    <Compile Include="Interpreter\Model\IJsArray.cs" />
     <Compile Include="Interpreter\Model\IJsFunction.cs" />
     <Compile Include="Interpreter\Model\IJsBool.cs" />
     <Compile Include="Interpreter\Model\IJsNull.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="Interpreter\Model\IJsObjectMembers.cs" />
     <Compile Include="Interpreter\Model\IJsUndefined.cs" />
     <Compile Include="Interpreter\Model\IJsValue.cs" />
+    <Compile Include="Interpreter\Model\JsArray.cs" />
     <Compile Include="Interpreter\Model\JsBool.cs" />
     <Compile Include="Interpreter\Model\JsCommonObject.cs" />
     <Compile Include="Interpreter\Model\JsError.cs" />

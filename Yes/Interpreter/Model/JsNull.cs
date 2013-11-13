@@ -30,6 +30,11 @@ namespace Yes.Interpreter.Model
             return true;
         }
 
+        public int? TryEvaluateToIndex()
+        {
+            return null;
+        }
+
         #endregion
     }
 }

@@ -33,6 +33,11 @@ namespace Yes.Interpreter.Model
             return !IsFalsy();
         }
 
+        public override int? TryEvaluateToIndex()
+        {
+            return (int) Value;
+        }
+
         #endregion
 
         public override string ToString()

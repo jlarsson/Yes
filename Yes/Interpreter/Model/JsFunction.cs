@@ -57,6 +57,8 @@ namespace Yes.Interpreter.Model
         public new static IJsValue CreatePrototype(Scope scope)
         {
             var prototype = new JsPrototype(scope);
+            //prototype.SetMember("toString", scope.CreateHostFunction((s,self, args) => scope.CreateString(self. ));
+            //prototype.SetMember("length", scope.CreateHostFunction(ProtypeLength) )
             return prototype;
         }
     }

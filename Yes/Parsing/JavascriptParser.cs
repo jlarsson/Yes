@@ -13,8 +13,24 @@ namespace Yes.Parsing
 
         public IEnumerable<Lexeme> Tokenize(string source)
         {
-            return from match in Matcher.Matches(source).OfType<Match>()
-                   select CreateLexeme(match, source);
+            Dictionary<JavascriptLexer.LexemeType,string> _types = new Dictionary<JavascriptLexer.LexemeType, string>()
+                                                                       {
+                                                                           {JavascriptLexer.LexemeType.Number, "(number)"},
+                                                                           {JavascriptLexer.LexemeType.String, "(string)"},
+                                                                           {JavascriptLexer.LexemeType.Name, "(name)"},
+                                                                       };
+            return from lexeme in new JavascriptLexer().Lex(source)
+                   where lexeme.Type != JavascriptLexer.LexemeType.Comment
+                   where lexeme.Type != JavascriptLexer.LexemeType.Error
+                   select new Lexeme()
+                              {
+                                  Value = lexeme.Value,
+                                  Id = _types.ContainsKey(lexeme.Type) ? _types[lexeme.Type] : lexeme.Value,
+                                  Source = source,
+                                  SourcePosition = lexeme.Position
+                              };
+            //return from match in Matcher.Matches(source).OfType<Match>()
+            //       select CreateLexeme(match, source);
         }
 
         public TAst Parse<TAst>(IAstFactory<TAst> factory, string source) where TAst : class

@@ -1,23 +1,33 @@
-using System;
 using System.Collections.Generic;
 
 namespace Yes.Interpreter.Model
 {
+    public interface IPropertyValueHolder
+    {
+        IJsValue GetValue();
+        IJsValue SetValue(IJsValue value);
+    }
+
+    public class PropertyValueHolder : IPropertyValueHolder
+    {
+        public IJsValue Value { get; private set; }
+        public IJsValue GetValue()
+        {
+            return Value;
+        }
+
+        public IJsValue SetValue(IJsValue value)
+        {
+            return Value = value;
+        }
+    }
+
     public class JsCommonObject : AbstractJsValue, IJsObject, IJsObjectMembers
     {
-        private Dictionary<string, IJsValue> _members;
+        private Dictionary<string, IPropertyValueHolder> _members;
 
         public JsCommonObject(IScope scope) : base(scope)
         {
-        }
-
-        public JsCommonObject(IScope scope, IEnumerable<Tuple<string, IJsValue>> members) : this(scope)
-        {
-            EnsureMembers();
-            foreach (var member in members)
-            {
-                _members[member.Item1] = member.Item2;
-            }
         }
 
         public override IJsValue Prototype
@@ -51,54 +61,58 @@ namespace Yes.Interpreter.Model
 
         #region IJsObjectMembers Members
 
-        public override IJsValue GetMember(string memberName)
+        public override IJsValue GetMember(IJsValue name)
         {
+            var memberName = name.ToString();
             if (_members != null)
             {
-                IJsValue value;
-                if (_members.TryGetValue(memberName, out value))
+
+                IPropertyValueHolder holder;
+                if (_members.TryGetValue(memberName, out holder))
                 {
-                    return value;
+                    return holder.GetValue();
+                }
+
+                // Was the protype asked for but not found?
+                var memberIsPrototype = "prototype".Equals(memberName);
+                if (memberIsPrototype)
+                {
+                    return Prototype;
+                }
+
+                // Do we have a custom prototype
+                IPropertyValueHolder customPrototypeHolder;
+                if (_members.TryGetValue("prototype", out customPrototypeHolder))
+                {
+                    return customPrototypeHolder.GetValue().Members.GetMember(name);
                 }
             }
-            if ("prototype".Equals(memberName))
-            {
-                return Prototype;
-            }
-            var prototype = GetEffectiveProtoType();
-            return (prototype is IJsNull) ? Scope.CreateUndefined() : prototype.Members.GetMember(memberName);
+
+            // Look in the default prototype
+            var prototype = Prototype;
+            return prototype == null ? Scope.CreateUndefined() : prototype.Members.GetMember(name);
         }
 
-        public override IJsValue SetMember(string name, IJsValue value)
-        {
-            EnsureMembers();
-            _members[name] = value;
-            return value;
-        }
-
-        #endregion
-
-        private IJsValue GetEffectiveProtoType()
-        {
-            IJsValue prototype;
-            if ((_members != null) && _members.TryGetValue("prototype", out prototype))
-            {
-                return prototype;
-            }
-
-            return Prototype ?? Scope.CreateNull();
-        }
-
-        private void EnsureMembers()
+        public IJsValue SetMember(string name, IJsValue value)
         {
             if (_members == null)
             {
-                _members = new Dictionary<string, IJsValue>
-                               {
-                                   {"prototype", Prototype}
-                               };
+                _members = new Dictionary<string, IPropertyValueHolder>();
             }
+            IPropertyValueHolder holder;
+            if (!_members.TryGetValue(name, out holder))
+            {
+                _members[name] = holder = new PropertyValueHolder();
+            }
+            return holder.SetValue(value);
         }
+
+        public override IJsValue SetMember(IJsValue name, IJsValue value)
+        {
+            return SetMember(name.ToString(), value);
+        }
+
+        #endregion
 
         public static IJsValue CreatePrototype(Scope scope)
         {

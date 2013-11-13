@@ -72,6 +72,13 @@ namespace Yes.Parsing
                                  return p.Factory.Apply(left, arguments);
                              });
 
+            Led("[", 80, (p, left) =>
+                             {
+                                 var argument = p.Expression(0);
+                                 p.Advance("]");
+                                 return p.Factory.Member(left, argument);
+                             });
+
             // Handle E => (E)
             Nud("(", (p, l) =>
                          {
@@ -261,7 +268,6 @@ namespace Yes.Parsing
                                 }
                                 p.Advance("]");
                                 return p.Factory.Array(members);
-
                             });
         }
 
@@ -331,7 +337,7 @@ namespace Yes.Parsing
         {
             var t = p.Token;
             p.Advance("(name)");
-            return p.Factory.Name(t.Lexeme.Value.ToString());
+            return p.Factory.LiteralName(t.Lexeme.Value.ToString());
         }
 
         private TAst TryParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)

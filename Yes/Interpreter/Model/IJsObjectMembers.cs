@@ -1,7 +1,8 @@
 namespace Yes.Interpreter.Model
 {
     public interface IJsObjectMembers{
-        IJsValue GetMember(string memberName);
+        IJsValue GetMember(IJsValue name);
         IJsValue SetMember(string name, IJsValue value);
+        IJsValue SetMember(IJsValue name, IJsValue value);
     }
 }

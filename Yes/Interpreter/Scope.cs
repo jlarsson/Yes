@@ -5,30 +5,26 @@ using Yes.Interpreter.Model;
 
 namespace Yes.Interpreter
 {
-    //public interface IPrototypes
-    //{
-    //    IJsValue FunctionPrototype { get; }
-    //    IJsValue ObjectPrototype { get; }
-    //}
-
-    //public class Prototypes: IPrototypes
-    //{
-    //    public IJsValue FunctionPrototype { get; set; }
-    //    public IJsValue ObjectPrototype { get; set; }
-    //}
-
     public class Scope : IScope
     {
-        private readonly Dictionary<string, IJsValue> _variables = new Dictionary<string, IJsValue>();
+        private Dictionary<string, IJsValue> _variables;
+
+        protected Dictionary<string, IJsValue> Variables
+        {
+            get { return _variables ?? (_variables = new Dictionary<string, IJsValue>()); }
+        }
 
         public Scope()
         {
             ProtoTypes = new ProtoTypes()
                              {
+                                 Array = new JsArrayProtoype(this),
                                  Bool = JsBool.CreatePrototype(this),
                                  Number = JsNumber.CreatePrototype(this),
+                                 String = JsString.CreatePrototype(this),
                                  Object = JsCommonObject.CreatePrototype(this),
-                                 Function = JsFunction.CreatePrototype(this)
+                                 Function = JsFunction.CreatePrototype(this),
+                                 Undefined = JsUndefined.CreatePrototype(this)
                              };
         }
 
@@ -52,7 +48,7 @@ namespace Yes.Interpreter
             var scope = this;
             while (scope != null)
             {
-                if (scope._variables.ContainsKey(name))
+                if (scope.Variables.ContainsKey(name))
                 {
                     return scope;
                 }
@@ -78,7 +74,7 @@ namespace Yes.Interpreter
             while (scope != null)
             {
                 IJsValue value;
-                if (scope._variables.TryGetValue(name, out value))
+                if (scope.Variables.TryGetValue(name, out value))
                 {
                     return value;
                 }
@@ -87,14 +83,14 @@ namespace Yes.Interpreter
             return null;
         }
 
-        public void SetVariable(string name, IJsValue value)
+        public IJsValue SetVariable(string name, IJsValue value)
         {
-            _variables[name] = value;
+            return Variables[name] = value;
         }
 
-        public IJsUndefined CreateUndefined()
+        public IJsValue CreateUndefined()
         {
-            return new JsUndefined(this);
+            return TryGetVariable("undefined") ?? SetVariable("undefined", new JsUndefined(this));
         }
 
         public IJsNull CreateNull()
@@ -112,24 +108,34 @@ namespace Yes.Interpreter
             return new JsNumber(this, value);
         }
 
+        public IJsValue CreateString(string value)
+        {
+            return new JsString(this, value);
+        }
+
         public IJsFunction CreateFunction(string name, string[] arguments, IAst statements)
         {
             return new JsFunction(this, name, arguments, statements);
         }
 
-        public IJsValue CreateHostFunction(Func<IScope, IJsValue[], IJsValue> function)
+        public IJsValue CreateHostFunction(Func<IScope, IJsValue, IJsValue[], IJsValue> function)
         {
             return new JsHostFunction(this, function);
         }
 
-        public IJsValue CreateObject(IEnumerable<Tuple<string, IJsValue>> members)
+        public IJsValue CreateObject()
         {
-            return new JsCommonObject(this, members);
+            return new JsCommonObject(this);
         }
 
         public IJsValue CreateArray(IEnumerable<IAst> members)
         {
             return new JsArray(this, members);
+        }
+
+        public IJsValue Throw(string format, params object[] args)
+        {
+            throw new ApplicationException(string.Format(format,args));
         }
 
         #endregion

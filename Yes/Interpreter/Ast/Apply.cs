@@ -33,7 +33,7 @@ namespace Yes.Interpreter.Ast
 
             if (function == null)
             {
-                Error.Throw("{0} is not a function", function);
+                return scope.Throw("Value is not a function");
             }
             return function.Apply(self, Arguments.Select(a => a.Evaluate(scope)).ToArray());
         }

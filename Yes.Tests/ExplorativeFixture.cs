@@ -18,20 +18,7 @@ namespace Yes.Tests
             var context = new Context();
             context.AddPrintFunction();
 
-            var console = context.Scope.CreateObject(
-                new Dictionary<string,IJsValue>()
-                    {
-                        {"log", context.Scope.CreateHostFunction(
-                            (scope,args) =>
-                                {
-                                    Console.Out.WriteLine(string.Join<IJsValue>("", args));
-                                    return scope.CreateUndefined();
-                                }
-                            )
-                            }
-                    }
-                    .Select(kv => Tuple.Create(kv.Key,kv.Value))
-                );
+            var console = context.Scope.CreateObject();
             context.Scope.SetVariable("console", console);
 
 
@@ -43,7 +30,7 @@ namespace Yes.Tests
         {
             var context = new Context();
             context.AddPrintFunction();
-            context.Execute("var x = [1,2,3,4,5,6,7,8];");
+            context.Execute("var x = [1,2,3,4,5,6,7,8]; print(x);");
         }
 
         [Test]
@@ -83,7 +70,7 @@ namespace Yes.Tests
         {
             var context = new Context();
             context.AddPrintFunction();
-            context.Execute("var x = {a:1,b:2,c: function () {return this.a;}}; print(x.c());");
+            context.Execute("var x = {a:1,b:2,c: function () {return this.a+this.b;}}; print(x.c());");
         }
 
         [Test]
@@ -129,7 +116,7 @@ namespace Yes.Tests
             //var x = new JavascriptParser().Parse(new AstFactory(), "1*2+3*4");
             var x = new JavascriptParser().Parse(new AstFactory(), "function f(a,b) {return a+b}; print(f(1,2));");
             var scope = new Scope();
-            scope.SetVariable("print", new JsHostFunction(scope, (s, args) =>
+            scope.SetVariable("print", new JsHostFunction(scope, (s, self, args) =>
                                                                      {
                                                                          Console.Out.WriteLine(string.Join("",
                                                                                                            args.Select
@@ -141,6 +128,16 @@ namespace Yes.Tests
                                                                      }));
 
             x.Evaluate(scope);
+        }
+
+        [Test]
+        public void F()
+        {
+            var context = new Context();
+
+            context.AddPrintFunction();
+
+            context.Execute("var y = 'apa'; var x = [1,2,3]; x[10-9] = 35;x['0'] = 123; x[3] = 'hej'; print(x);");
         }
     }
 }

@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Array\Class1.cs" />
     <Compile Include="ExplorativeFixture.cs" />
     <Compile Include="Lexing\JavascriptLexerFixture.cs" />
     <Compile Include="Lexing\NumberLexingFixture.cs" />

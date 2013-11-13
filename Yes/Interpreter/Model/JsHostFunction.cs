@@ -4,13 +4,13 @@ namespace Yes.Interpreter.Model
 {
     public class JsHostFunction : JsCommonObject, IJsFunction
     {
-        public JsHostFunction(IScope scope, Func<IScope, IJsValue[], IJsValue> func): base(scope)
+        public JsHostFunction(IScope scope, Func<IScope, IJsValue, IJsValue[], IJsValue> func): base(scope)
         {
             Scope = scope;
             Func = func;
         }
 
-        public Func<IScope, IJsValue[], IJsValue> Func { get; set; }
+        public Func<IScope, IJsValue, IJsValue[], IJsValue> Func { get; set; }
 
         #region IJsFunction Members
 
@@ -21,7 +21,7 @@ namespace Yes.Interpreter.Model
 
         public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
-            return Func(Scope, arguments) ?? Scope.CreateUndefined();
+            return Func(Scope, @this, arguments) ?? Scope.CreateUndefined();
         }
 
         #endregion

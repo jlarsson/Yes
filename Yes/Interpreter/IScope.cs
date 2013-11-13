@@ -14,14 +14,17 @@ namespace Yes.Interpreter
         IScope CreateChildScope();
         IScope GetVariableScope(string name); 
         IJsValue TryGetVariable(string name);
-        void SetVariable(string name, IJsValue value);
-        IJsUndefined CreateUndefined();
+        IJsValue SetVariable(string name, IJsValue value);
+        IJsValue CreateUndefined();
         IJsNull CreateNull();
         IJsBool CreateBool(bool value);
         IJsNumber CreateNumber(double value);
+        IJsValue CreateString(string value);
         IJsFunction CreateFunction(string name, string[] arguments, IAst statements);
-        IJsValue CreateHostFunction(Func<IScope, IJsValue[], IJsValue> function);
-        IJsValue CreateObject(IEnumerable<Tuple<string, IJsValue>> members);
+        IJsValue CreateHostFunction(Func<IScope, IJsValue, IJsValue[], IJsValue> function);
+        IJsValue CreateObject();
         IJsValue CreateArray(IEnumerable<IAst> members);
+
+        IJsValue Throw(string format, params object[] args);
     }
 }

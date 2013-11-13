@@ -61,7 +61,8 @@ namespace Yes.Parsing
                                                                    "!", "~", "&&", "||", "?", ":",
                                                                    "=", "+=", "-=", "*=", "%=", "<<=",
                                                                    ">>=", ">>>=", "&=", "|=", "^=",
-                                                                   "/", "/="
+                                                                   "/", "/=",
+                                                                   ","
                                                                };
 
 
@@ -90,7 +91,7 @@ namespace Yes.Parsing
             {
                 // Single character operators
                 // Notice absence of . since that can be start of a number
-                foreach (var op in "()[]{};?:")
+                foreach (var op in "()[]{};?:,")
                 {
                     _preLookup[op] = (r, c) => r.TryLexSingleCharacterOperator(c);
                 }

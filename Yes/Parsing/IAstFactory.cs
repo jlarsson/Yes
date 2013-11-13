@@ -6,6 +6,7 @@ namespace Yes.Parsing
     public interface IAstFactory<TAst>
     {
         TAst Name(string value);
+        TAst LiteralName(string name);
         TAst Null();
         TAst Bool(bool value);
         TAst Number(object value);

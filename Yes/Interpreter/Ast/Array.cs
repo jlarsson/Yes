@@ -3,7 +3,7 @@ using Yes.Interpreter.Model;
 
 namespace Yes.Interpreter.Ast
 {
-    public class Array: IAst{
+    public class Array: IAst {
         public IEnumerable<IAst> Members { get; set; }
 
         public Array(IEnumerable<IAst> members)

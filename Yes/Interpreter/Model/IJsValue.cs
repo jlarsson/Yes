@@ -6,5 +6,7 @@ namespace Yes.Interpreter.Model
         JsTypeCode TypeCode { get; }
         bool IsTruthy();
         bool IsFalsy();
+
+        int? TryEvaluateToIndex();
     }
 }

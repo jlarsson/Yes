@@ -6,6 +6,7 @@ namespace Yes.Interpreter.Model
         Null,
         Bool,
         Number,
+        String,
         Function,
         Object
     }

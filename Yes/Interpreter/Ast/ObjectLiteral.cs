@@ -15,11 +15,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IScope scope)
         {
-            return scope.CreateObject(
-                from t in Members
-                let name = ((IPropertyName) t.Item1).PropertyName
-                let value = t.Item2.Evaluate(scope)
-                select Tuple.Create(name, value));
+            return scope.CreateObject();
         }
     }
 }

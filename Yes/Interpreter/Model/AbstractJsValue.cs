@@ -16,21 +16,30 @@ namespace Yes.Interpreter.Model
         public abstract JsTypeCode TypeCode { get; }
         public abstract bool IsTruthy();
         public abstract bool IsFalsy();
+        public virtual int? TryEvaluateToIndex()
+        {
+            return null;
+        }
 
         #endregion
 
-        public virtual IJsValue GetMember(string memberName)
+        public virtual IJsValue GetMember(IJsValue name)
         {
-            if ("prototype".Equals(memberName))
+            if ("prototype".Equals(name))
             {
                 return Prototype;
             }
-            return Prototype.Members.GetMember(memberName);
+            return Prototype.Members.GetMember(name);
         }
 
         public virtual IJsValue SetMember(string name, IJsValue value)
         {
-            return Scope.CreateUndefined();
+            return Scope.Throw("Can't assign to member {0} of {1}", name, this);
+        }
+
+        public virtual IJsValue SetMember(IJsValue name, IJsValue value)
+        {
+            return Scope.Throw("Can't assign to member {0} of {1}", name, this);
         }
     }
 }

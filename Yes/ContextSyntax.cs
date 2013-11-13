@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Yes.Interpreter;
 using Yes.Interpreter.Model;
 
@@ -8,32 +9,33 @@ namespace Yes
     {
         public static void AddPrintFunction(this IContext context)
         {
-            context.SetHostFunction("print", args => Console.Out.WriteLine(string.Join<IJsValue>("", args)));
+            context.SetHostFunction("print",
+                                    (scope, self, args) => Console.Out.WriteLine(string.Join<IJsValue>("", args)));
         }
 
         public static void SetHostFunction(this IContext context, string name, Action function)
         {
-            SetHostFunction(context, name, (scope, args) =>
+            SetHostFunction(context, name, (scope, self, args) =>
                                                {
                                                    function();
                                                    return scope.CreateUndefined();
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Action<IJsValue[]> function)
+        public static void SetHostFunction(this IContext context, string name, Action<IJsValue[]> action)
         {
-            SetHostFunction(context, name, (scope, args) =>
+            SetHostFunction(context, name, (scope, self, args) =>
                                                {
-                                                   function(args);
+                                                   action(args);
                                                    return scope.CreateUndefined();
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Action<IScope, IJsValue[]> function)
+        public static void SetHostFunction(this IContext context, string name, Action<IScope, IJsValue[]> action)
         {
-            SetHostFunction(context, name, (scope, args) =>
+            SetHostFunction(context, name, (scope, self, args) =>
                                                {
-                                                   function(scope, args);
+                                                   action(scope, args);
                                                    return scope.CreateUndefined();
                                                });
         }
@@ -44,9 +46,19 @@ namespace Yes
         }
 
         public static void SetHostFunction(this IContext context, string name,
-                                           Func<IScope, IJsValue[], IJsValue> function)
+                                           Func<IScope, IJsValue, IJsValue[], IJsValue> function)
         {
             context.Scope.SetVariable(name, context.Scope.CreateHostFunction(function));
+        }
+    
+        public static void SetHostFunction(this IContext context, string name,
+                                           Action<IScope, IJsValue, IJsValue[]> action)
+        {
+            context.Scope.SetVariable(name, context.Scope.CreateHostFunction((scope,self, args) =>
+                                                                                 {
+                                                                                     action(scope, self, args);
+                                                                                     return scope.CreateUndefined();
+                                                                                 }));
         }
     }
 }

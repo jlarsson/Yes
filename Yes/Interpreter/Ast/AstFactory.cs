@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Yes.Parsing;
+using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
 {
@@ -26,6 +28,23 @@ namespace Yes.Interpreter.Ast
             return new Name(name);
         }
 
+        public IAst LiteralName(string name)
+        {
+            if ("null".Equals(name))
+            {
+                return Null();
+            }
+            if ("true".Equals(name))
+            {
+                return Bool(true);
+            }
+            if ("false".Equals(name))
+            {
+                return Bool(false);
+            }
+            return new LiteralName(name);
+        }
+
         public IAst Null()
         {
             return new Null();
@@ -38,12 +57,12 @@ namespace Yes.Interpreter.Ast
 
         public IAst Number(object value)
         {
-            return new Number((double) value);
+            return new Number(Convert.ToDouble(value, Conversion.DoubleFormat));
         }
 
         public IAst String(object value)
         {
-            throw new NotImplementedException();
+            return new String(value.ToString());
         }
 
         public IAst Function(IAst name, IEnumerable<IAst> arguments, IAst statements)

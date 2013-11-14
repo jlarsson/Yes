@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -11,9 +12,9 @@ namespace Yes.Interpreter.Ast
             Value = value;
         }
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            return scope.CreateString(Value);
+            return environment.CreateString(Value);
         }
     }
 }

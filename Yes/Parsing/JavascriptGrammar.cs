@@ -20,7 +20,7 @@ namespace Yes.Parsing
         protected JavascriptGrammar()
         {
             NewScope();
-            Keywords("return", "var", "if", "for", "while", "break", "function");
+            Keywords("return", "var", "if", "else", "for", "while", "break", "function", "new");
 
             Literal("(number)", (f, l) => f.Number(l.Value));
             Literal("(string)", (f, l) => f.String(l.Value));
@@ -87,6 +87,23 @@ namespace Yes.Parsing
                              return e;
                          });
 
+            Prefix("new", (p, f) =>
+                              {
+                                  var constructor = p.Expression(100);
+                                  var arguments = new List<TAst>();
+                                  p.Advance("(");
+                                  while (!p.CanAdvance(")"))
+                                  {
+                                      arguments.Add(p.Expression(0));
+                                      if (!p.TryAdvance(","))
+                                      {
+                                          break;
+                                      }
+                                  }
+                                  p.Advance(")");
+
+                                  return p.Factory.Construct(constructor,arguments);
+                              });
             Prefix("function", (p, f) =>
                                    {
                                        using (NewScope())

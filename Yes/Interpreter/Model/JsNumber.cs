@@ -1,54 +1,54 @@
 using System;
+using Yes.Runtime;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsNumber : AbstractJsValue, IJsNumber
+    public class JsNumber : IJsNumber
     {
-        public JsNumber(IScope scope, double value) : base(scope)
+        public JsNumber(double value) : base()
         {
             Value = value;
         }
 
-        #region IJsNumber Members
-
         public double Value { get; set; }
 
-        public override IJsValue Prototype
-        {
-            get { return Scope.ProtoTypes.Number; }
-        }
-
-        public override JsTypeCode TypeCode
+        public JsTypeCode TypeCode
         {
             get { return JsTypeCode.Number; }
         }
 
-        public override bool IsTruthy()
+        public IReference GetReference(IJsValue name)
         {
-            return Math.Abs(Value - 0) > Double.Epsilon;
+            throw new NotImplementedException();
         }
 
-        public override bool IsFalsy()
+        public IReference GetReference(string name)
         {
-            return !IsFalsy();
+            throw new NotImplementedException();
         }
 
-        public override int? TryEvaluateToIndex()
+        public int? ToArrayIndex()
         {
-            return (int) Value;
+            return (int)Math.Floor(Value);
         }
 
-        #endregion
+        public bool ToBoolean()
+        {
+            if (double.IsNaN(Value))
+            {
+                return false;
+            }
+            return (Value > double.Epsilon) || (Value < -double.Epsilon);
+        }
+
+        public double ToNumber()
+        {
+            return Value;
+        }
 
         public override string ToString()
         {
             return Value.ToString();
-        }
-
-        public static IJsValue CreatePrototype(Scope scope)
-        {
-            var prototype = new JsPrototype(scope);
-            return prototype;
         }
     }
 }

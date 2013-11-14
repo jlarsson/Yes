@@ -42,5 +42,6 @@ namespace Yes.Parsing
         TAst IfThenElse(TAst @if, TAst then, TAst @else);
         TAst While(TAst condition, TAst statements);
         TAst For(TAst initial, TAst condition, TAst loop, TAst block);
+        TAst Construct(TAst constructor, IEnumerable<TAst> arguments);
     }
 }

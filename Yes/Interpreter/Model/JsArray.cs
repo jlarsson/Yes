@@ -1,23 +1,96 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Yes.Interpreter.Ast;
+using Yes.Runtime;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsArrayProtoype: JsCommonObject
-    {
-        public JsArrayProtoype(IScope scope) : base(scope)
-        {
-        }
-    }
-
-    public class JsArray: JsCommonObject, IJsArray
+    public class JsArray: JsObject, IJsArray
     {
         private readonly List<IJsValue> _array;
 
-        public JsArray(IScope scope, IEnumerable<IAst> members) : base(scope)
+        public JsArray(IEnvironment environment, IJsObject protype, IEnumerable<IJsValue> members) : base(environment, protype)
         {
-            _array = (from m in members select m.Evaluate(scope)).ToList();
+            DefineOwnProperty(new AccessorPropertyDescriptor("length",
+                                                             JsGetLength,
+                                                             JsSetLength));
+
+            _array = members.ToList();
+        }
+
+        protected IJsValue JsGetLength()
+        {
+            return Environment.CreateNumber(_array.Count);
+        }
+
+        protected IJsValue JsSetLength(IJsValue length)
+        {
+            var index = length.ToArrayIndex();
+            if (!index.HasValue)
+            {
+                throw new JsTypeError();
+            }
+            var l = index.Value;
+            if (l < 0)
+            {
+                throw new JsArgumentError();
+            }
+            if (l < _array.Count)
+            {
+                _array.RemoveRange(l, _array.Count-l);
+            }
+            else if (l > _array.Count)
+            {
+                _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Instance));
+            }
+            return length;
+        }
+        protected IJsValue JsGetElement(int index)
+        {
+            if ((index < 0) || (index >= _array.Count))
+            {
+                throw new JsRangeError();
+            }
+            return _array[index];
+        }
+        protected IJsValue JsSetElement(int index, IJsValue value)
+        {
+            if (index < 0)
+            {
+                throw new JsRangeError();
+            }
+            if (index < _array.Count)
+            {
+                return _array[index] = value;
+            }
+            if (index == _array.Count)
+            {
+                _array.Add(value);
+                return value;
+            }
+            throw new JsRangeError();
+        }
+
+
+        public override IReference GetReference(IJsValue name)
+        {
+            var index = name.ToArrayIndex();
+            if (index.HasValue)
+            {
+                return GetElementReference(index.Value);
+            }
+            return base.GetReference(name.ToString());
+        }
+
+        public override IReference GetReference(string name)
+        {
+            int index;
+            if (int.TryParse(name, out index))
+            {
+                return GetElementReference(index);
+            }
+            return base.GetReference(name);
         }
 
         public override string ToString()
@@ -25,48 +98,36 @@ namespace Yes.Interpreter.Model
             return string.Join(",", _array);
         }
 
-        public override IJsValue GetMember(IJsValue name)
+        protected IReference GetElementReference(int value)
         {
-            var index = name.TryEvaluateToIndex();
-            if (index != null)
-            {
-                var i = index.Value;
-                if ((i < 0) || (i >= _array.Count))
-                {
-                    return Scope.Throw("Array index is out of bounds");
-                }
-                return _array[i];
-            }
-            return base.GetMember(name);
+            return new ArrayElementReference(value,
+                JsGetElement,
+                JsSetElement
+                );
         }
 
-        public override IJsValue SetMember(IJsValue name, IJsValue value)
+        public class ArrayElementReference : IReference
         {
-            var index = name.TryEvaluateToIndex();
-            if (index != null)
-            {
-                return SetArrayMember(index.Value, value);
-            }
-            return base.SetMember(name, value);
-        }
+            private readonly int _index;
+            private readonly Func<int, IJsValue> _getter;
+            private readonly Func<int, IJsValue, IJsValue> _setter;
 
-        private IJsValue SetArrayMember(int index, IJsValue value)
-        {
-            if (index < 0)
+            public ArrayElementReference(int index, Func<int,IJsValue> getter, Func<int,IJsValue,IJsValue> setter)
             {
-                return Scope.Throw("Array index is out of bounds");
+                _index = index;
+                _getter = getter;
+                _setter = setter;
             }
-            if (index < _array.Count)
+
+            public IJsValue GetValue()
             {
-                _array[index] = value;
-                return value;
+                return _getter(_index);
             }
-            if (index == _array.Count)
+
+            public IJsValue SetValue(IJsValue value)
             {
-                _array.Add(value);
-                return value;
+                return _setter(_index,value);
             }
-            return Scope.Throw("Array index is out of bounds");
         }
     }
 }

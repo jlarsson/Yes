@@ -1,9 +1,24 @@
+using Yes.Runtime;
+
 namespace Yes.Interpreter.Model
 {
-    public class JsUndefined : AbstractJsValue, IJsUndefined
+    public class JsUndefined : IJsUndefined
     {
-        public JsUndefined(IScope scope) : base(scope)
+        public static JsUndefined Instance = new JsUndefined();
+
+        public int? ToArrayIndex()
         {
+            return null;
+        }
+
+        public bool ToBoolean()
+        {
+            return false;
+        }
+
+        public double ToNumber()
+        {
+            return double.NaN;
         }
 
         public override string ToString()
@@ -11,34 +26,19 @@ namespace Yes.Interpreter.Model
             return "undefined";
         }
 
-        #region IJsUndefined Members
-
-        public override IJsValue Prototype
-        {
-            get { return Scope.ProtoTypes.Undefined; }
-        }
-
-        public override JsTypeCode TypeCode
+        public JsTypeCode TypeCode
         {
             get { return JsTypeCode.Undefined; }
         }
 
-        public override bool IsTruthy()
+        public IReference GetReference(IJsValue name)
         {
-            return false;
+            throw new System.NotImplementedException();
         }
 
-        public override bool IsFalsy()
+        public IReference GetReference(string name)
         {
-            return true;
-        }
-
-        #endregion
-
-        public static IJsValue CreatePrototype(Scope scope)
-        {
-            var prototype = new JsPrototype(scope);
-            return prototype;
+            throw new System.NotImplementedException();
         }
     }
 }

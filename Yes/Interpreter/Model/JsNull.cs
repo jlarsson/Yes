@@ -1,40 +1,39 @@
+using Yes.Runtime;
+
 namespace Yes.Interpreter.Model
 {
     public class JsNull : IJsNull
     {
         public static readonly JsNull Value = new JsNull();
 
-        #region IJsNull Members
-
-        public IJsObjectMembers Members
-        {
-            get
-            {
-                JsError.Throw("Illegal member access on null object.");
-                return null;
-            }
-        }
-
         public JsTypeCode TypeCode
         {
             get { return JsTypeCode.Null; }
         }
 
-        public bool IsTruthy()
+        public IReference GetReference(IJsValue name)
         {
-            return false;
+            throw new System.NotImplementedException();
         }
 
-        public bool IsFalsy()
+        public IReference GetReference(string name)
         {
-            return true;
+            throw new System.NotImplementedException();
         }
 
-        public int? TryEvaluateToIndex()
+        public int? ToArrayIndex()
         {
             return null;
         }
 
-        #endregion
+        public bool ToBoolean()
+        {
+            return false;
+        }
+
+        public double ToNumber()
+        {
+            return 0;
+        }
     }
 }

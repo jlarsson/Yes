@@ -342,10 +342,10 @@ namespace Yes.Parsing
                 if (escapePos < 0)
                 {
                     // No escapes, fast bail out
-                    return value;    
+                    return value.Substring(1, value.Length - 2);
                 }
 
-                return MatchEscapeCharacter.Replace(value, m =>
+                return MatchEscapeCharacter.Replace(value.Substring(1,value.Length-2), m =>
                                                                {
                                                                    switch (m.Value[1])
                                                                    {

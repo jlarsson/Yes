@@ -1,18 +1,17 @@
 using System;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsHostFunction : JsCommonObject, IJsFunction
+    public class JsHostFunction : JsObject, IJsFunction
     {
-        public JsHostFunction(IScope scope, Func<IScope, IJsValue, IJsValue[], IJsValue> func): base(scope)
+        public JsHostFunction(IEnvironment environment, Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func)
+            : base(environment, null)
         {
-            Scope = scope;
             Func = func;
         }
 
-        public Func<IScope, IJsValue, IJsValue[], IJsValue> Func { get; set; }
-
-        #region IJsFunction Members
+        public Func<IEnvironment, IJsValue, IJsValue[], IJsValue> Func { get; protected set; }
 
         public override JsTypeCode TypeCode
         {
@@ -21,9 +20,7 @@ namespace Yes.Interpreter.Model
 
         public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
-            return Func(Scope, @this, arguments) ?? Scope.CreateUndefined();
+            return Func(Environment, @this, arguments) ?? JsUndefined.Instance;
         }
-
-        #endregion
     }
 }

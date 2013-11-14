@@ -1,12 +1,13 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
     public class Break: IAst{
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            scope.Break = true;
-            return scope.CreateUndefined();
+            environment.ControlFlow.Break = true;
+            return JsUndefined.Instance;
         }
     }
 }

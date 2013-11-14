@@ -1,6 +1,6 @@
 namespace Yes.Interpreter.Ast
 {
-    public interface INameAst
+    public interface IAstWithName: IAst
     {
         string Name { get; }
     }

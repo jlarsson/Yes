@@ -1,5 +1,6 @@
 using System;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -7,8 +8,7 @@ namespace Yes.Interpreter.Ast
     {
         #region IDefineBinaryOperatorFunctions Members
 
-        public void Define(
-            Action<JsTypeCode, JsTypeCode, BinaryOperation, Func<IScope, IJsValue, IJsValue, IJsValue>> define)
+        public void Define(Action<JsTypeCode, JsTypeCode, BinaryOperation, Func<IEnvironment, IJsValue, IJsValue, IJsValue>> define)
         {
             define(JsTypeCode.Number, JsTypeCode.Number, BinaryOperation.Add,
                    (s, l, r) => s.CreateNumber(((IJsNumber) l).Value + ((IJsNumber) r).Value));

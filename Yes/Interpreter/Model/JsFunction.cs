@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Ast;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsFunction : JsCommonObject, IJsFunction
+    public class JsFunction : JsObject, IJsFunction, IJsConstructor
     {
-        public JsFunction(IScope scope, string name, string[] arguments, IAst statements) : base(scope)
+        public JsFunction(IEnvironment environment, IJsObject prototype, string name, string[] arguments, IAst statements) : base(environment, prototype)
         {
             Name = name;
             Arguments = arguments;
@@ -18,23 +20,20 @@ namespace Yes.Interpreter.Model
 
         #region IJsFunction Members
 
-        public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
+        public virtual IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
-            var argumentsScope = Scope.CreateChildScope();
+            var applyEnvironment =
+                new Environment(
+                    new ThisEnvironment(
+                        new BoundArgumentsEnvironment(
+                            Environment,
+                            Arguments,
+                            arguments
+                            ),
+                        @this
+                        ));
 
-            foreach (var a in arguments.Zip(Arguments, (v, n) => new
-                                                                     {
-                                                                         Name = n,
-                                                                         Value = v
-                                                                     }))
-            {
-                argumentsScope.SetVariable(a.Name, a.Value);
-            }
-            argumentsScope.SetVariable("this", @this ?? this);
-
-            var applyScope = argumentsScope.CreateChildScope();
-
-            return Statements.Evaluate(applyScope);
+            return Statements.Evaluate(applyEnvironment);
         }
 
         public override JsTypeCode TypeCode
@@ -42,24 +41,13 @@ namespace Yes.Interpreter.Model
             get { return JsTypeCode.Function; }
         }
 
-        public override bool IsTruthy()
-        {
-            return true;
-        }
-
-        public override bool IsFalsy()
-        {
-            return false;
-        }
-
         #endregion
 
-        public new static IJsValue CreatePrototype(Scope scope)
+        public IJsValue Construct(IEnumerable<IJsValue> arguments)
         {
-            var prototype = new JsPrototype(scope);
-            //prototype.SetMember("toString", scope.CreateHostFunction((s,self, args) => scope.CreateString(self. ));
-            //prototype.SetMember("length", scope.CreateHostFunction(ProtypeLength) )
-            return prototype;
+            var self = Environment.CreateObject();
+            Apply(self, arguments.ToArray());
+            return self;
         }
     }
 }

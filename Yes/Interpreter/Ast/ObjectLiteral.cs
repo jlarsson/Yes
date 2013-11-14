@@ -1,21 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
     public class ObjectLiteral: IAst{
-        public IEnumerable<Tuple<IAst, IAst>> Members { get; set; }
+        public IEnumerable<Tuple<IAstWithName, IAst>> Members { get; set; }
 
-        public ObjectLiteral(IEnumerable<Tuple<IAst, IAst>> members)
+        public ObjectLiteral(IEnumerable<Tuple<IAstWithName, IAst>> members)
         {
             Members = members;
         }
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            return scope.CreateObject();
+            var obj = environment.CreateObject();
+            foreach (var member in Members)
+            {
+                obj.GetReference(member.Item1.Name).SetValue(member.Item2.Evaluate(environment));
+            }
+            return obj;
         }
     }
 }

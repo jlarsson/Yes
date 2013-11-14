@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -9,8 +10,8 @@ namespace Yes.Interpreter.Ast
         public Function(IAst name, IEnumerable<IAst> arguments, IAst statements)
         {
             Statements = statements;
-            Name = name == null ? null : ((INameAst) name).Name;
-            Arguments = arguments.Select(a => (INameAst) a).Select(n => n.Name).ToArray();
+            Name = name == null ? null : ((IAstWithName) name).Name;
+            Arguments = arguments.Select(a => (IAstWithName) a).Select(n => n.Name).ToArray();
         }
 
         public IAst Statements { get; protected set; }
@@ -21,12 +22,12 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            var f = scope.CreateFunction(Name, Arguments, Statements);
+            var f = environment.CreateFunction(Name, Arguments, Statements);
             if (!string.IsNullOrEmpty(Name))
             {
-                scope.SetVariable(Name, f);
+                environment.CreateReference(Name,f);
             }
             return f;
         }

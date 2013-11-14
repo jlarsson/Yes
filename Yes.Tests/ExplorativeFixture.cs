@@ -6,6 +6,7 @@ using Yes.Interpreter;
 using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Parsing;
+using Yes.Runtime.Environment;
 
 namespace Yes.Tests
 {
@@ -18,8 +19,10 @@ namespace Yes.Tests
             var context = new Context();
             context.AddPrintFunction();
 
-            var console = context.Scope.CreateObject();
-            context.Scope.SetVariable("console", console);
+            var console = context.CreateObject();
+            console.GetReference("log").SetValue(context.CreateHostFunction((scope, self, args) => null));
+            context.Environment.CreateReference("console", console);
+
 
 
             context.Execute("var x = 1; console.log(x,2,3);");
@@ -90,7 +93,7 @@ namespace Yes.Tests
 
             context.Execute("function fac(n) { if(n < 2) { return n; } else { { return n*fac(n-1); } }}");
 
-            var v = (context.Scope.TryGetVariable("fac") as IJsFunction).Apply(null, context.Scope.CreateNumber(6));
+            var v = (context.Environment.GetReference("fac").GetValue() as IJsFunction).Apply(null, context.Environment.CreateNumber(6));
 
             Console.Out.WriteLine(v);
         }
@@ -105,29 +108,9 @@ namespace Yes.Tests
             context.Execute("function f(a,b) {return a+b}; print(f(1,2));");
 
 
-            var v = (context.Scope.TryGetVariable("f") as IJsFunction).Apply(null, context.Scope.CreateNumber(11),
-                context.Scope.CreateNumber(22)
+            var v = (context.Environment.GetReference("f").GetValue() as IJsFunction).Apply(null, context.Environment.CreateNumber(11),
+                context.CreateNumber(22)
                 );
-        }
-
-        [Test]
-        public void Test()
-        {
-            //var x = new JavascriptParser().Parse(new AstFactory(), "1*2+3*4");
-            var x = new JavascriptParser().Parse(new AstFactory(), "function f(a,b) {return a+b}; print(f(1,2));");
-            var scope = new Scope();
-            scope.SetVariable("print", new JsHostFunction(scope, (s, self, args) =>
-                                                                     {
-                                                                         Console.Out.WriteLine(string.Join("",
-                                                                                                           args.Select
-                                                                                                               (a =>
-                                                                                                                a.
-                                                                                                                    ToString
-                                                                                                                    ())));
-                                                                         return s.CreateUndefined();
-                                                                     }));
-
-            x.Evaluate(scope);
         }
 
         [Test]
@@ -137,7 +120,9 @@ namespace Yes.Tests
 
             context.AddPrintFunction();
 
-            context.Execute("var y = 'apa'; var x = [1,2,3]; x[10-9] = 35;x['0'] = 123; x[3] = 'hej'; print(x);");
+            context.Execute("var y = 'apa'; var x = [1,2,3]; x[10-9] = 35;x['0'] = 123; x[3] = 'hej'; x.push(18); print(x);");
+
+            //context.Execute("var x = new (function (l){this.p = function (){print(l);}})(1234); x.p();");
         }
     }
 }

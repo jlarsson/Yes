@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -13,17 +14,18 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
+            var flow = environment.ControlFlow;
             foreach (var statement in Statements)
             {
-                if (scope.Return || scope.Break)
+                if (flow.Return || flow.Break)
                 {
                     break;
                 }
-                statement.Evaluate(scope);
+                statement.Evaluate(environment);
             }
-            return scope.ReturnValue ?? scope.CreateUndefined();
+            return flow.ReturnValue ?? JsUndefined.Instance;
         }
 
         #endregion

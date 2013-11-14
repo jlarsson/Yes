@@ -1,8 +1,9 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
-    public class LiteralName : IAst, INameAst, IPropertyName
+    public class LiteralName : IAst, IAstWithName, IPropertyName
     {
         public string Name { get; set; }
 
@@ -11,9 +12,9 @@ namespace Yes.Interpreter.Ast
             Name = name;
         }
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            return scope.CreateString(Name);
+            return environment.CreateString(Name);
         }
 
         public string PropertyName

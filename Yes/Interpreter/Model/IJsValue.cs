@@ -1,12 +1,16 @@
+using Yes.Runtime;
+
 namespace Yes.Interpreter.Model
 {
     public interface IJsValue
     {
-        IJsObjectMembers Members { get; }
         JsTypeCode TypeCode { get; }
-        bool IsTruthy();
-        bool IsFalsy();
+        IReference GetReference(IJsValue name);
+        IReference GetReference(string name);
 
-        int? TryEvaluateToIndex();
+        int? ToArrayIndex();
+        bool ToBoolean();
+        double ToNumber();
+        string ToString();
     }
 }

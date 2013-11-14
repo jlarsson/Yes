@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Yes.Parsing;
 using Yes.Utility;
@@ -72,7 +71,7 @@ namespace Yes.Interpreter.Ast
 
         public IAst Object(IEnumerable<Tuple<IAst, IAst>> members)
         {
-            return new ObjectLiteral(members);
+            return new ObjectLiteral(members.Select(t => Tuple.Create((IAstWithName)t.Item1,t.Item2)));
         }
 
         public IAst Array(IEnumerable<IAst> members)
@@ -223,6 +222,15 @@ namespace Yes.Interpreter.Ast
         public IAst For(IAst initial, IAst condition, IAst loop, IAst block)
         {
             return new For(initial, condition, loop, block);
+        }
+
+        public IAst Construct(IAst constructor, IEnumerable<IAst> arguments)
+        {
+            if (constructor is IAstWithName)
+            {
+                return new NamedConstruct((constructor as IAstWithName).Name, arguments.ToArray());
+            }
+            return new Construct(constructor, arguments.ToArray());
         }
 
         #endregion

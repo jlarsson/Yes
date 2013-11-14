@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -6,9 +7,9 @@ namespace Yes.Interpreter.Ast
     {
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            return scope.CreateNull();
+            return JsNull.Value;
         }
 
         #endregion

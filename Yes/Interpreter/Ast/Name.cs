@@ -1,8 +1,9 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
-    public class Name : IAst, INameAst, IPropertyName, ILValue
+    public class Name : IAst, IAstWithName, IPropertyName, ILValue
     {
         public Name(string name)
         {
@@ -13,27 +14,25 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            return scope.TryGetVariable(Value) ?? scope.CreateUndefined();
+            return environment.GetReference(Value).GetValue();
         }
 
         #endregion
 
         #region ILValue Members
 
-        public IJsValue SetValue(IScope scope, IJsValue value)
+        public IJsValue SetValue(IEnvironment environment, IJsValue value)
         {
-            var variableScope = scope.GetVariableScope(Value) ?? scope;
-            variableScope.SetVariable(Value, value);
-            return value;
+            return environment.GetReference(Value).SetValue(value);
         }
 
         #endregion
 
         #region INameAst Members
 
-        string INameAst.Name
+        string IAstWithName.Name
         {
             get { return Value; }
         }

@@ -1,5 +1,8 @@
+using System;
 using System.Linq;
 using Yes.Interpreter.Model;
+using Yes.Runtime;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -16,7 +19,7 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
             IJsValue self = null;
             IJsFunction function;
@@ -24,18 +27,18 @@ namespace Yes.Interpreter.Ast
             var hasThis = Function as IEvaluateThisAndMember;
             if (hasThis != null)
             {
-                function = hasThis.Evaluate(scope, out self) as IJsFunction;
+                function = hasThis.Evaluate(environment, out self) as IJsFunction;
             }
             else
             {
-                function = Function.Evaluate(scope) as IJsFunction;
+                function = Function.Evaluate(environment) as IJsFunction;
             }
 
             if (function == null)
             {
-                return scope.Throw("Value is not a function");
+                throw new JsTypeError();
             }
-            return function.Apply(self, Arguments.Select(a => a.Evaluate(scope)).ToArray());
+            return function.Apply(self, Arguments.Select(a => a.Evaluate(environment)).ToArray());
         }
 
         #endregion

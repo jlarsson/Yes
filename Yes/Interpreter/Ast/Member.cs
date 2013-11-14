@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -15,24 +16,24 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            var obj = Instance.Evaluate(scope);
-            return obj.Members.GetMember(MemberName.Evaluate(scope));
+            var obj = Instance.Evaluate(environment);
+            return obj.GetReference(MemberName.Evaluate(environment)).GetValue();
         }
 
         #endregion
 
-        public IJsValue SetValue(IScope scope, IJsValue value)
+        public IJsValue SetValue(IEnvironment environment, IJsValue value)
         {
-            return Instance.Evaluate(scope).Members.SetMember(MemberName.Evaluate(scope), value);
+            return Instance.Evaluate(environment).GetReference(MemberName.Evaluate(environment)).SetValue(value);
         }
 
-        public IJsValue Evaluate(IScope scope, out IJsValue @this)
+        public IJsValue Evaluate(IEnvironment environment, out IJsValue @this)
         {
-            var obj = Instance.Evaluate(scope);
+            var obj = Instance.Evaluate(environment);
             @this = obj;
-            return obj.Members.GetMember(MemberName.Evaluate(scope));
+            return obj.GetReference(MemberName.Evaluate(environment)).GetValue();
         }
     }
 }

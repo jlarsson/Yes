@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -12,11 +13,11 @@ namespace Yes.Interpreter.Ast
         private static readonly int MaxOperation =
             Enum.GetValues(typeof (BinaryOperation)).OfType<BinaryOperation>().Select(v => (int) v).Max() + 1;
 
-        private static readonly Func<IScope, IJsValue, IJsValue, IJsValue>[] _lookup;
+        private static readonly Func<IEnvironment, IJsValue, IJsValue, IJsValue>[] _lookup;
 
         static AbstractBinaryOperation()
         {
-            _lookup = new Func<IScope, IJsValue, IJsValue, IJsValue>[
+            _lookup = new Func<IEnvironment, IJsValue, IJsValue, IJsValue>[
                 MaxTypeCode*MaxTypeCode*MaxOperation];
 
             var operators = new IDefineBinaryOperatorFunctions[]
@@ -41,14 +42,14 @@ namespace Yes.Interpreter.Ast
 
         #region IAst Members
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
-            var l = Lhs.Evaluate(scope);
-            var r = Rhs.Evaluate(scope);
+            var l = Lhs.Evaluate(environment);
+            var r = Rhs.Evaluate(environment);
 
             var f = _lookup[GetLookupIndex(l.TypeCode, r.TypeCode, Operation)];
 
-            return f(scope, l, r);
+            return f(environment, l, r);
         }
 
         #endregion

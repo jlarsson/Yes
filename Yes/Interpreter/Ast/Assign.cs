@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -13,10 +14,10 @@ namespace Yes.Interpreter.Ast
             Rhs = rhs;
         }
 
-        public IJsValue Evaluate(IScope scope)
+        public IJsValue Evaluate(IEnvironment environment)
         {
             var lvalue = Lhs as ILValue;
-            return lvalue.SetValue(scope, Rhs.Evaluate(scope));
+            return lvalue.SetValue(environment, Rhs.Evaluate(environment));
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
-using System.Linq;
-using Yes.Interpreter;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes
 {
@@ -18,7 +17,7 @@ namespace Yes
             SetHostFunction(context, name, (scope, self, args) =>
                                                {
                                                    function();
-                                                   return scope.CreateUndefined();
+                                                   return JsUndefined.Instance;
                                                });
         }
 
@@ -27,37 +26,37 @@ namespace Yes
             SetHostFunction(context, name, (scope, self, args) =>
                                                {
                                                    action(args);
-                                                   return scope.CreateUndefined();
+                                                   return JsUndefined.Instance;
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Action<IScope, IJsValue[]> action)
+        public static void SetHostFunction(this IContext context, string name, Action<IEnvironment, IJsValue[]> action)
         {
-            SetHostFunction(context, name, (scope, self, args) =>
+            SetHostFunction(context, name, (env, self, args) =>
                                                {
-                                                   action(scope, args);
-                                                   return scope.CreateUndefined();
+                                                   action(env, args);
+                                                   return JsUndefined.Instance;
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Func<IScope, IJsValue> function)
+        public static void SetHostFunction(this IContext context, string name, Func<IEnvironment, IJsValue> function)
         {
-            SetHostFunction(context, name, (scope, args) => function(scope));
+            SetHostFunction(context, name, (env, args) => function(env));
         }
 
         public static void SetHostFunction(this IContext context, string name,
-                                           Func<IScope, IJsValue, IJsValue[], IJsValue> function)
+                                           Func<IEnvironment, IJsValue, IJsValue[], IJsValue> function)
         {
-            context.Scope.SetVariable(name, context.Scope.CreateHostFunction(function));
+            context.Environment.CreateReference(name, context.CreateHostFunction(function));
         }
     
         public static void SetHostFunction(this IContext context, string name,
-                                           Action<IScope, IJsValue, IJsValue[]> action)
+                                           Action<IEnvironment, IJsValue, IJsValue[]> action)
         {
-            context.Scope.SetVariable(name, context.Scope.CreateHostFunction((scope,self, args) =>
+            context.Environment.CreateReference(name, context.CreateHostFunction((scope, self, args) =>
                                                                                  {
                                                                                      action(scope, self, args);
-                                                                                     return scope.CreateUndefined();
+                                                                                     return JsUndefined.Instance;
                                                                                  }));
         }
     }

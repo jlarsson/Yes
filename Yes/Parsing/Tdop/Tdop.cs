@@ -90,12 +90,21 @@ namespace Yes.Parsing.Tdop
             {
                 return false;
             }
-            if (Token.Lexeme.Id != id)
+            var canAdvance = Token.Lexeme.Id == id;
+            canAdvance |= Token.Lexeme.Value.ToString() == id;
+            if (canAdvance)
             {
-                return false;
+                Advance();
+                return true;
             }
-            Advance();
-            return true;
+            return false;
+
+            //if (Token.Lexeme.Id != id)
+            //{
+            //    return false;
+            //}
+            //Advance();
+            //return true;
         }
 
         public TAst Parse()

@@ -1,9 +1,10 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
     public interface IEvaluateThisAndMember
     {
-        IJsValue Evaluate(IScope scope, out IJsValue @this);
+        IJsValue Evaluate(IEnvironment environment, out IJsValue @this);
     }
 }

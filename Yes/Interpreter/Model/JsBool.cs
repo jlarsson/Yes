@@ -1,42 +1,47 @@
+using System;
+using Yes.Runtime;
+using Yes.Runtime.Environment;
+
 namespace Yes.Interpreter.Model
 {
-    public class JsBool : AbstractJsValue, IJsBool
+    public class JsBool : IJsBool
     {
-        public JsBool(IScope scope, bool value) : base(scope)
+        public JsBool(bool value)
         {
             Value = value;
         }
 
         public bool Value { get; protected set; }
 
-        public override IJsValue Prototype
-        {
-            get { return Scope.ProtoTypes.Bool; }
-        }
 
-        #region IJsBool Members
-
-        public override JsTypeCode TypeCode
+        public JsTypeCode TypeCode
         {
             get { return JsTypeCode.Bool; }
         }
 
-        public override bool IsTruthy()
+        public IReference GetReference(IJsValue name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IReference GetReference(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int? ToArrayIndex()
+        {
+            return Value ? 1 : 0;
+        }
+
+        public bool ToBoolean()
         {
             return Value;
         }
 
-        public override bool IsFalsy()
+        public double ToNumber()
         {
-            return !Value;
-        }
-
-        #endregion
-
-        public static IJsValue CreatePrototype(IScope scope)
-        {
-            var prototype = new JsPrototype(scope);
-            return prototype;
+            return Value ? 1d : 0d;
         }
     }
 }

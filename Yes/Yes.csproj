@@ -78,7 +78,6 @@
     <Compile Include="Interpreter\Model\AccessorPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\ArrayConstructor.cs" />
     <Compile Include="Interpreter\Model\BooleanConstructor.cs" />
-    <Compile Include="Interpreter\Model\DataPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\FunctionConstructor.cs" />
     <Compile Include="Interpreter\Model\IArrayConstructor.cs" />
     <Compile Include="Interpreter\Model\IBooleanConstructor.cs" />
@@ -111,6 +110,7 @@
     <Compile Include="Interpreter\Model\LambdaReference.cs" />
     <Compile Include="Interpreter\Model\NumberConstructor.cs" />
     <Compile Include="Interpreter\Model\ObjectConstructor.cs" />
+    <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
     <Compile Include="Interpreter\ProtoTypes.cs" />
@@ -158,7 +158,7 @@
     <Compile Include="Runtime\JsSyntaxError.cs" />
     <Compile Include="Runtime\JsTypeError.cs" />
     <Compile Include="Runtime\JsUriError.cs" />
-    <Compile Include="Runtime\Prototypes\Class1.cs" />
+    <Compile Include="Runtime\Prototypes\PrototypeBuilder.cs" />
     <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
     <Compile Include="Runtime\Prototypes\JsInstanceMethodAttribute.cs" />
     <Compile Include="Runtime\Prototypes\JsInstancePropertyAttribute.cs" />

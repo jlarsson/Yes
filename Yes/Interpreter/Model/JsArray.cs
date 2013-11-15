@@ -7,46 +7,16 @@ using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsArray: JsObject, IJsArray
+    public class JsArray : JsObject, IJsArray
     {
         private readonly List<IJsValue> _array;
 
-        public JsArray(IEnvironment environment, IJsObject prototype, IEnumerable<IJsValue> members) : base(environment, prototype)
+        public JsArray(IEnvironment environment, IJsObject prototype, IEnumerable<IJsValue> members)
+            : base(environment, prototype)
         {
-            DefineOwnProperty(new AccessorPropertyDescriptor("length",
-                                                             JsGetLength,
-                                                             JsSetLength));
-
             _array = members.ToList();
         }
 
-        protected IJsValue JsGetLength()
-        {
-            return Environment.CreateNumber(_array.Count);
-        }
-
-        protected IJsValue JsSetLength(IJsValue length)
-        {
-            var index = length.ToArrayIndex();
-            if (!index.HasValue)
-            {
-                throw new JsTypeError();
-            }
-            var l = index.Value;
-            if (l < 0)
-            {
-                throw new JsArgumentError();
-            }
-            if (l < _array.Count)
-            {
-                _array.RemoveRange(l, _array.Count-l);
-            }
-            else if (l > _array.Count)
-            {
-                _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Instance));
-            }
-            return length;
-        }
         protected IJsValue JsGetElement(int index)
         {
             if ((index < 0) || (index >= _array.Count))
@@ -55,6 +25,7 @@ namespace Yes.Interpreter.Model
             }
             return _array[index];
         }
+
         protected IJsValue JsSetElement(int index, IJsValue value)
         {
             if (index < 0)
@@ -102,11 +73,41 @@ namespace Yes.Interpreter.Model
         protected IReference GetElementReference(int value)
         {
             return new ArrayElementReference(value,
-                JsGetElement,
-                JsSetElement
+                                             JsGetElement,
+                                             JsSetElement
                 );
         }
 
+
+        [JsInstanceProperty("length")]
+        public IJsValue JsLength
+        {
+            get
+            {
+                return Environment.CreateNumber(_array.Count);
+            }
+            set
+            {
+                var index = value.ToArrayIndex();
+                if (!index.HasValue)
+                {
+                    throw new JsTypeError();
+                }
+                var l = index.Value;
+                if (l < 0)
+                {
+                    throw new JsArgumentError();
+                }
+                if (l < _array.Count)
+                {
+                    _array.RemoveRange(l, _array.Count - l);
+                }
+                else if (l > _array.Count)
+                {
+                    _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Instance));
+                }
+            }
+        }
 
         [JsInstanceMethod("push")]
         public IJsValue JsPush(IJsValue argument)
@@ -121,7 +122,7 @@ namespace Yes.Interpreter.Model
             private readonly Func<int, IJsValue> _getter;
             private readonly Func<int, IJsValue, IJsValue> _setter;
 
-            public ArrayElementReference(int index, Func<int,IJsValue> getter, Func<int,IJsValue,IJsValue> setter)
+            public ArrayElementReference(int index, Func<int, IJsValue> getter, Func<int, IJsValue, IJsValue> setter)
             {
                 _index = index;
                 _getter = getter;
@@ -135,7 +136,7 @@ namespace Yes.Interpreter.Model
 
             public IJsValue SetValue(IJsValue self, IJsValue value)
             {
-                return _setter(_index,value);
+                return _setter(_index, value);
             }
         }
     }

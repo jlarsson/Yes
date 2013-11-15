@@ -8,6 +8,5 @@ namespace Yes.Interpreter.Model
         bool Writable { get; }
         bool Enumerable { get; }
         bool Configurable { get; }
-        IPropertyDescriptor MakeOwnCopy(IJsValue value);
     }
 }

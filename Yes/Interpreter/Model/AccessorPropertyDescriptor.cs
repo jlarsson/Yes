@@ -34,14 +34,5 @@ namespace Yes.Interpreter.Model
         public bool Enumerable { get; set; }
 
         public bool Configurable { get; set; }
-
-        public IPropertyDescriptor MakeOwnCopy(IJsValue value)
-        {
-            return new AccessorPropertyDescriptor(Name, _getter, _setter)
-                       {
-                           Enumerable = Enumerable,
-                           Configurable = Configurable
-                       };
-        }
     }
 }

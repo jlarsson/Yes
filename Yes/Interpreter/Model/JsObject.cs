@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Prototypes;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Model
@@ -17,8 +17,12 @@ namespace Yes.Interpreter.Model
             Environment = environment;
             Prototype = prototype;
             Extensible = true;
-            DefineOwnProperty(new AccessorPropertyDescriptor("prototype", () => Prototype,
-                                                             v => Prototype = Conversion.Cast<IJsObject>(v, true)));
+        }
+
+
+        public IPropertyDescriptor CreateDataProperty(string name, IJsValue value, PropertyDescriptorFlags flags)
+        {
+            return new ObjectPropertyDescriptor(this, name, value, flags);
         }
 
         public virtual JsTypeCode TypeCode
@@ -45,31 +49,16 @@ namespace Yes.Interpreter.Model
                 pd = proto.GetOwnProperty(name);
                 if (pd != null)
                 {
-                    if (!pd.Writable)
-                    {
-                        return new ReadonlyReference(pd);
-                    }
-                    break;
+                    return pd;
                 }
                 proto = proto.GetPrototype();
             }
-            if (pd == null)
+            if (!Extensible)
             {
-                if (!Extensible)
-                {
-                    return new ReadonlyReference();
-                }
-                // Property not found, but we are extensible to create a new data property
-                return _properties[name] = new DataPropertyDescriptor(name);
+                return new ReadonlyReference();
             }
-
-            // If the property is not own, we make a copy on write that is own
-            // This is equivalent of calling DefineOwnProperty
-            if (!_properties.ContainsKey(name))
-            {
-                return new DefineOwnPropertyOnWriteReference(this, name, pd);
-            }
-            return pd;
+            // Property not found, but we are extensible to create a new data property
+            return new ObjectPropertyDescriptor(null/* no owner, yet... */, name, JsUndefined.Instance, PropertyDescriptorFlags.Configurable | PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable);
         }
 
         public virtual int? ToArrayIndex()
@@ -120,56 +109,11 @@ namespace Yes.Interpreter.Model
             return _properties[descriptor.Name] = descriptor;
         }
 
-        protected IJsValue SetOwnOrUpgradeInheritedProperty(string name, IJsValue value)
+        [JsInstanceProperty("prototype",Configurable = false, Enumerable = false)]
+        public IJsValue JsPrototype
         {
-            var pd = GetOwnProperty(name);
-            if (pd != null)
-            {
-                return pd.SetValue(this, value);
-            }
-
-            if (!Extensible)
-            {
-                throw new ApplicationException();
-            }
-
-            var proto = GetPrototype();
-            while (proto != null)
-            {
-                pd = GetOwnProperty(name);
-                if (pd != null)
-                {
-                    DefineOwnProperty(pd.MakeOwnCopy(value));
-                    return value;
-                }
-                proto = proto.GetPrototype();
-            }
-            throw new JsError();
-        }
-
-        protected class DefineOwnPropertyOnWriteReference : IReference
-        {
-            private readonly JsObject _owner;
-            private readonly string _name;
-            private readonly IPropertyDescriptor _inheritedPropertyDescriptor;
-
-            public DefineOwnPropertyOnWriteReference(JsObject owner, string name,
-                                                     IPropertyDescriptor inheritedPropertyDescriptor)
-            {
-                _owner = owner;
-                _name = name;
-                _inheritedPropertyDescriptor = inheritedPropertyDescriptor;
-            }
-
-            public IJsValue GetValue(IJsValue self)
-            {
-                return (_owner.GetOwnProperty(_name) ?? _inheritedPropertyDescriptor).GetValue(self);
-            }
-
-            public IJsValue SetValue(IJsValue self, IJsValue value)
-            {
-                return _owner.SetOwnOrUpgradeInheritedProperty(_name, value);
-            }
+            get { return Prototype; }
+            set { Prototype = Conversion.Cast<IJsObject>(value, true); }
         }
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Yes.Interpreter.Model;
 
@@ -31,7 +30,7 @@ namespace Yes.Runtime.Prototypes
             {
                 throw new JsError();
             }
-            return (_getter.Invoke(self, new object[]{value}) as IJsValue) ?? JsUndefined.Instance;
+            return (_setter.Invoke(self, new object[]{value}) as IJsValue) ?? JsUndefined.Instance;
         }
 
         public string Name { get; private set; }
@@ -39,10 +38,5 @@ namespace Yes.Runtime.Prototypes
         public bool Writable { get { return _setter != null; } }
         public bool Enumerable { get; set; }
         public bool Configurable { get; set; }
-
-        public IPropertyDescriptor MakeOwnCopy(IJsValue value)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

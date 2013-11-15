@@ -9,10 +9,10 @@ namespace Yes.Runtime.Prototypes
 {
     public class PrototypeBuilder
     {
-        public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType<T>(IEnvironment environment) where T : IJsObject
+        public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType<T>(IEnvironment environment, IJsObject prototype) where T : IJsObject
         {
             return 
-                CreateMethodPropertyDescriptorsForType(environment, typeof(T))
+                CreateMethodPropertyDescriptorsForType(environment, typeof(T), prototype)
                 .Union(CreateAccessorPropertyDescriptorsForType(environment, typeof(T)));
         }
 
@@ -29,7 +29,7 @@ namespace Yes.Runtime.Prototypes
                 select new InstancePropertyDescriptor(a.Name, getMethod, setMethod){Enumerable = a.Enumerable, Configurable = a.Configurable};
         }
 
-        private IEnumerable<IPropertyDescriptor> CreateMethodPropertyDescriptorsForType(IEnvironment environment, Type type)
+        private IEnumerable<IPropertyDescriptor> CreateMethodPropertyDescriptorsForType(IEnvironment environment, Type type, IJsObject prototype)
         {
             return
                 from method in type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
@@ -39,7 +39,7 @@ namespace Yes.Runtime.Prototypes
                 let hostFunction = CreateHostFunction(environment, method)
 
                 from a in methodAttributes.OfType<JsInstanceMethodAttribute>()
-                select new DataPropertyDescriptor(a.Name, hostFunction, a.GetFlags());
+                select new ObjectPropertyDescriptor(prototype,a.Name, hostFunction, a.GetFlags());
         }
 
         private IJsFunction CreateHostFunction(IEnvironment environment, MethodInfo method)

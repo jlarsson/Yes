@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using NUnit.Framework;
-using Yes.Interpreter;
-using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
-using Yes.Parsing;
-using Yes.Runtime;
 using Yes.Runtime.Environment;
 
 namespace Yes.Tests
@@ -21,13 +15,10 @@ namespace Yes.Tests
             context.AddPrintFunction();
 
             var console = context.CreateObject();
-            console.GetReference("log").SetValue(context.CreateHostFunction((scope, self, args) => null));
+            console.GetReference("log").SetValue(console, context.CreateHostFunction((scope, self, args) => null));
             context.Environment.CreateReference("console", console);
 
-
-
             context.Execute("var x = 1; console.log(x,2,3);");
-
         }
         [Test]
         public void Array()

@@ -27,9 +27,9 @@ namespace Yes.Interpreter.Model
         protected JsObject CreateProtypeForImplementation<T>(IJsObject basePrototype) where T: IJsObject
         {
             var proto = new JsObject(Environment, basePrototype);
-            proto.DefineOwnProperty(new DataPropertyDescriptor("constructor", this, PropertyDescriptorFlags.Enumerable));
+            proto.DefineOwnProperty(proto.CreateDataProperty("constructor", this, PropertyDescriptorFlags.Enumerable));
 
-            foreach (var pd in new PrototypeBuilder().CreatePropertyDescriptorsForType<T>(Environment))
+            foreach (var pd in new PrototypeBuilder().CreatePropertyDescriptorsForType<T>(Environment, proto))
             {
                 proto.DefineOwnProperty(pd);
             }

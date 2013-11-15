@@ -12,7 +12,7 @@ namespace Yesh
             var context = new Context();
 
             var console = context.CreateObject();
-            console.GetReference("log").SetValue(context.CreateHostFunction((scope, self, args) =>
+            console.GetReference("log").SetValue(console, context.CreateHostFunction((scope, self, args) =>
                                                                                 {
                                                                                     Console.Out.WriteLine(
                                                                                         string.Join<IJsValue>("", args));

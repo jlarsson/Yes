@@ -38,12 +38,12 @@ namespace Yes.Interpreter.Model
 
         public IReference GetReference(IJsValue name)
         {
-            throw new System.NotImplementedException();
+            throw new JsReferenceError();
         }
 
         public IReference GetReference(string name)
         {
-            throw new System.NotImplementedException();
+            throw new JsReferenceError();
         }
     }
 }

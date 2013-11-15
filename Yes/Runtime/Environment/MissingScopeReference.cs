@@ -6,7 +6,7 @@ namespace Yes.Runtime.Environment
     {
         public IJsValue GetValue(IJsValue self)
         {
-            return JsUndefined.Instance;
+            return JsUndefined.Value;
         }
 
         public IJsValue SetValue(IJsValue self, IJsValue value)

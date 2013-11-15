@@ -1,13 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Interpreter.Model;
 using Yes.Parsing;
+using Yes.Runtime;
+using Yes.Runtime.Environment;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
 {
     public class AstFactory : IAstFactory<IAst>
     {
+        public IOperators Operators { get; set; }
+
+        public AstFactory(IOperators operators)
+        {
+            Operators = operators;
+        }
+
         #region IAstFactory<IAst> Members
 
         public IAst Name(string name)
@@ -104,6 +114,11 @@ namespace Yes.Interpreter.Ast
             throw new NotImplementedException();
         }
 
+        public IAst BinaryOperation(string @operator, IAst lhs, IAst rhs)
+        {
+            return new BinaryOperation(Operators.GetBinaryOperator(@operator), lhs, rhs);
+        }
+
         public IAst Neg(IAst v)
         {
             throw new NotImplementedException();
@@ -115,66 +130,6 @@ namespace Yes.Interpreter.Ast
         }
 
         public IAst TypeOf(IAst v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAst Eeq(IAst lhs, IAst rhs)
-        {
-            return new Eeq(lhs, rhs);
-        }
-
-        public IAst Eneq(IAst lhs, IAst rhs)
-        {
-            return new Eneq(lhs, rhs);
-        }
-
-        public IAst Eq(IAst lhs, IAst rhs)
-        {
-            return new Eq(lhs, rhs);
-        }
-
-        public IAst Neq(IAst lhs, IAst rhs)
-        {
-            return new Neq(lhs, rhs);
-        }
-
-        public IAst Gt(IAst lhs, IAst rhs)
-        {
-            return new Gt(lhs, rhs);
-        }
-
-        public IAst Gte(IAst lhs, IAst rhs)
-        {
-            return new Gte(lhs, rhs);
-        }
-
-        public IAst Lt(IAst lhs, IAst rhs)
-        {
-            return new Lt(lhs, rhs);
-        }
-
-        public IAst Lte(IAst lhs, IAst rhs)
-        {
-            return new Lte(lhs, rhs);
-        }
-
-        public IAst Add(IAst lhs, IAst rhs)
-        {
-            return new Add(lhs, rhs);
-        }
-
-        public IAst Sub(IAst lhs, IAst rhs)
-        {
-            return new Sub(lhs, rhs);
-        }
-
-        public IAst Mul(IAst lhs, IAst rhs)
-        {
-            return new Mul(lhs, rhs);
-        }
-
-        public IAst Div(IAst lhs, IAst rhs)
         {
             throw new NotImplementedException();
         }
@@ -209,6 +164,11 @@ namespace Yes.Interpreter.Ast
             return new Break();
         }
 
+        public IAst Continue()
+        {
+            return new Continue();
+        }
+
         public IAst IfThenElse(IAst @if, IAst then, IAst @else)
         {
             return new IfThenElse(@if, @then, @else);
@@ -234,5 +194,14 @@ namespace Yes.Interpreter.Ast
         }
 
         #endregion
+    }
+
+    public class Continue : IAst
+    {
+        public IJsValue Evaluate(IEnvironment environment)
+        {
+            environment.ControlFlow.Continue = true;
+            return JsUndefined.Value;
+        }
     }
 }

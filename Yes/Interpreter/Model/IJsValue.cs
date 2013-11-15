@@ -9,6 +9,7 @@ namespace Yes.Interpreter.Model
         IReference GetReference(string name);
 
         int? ToArrayIndex();
+        object ToPrimitive();
         bool ToBoolean();
         double ToNumber();
         int ToInteger();

@@ -19,7 +19,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            return environment.CreateReference(Name, Value == null ? JsUndefined.Instance : Value.Evaluate(environment)).GetValue();
+            return environment.CreateReference(Name, Value == null ? JsUndefined.Value : Value.Evaluate(environment)).GetValue();
         }
 
         #endregion

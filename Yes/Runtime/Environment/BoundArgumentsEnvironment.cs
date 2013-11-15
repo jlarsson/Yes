@@ -53,7 +53,7 @@ namespace Yes.Runtime.Environment
             }
             return _references[index] ??
                    (_references[index] =
-                    new ValueReference((index < Values.Length ? Values[index] : null) ?? JsUndefined.Instance));
+                    new ValueReference((index < Values.Length ? Values[index] : null) ?? JsUndefined.Value));
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             environment.ControlFlow.Break = true;
-            return JsUndefined.Instance;
+            return JsUndefined.Value;
         }
     }
 }

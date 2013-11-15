@@ -23,6 +23,11 @@ namespace Yes.Interpreter.Model
             return Value ? 1 : 0;
         }
 
+        public override object ToPrimitive()
+        {
+            return Value;
+        }
+
         public override bool ToBoolean()
         {
             return Value;

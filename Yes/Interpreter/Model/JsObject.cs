@@ -58,12 +58,17 @@ namespace Yes.Interpreter.Model
                 return new ReadonlyReference();
             }
             // Property not found, but we are extensible to create a new data property
-            return new ObjectPropertyDescriptor(null/* no owner, yet... */, name, JsUndefined.Instance, PropertyDescriptorFlags.Configurable | PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable);
+            return new ObjectPropertyDescriptor(null/* no owner, yet... */, name, JsUndefined.Value, PropertyDescriptorFlags.Configurable | PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable);
         }
 
         public virtual int? ToArrayIndex()
         {
             return null;
+        }
+
+        public virtual object ToPrimitive()
+        {
+            return this;
         }
 
         public virtual bool ToBoolean()

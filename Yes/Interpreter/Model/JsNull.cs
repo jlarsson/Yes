@@ -26,6 +26,11 @@ namespace Yes.Interpreter.Model
             return null;
         }
 
+        public object ToPrimitive()
+        {
+            return this;
+        }
+
         public bool ToBoolean()
         {
             return false;

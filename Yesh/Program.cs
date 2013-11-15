@@ -16,7 +16,7 @@ namespace Yesh
                                                                                 {
                                                                                     Console.Out.WriteLine(
                                                                                         string.Join<IJsValue>("", args));
-                                                                                    return JsUndefined.Instance;
+                                                                                    return JsUndefined.Value;
                                                                                 }));
             context.Environment.CreateReference("console", console);
 
@@ -41,8 +41,10 @@ namespace Yesh
 
                 try
                 {
+                    var start = DateTime.Now;
                     var result = context.Execute(line);
-                    Console.Out.WriteLine("> {0}", result);
+                    var elapsed = DateTime.Now - start;
+                    Console.Out.WriteLine("[{0}] {1}", elapsed, result);
                 }
                 catch(Exception e)
                 {

@@ -6,7 +6,7 @@ namespace Yes.Interpreter.Model
     {
         public ObjectPropertyDescriptor(IJsObject owner, string name)
             : this(
-                owner, name, JsUndefined.Instance,
+                owner, name, JsUndefined.Value,
                 PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable |
                 PropertyDescriptorFlags.Configurable)
         {

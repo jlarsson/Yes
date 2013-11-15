@@ -21,7 +21,7 @@ namespace Yes.Runtime.Prototypes
             {
                 throw new JsError();
             }
-            return (_getter.Invoke(self, new object[0]) as IJsValue) ?? JsUndefined.Instance;
+            return (_getter.Invoke(self, new object[0]) as IJsValue) ?? JsUndefined.Value;
         }
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
@@ -30,7 +30,7 @@ namespace Yes.Runtime.Prototypes
             {
                 throw new JsError();
             }
-            return (_setter.Invoke(self, new object[]{value}) as IJsValue) ?? JsUndefined.Instance;
+            return (_setter.Invoke(self, new object[]{value}) as IJsValue) ?? JsUndefined.Value;
         }
 
         public string Name { get; private set; }

@@ -20,25 +20,25 @@ namespace Yes.Parsing
         protected JavascriptGrammar()
         {
             NewScope();
-            Keywords("return", "var", "if", "else", "for", "while", "break", "function", "new");
+            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new");
 
             Literal("(number)", (f, l) => f.Number(l.Value));
             Literal("(string)", (f, l) => f.String(l.Value));
             Literal("(name)", (f, l) => f.Name(l.Value.ToString()));
 
-            Infix("===", 40, (f, lhs, rhs) => f.Eeq(lhs, rhs));
-            Infix("!==", 40, (f, lhs, rhs) => f.Eneq(lhs, rhs));
-            Infix("==", 40, (f, lhs, rhs) => f.Eq(lhs, rhs));
-            Infix("!=", 40, (f, lhs, rhs) => f.Neq(lhs, rhs));
-            Infix("<", 40, (f, lhs, rhs) => f.Lt(lhs, rhs));
-            Infix("<=", 40, (f, lhs, rhs) => f.Lte(lhs, rhs));
-            Infix(">", 40, (f, lhs, rhs) => f.Gt(lhs, rhs));
-            Infix(">=", 40, (f, lhs, rhs) => f.Gte(lhs, rhs));
+            Infix("===", 40, (f, lhs, rhs) => f.BinaryOperation("===", lhs, rhs));
+            Infix("!==", 40, (f, lhs, rhs) => f.BinaryOperation("!==", lhs, rhs));
+            Infix("==", 40, (f, lhs, rhs) => f.BinaryOperation("==", lhs, rhs));
+            Infix("!=", 40, (f, lhs, rhs) => f.BinaryOperation("!=", lhs, rhs));
+            Infix("<", 40, (f, lhs, rhs) => f.BinaryOperation("<", lhs, rhs));
+            Infix("<=", 40, (f, lhs, rhs) => f.BinaryOperation("<=", lhs, rhs));
+            Infix(">", 40, (f, lhs, rhs) => f.BinaryOperation(">", lhs, rhs));
+            Infix(">=", 40, (f, lhs, rhs) => f.BinaryOperation(">=", lhs, rhs));
 
-            Infix("+", 50, (f, lhs, rhs) => f.Add(lhs, rhs));
-            Infix("-", 50, (f, lhs, rhs) => f.Sub(lhs, rhs));
-            Infix("*", 60, (f, lhs, rhs) => f.Mul(lhs, rhs));
-            Infix("/", 60, (f, lhs, rhs) => f.Div(lhs, rhs));
+            Infix("+", 50, (f, lhs, rhs) => f.BinaryOperation("+", lhs, rhs));
+            Infix("-", 50, (f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
+            Infix("*", 60, (f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
+            Infix("/", 60, (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
 
             Prefix("-", 70, (f, v) => f.Neg(v));
             Prefix("!", 70, (f, v) => f.Not(v));
@@ -164,6 +164,7 @@ namespace Yes.Parsing
 
             Std("return", (p, f) =>
                               {
+                                  //if (!Scope.IsAllowed(Feature.Return))
                                   if (p.TryAdvance(";"))
                                   {
                                       return f.Return(null);
@@ -188,7 +189,7 @@ namespace Yes.Parsing
                           });
             Std("for", (p, f) =>
                            {
-                               using (NewScope(Feature.Break))
+                               using (NewScope(Feature.Break|Feature.Continue))
                                {
                                    p.Advance("(");
 
@@ -228,7 +229,7 @@ namespace Yes.Parsing
                            });
             Std("while", (p, f) =>
                              {
-                                 using (NewScope(Feature.Break))
+                                 using (NewScope(Feature.Break|Feature.Continue))
                                  {
                                      p.Advance("(");
                                      var cond = p.Expression(0);
@@ -246,7 +247,16 @@ namespace Yes.Parsing
                                  AdvanceOptionalSemiColon(p);
                                  return f.Break();
                              });
-
+            Std("continue", (p, f) =>
+                                {
+                                    if (!Scope.IsAllowed(Feature.Continue))
+                                    {
+                                        p.Token.Lexeme.Error("Keyword continue is not valid here.");
+                                    }
+                                    AdvanceOptionalSemiColon(p);
+                                    return f.Continue();
+                                });
+            
 
             Prefix("{", (p, l) =>
                             {
@@ -434,7 +444,8 @@ namespace Yes.Parsing
         protected enum Feature
         {
             None = 0x00,
-            Break = 0x01
+            Break = 0x01,
+            Continue = 0x02,
         }
 
         #endregion

@@ -29,6 +29,11 @@ namespace Yes.Interpreter.Model
                        : null;
         }
 
+        public override object ToPrimitive()
+        {
+            return Value;
+        }
+
         public override bool ToBoolean()
         {
             return !string.IsNullOrEmpty(Value);

@@ -30,7 +30,7 @@ namespace Yes.Interpreter.Ast
                     break;
                 }
             }
-            return JsUndefined.Instance;
+            return JsUndefined.Value;
         }
 
         #endregion

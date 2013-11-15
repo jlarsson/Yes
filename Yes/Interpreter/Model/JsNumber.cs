@@ -22,6 +22,11 @@ namespace Yes.Interpreter.Model
             return (int)Math.Floor(Value);
         }
 
+        public override object ToPrimitive()
+        {
+            return Value;
+        }
+
         public override bool ToBoolean()
         {
             if (double.IsNaN(Value))

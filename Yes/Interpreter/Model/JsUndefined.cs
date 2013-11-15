@@ -4,11 +4,16 @@ namespace Yes.Interpreter.Model
 {
     public class JsUndefined : IJsUndefined
     {
-        public static JsUndefined Instance = new JsUndefined();
+        public static JsUndefined Value = new JsUndefined();
 
         public int? ToArrayIndex()
         {
             return null;
+        }
+
+        public object ToPrimitive()
+        {
+            return this;
         }
 
         public bool ToBoolean()

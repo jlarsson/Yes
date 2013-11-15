@@ -17,7 +17,7 @@ namespace Yes
             SetHostFunction(context, name, (scope, self, args) =>
                                                {
                                                    function();
-                                                   return JsUndefined.Instance;
+                                                   return JsUndefined.Value;
                                                });
         }
 
@@ -26,7 +26,7 @@ namespace Yes
             SetHostFunction(context, name, (scope, self, args) =>
                                                {
                                                    action(args);
-                                                   return JsUndefined.Instance;
+                                                   return JsUndefined.Value;
                                                });
         }
 
@@ -35,7 +35,7 @@ namespace Yes
             SetHostFunction(context, name, (env, self, args) =>
                                                {
                                                    action(env, args);
-                                                   return JsUndefined.Instance;
+                                                   return JsUndefined.Value;
                                                });
         }
 
@@ -56,7 +56,7 @@ namespace Yes
             context.Environment.CreateReference(name, context.CreateHostFunction((scope, self, args) =>
                                                                                  {
                                                                                      action(scope, self, args);
-                                                                                     return JsUndefined.Instance;
+                                                                                     return JsUndefined.Value;
                                                                                  }));
         }
     }

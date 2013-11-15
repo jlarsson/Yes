@@ -16,7 +16,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            return environment.ControlFlow.ReturnValue = (Value == null ? JsUndefined.Instance : Value.Evaluate(environment));
+            return environment.ControlFlow.ReturnValue = (Value == null ? JsUndefined.Value : Value.Evaluate(environment));
         }
 
         #endregion

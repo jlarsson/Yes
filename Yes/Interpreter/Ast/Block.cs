@@ -19,13 +19,13 @@ namespace Yes.Interpreter.Ast
             var flow = environment.ControlFlow;
             foreach (var statement in Statements)
             {
-                if (flow.Return || flow.Break)
+                if (flow.Return || flow.Break || flow.Continue)
                 {
                     break;
                 }
                 statement.Evaluate(environment);
             }
-            return flow.ReturnValue ?? JsUndefined.Instance;
+            return flow.ReturnValue ?? JsUndefined.Value;
         }
 
         #endregion

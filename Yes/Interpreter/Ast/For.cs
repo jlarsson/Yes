@@ -22,28 +22,34 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
+            var loopEnvironment = new Environment(environment);
+
             if (Initial != null)
             {
-                Initial.Evaluate(environment);
+                Initial.Evaluate(loopEnvironment);
             }
 
-            var flow = environment.ControlFlow;
-            flow.Break = false;
-            while ((Condition == null) || Condition.Evaluate(environment).ToBoolean())
+            while ((Condition == null) || Condition.Evaluate(loopEnvironment).ToBoolean())
             {
-                Block.Evaluate(environment);
+                // TODO: If block has variable declarations or control flow (break/continue/return), we need to setup an enviroment in each loop
+                var blockEnvironment = new Environment(loopEnvironment);
+                Block.Evaluate(blockEnvironment);
 
-                if (flow.Return || flow.Break)
+                if (blockEnvironment.ControlFlow.Break)
                 {
-                    flow.Break = false;
                     break;
                 }
+                if (blockEnvironment.Return)
+                {
+                    break;
+                }
+
                 if (Loop != null)
                 {
-                    Loop.Evaluate(environment);
+                    Loop.Evaluate(loopEnvironment);
                 }
             }
-            return JsUndefined.Instance;
+            return JsUndefined.Value;
         }
 
         #endregion

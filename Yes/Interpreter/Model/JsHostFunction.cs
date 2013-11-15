@@ -20,7 +20,7 @@ namespace Yes.Interpreter.Model
 
         public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
-            return Func(Environment, @this, arguments) ?? JsUndefined.Instance;
+            return Func(Environment, @this, arguments) ?? JsUndefined.Value;
         }
     }
 }

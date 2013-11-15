@@ -65,6 +65,8 @@ namespace Yes.Runtime.Environment
 
         public bool Break { get; set; }
 
+        public bool Continue { get; set; }
+
         public bool Return { get; set; }
 
         public IJsValue ReturnValue { get; set; }

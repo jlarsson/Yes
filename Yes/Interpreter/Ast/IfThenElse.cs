@@ -24,7 +24,7 @@ namespace Yes.Interpreter.Ast
             {
                 return Then.Evaluate(environment);
             }
-            return Else == null ? JsUndefined.Instance : Else.Evaluate(environment);
+            return Else == null ? JsUndefined.Value : Else.Evaluate(environment);
         }
 
         #endregion

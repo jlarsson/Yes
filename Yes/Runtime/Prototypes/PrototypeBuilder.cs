@@ -44,7 +44,7 @@ namespace Yes.Runtime.Prototypes
 
         private IJsFunction CreateHostFunction(IEnvironment environment, MethodInfo method)
         {
-            Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func = (env, @this, args) => (method.Invoke(@this, args) as IJsValue) ?? JsUndefined.Instance;
+            Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func = (env, @this, args) => (method.Invoke(@this, args) as IJsValue) ?? JsUndefined.Value;
             return new JsHostFunction(environment,func);
         }
     }

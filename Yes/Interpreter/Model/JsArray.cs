@@ -104,7 +104,7 @@ namespace Yes.Interpreter.Model
                 }
                 else if (l > _array.Count)
                 {
-                    _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Instance));
+                    _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Value));
                 }
             }
         }

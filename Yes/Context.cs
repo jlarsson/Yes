@@ -1,6 +1,7 @@
 using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Parsing;
+using Yes.Runtime;
 using Yes.Runtime.Environment;
 
 namespace Yes
@@ -9,6 +10,7 @@ namespace Yes
     {
         public Context()
         {
+            Operators = new Operators();
             Environment = new Environment(this);
             ArrayConstructor = new ArrayConstructor(Environment);
             BooleanConstructor = new BooleanConstructor(Environment);
@@ -27,9 +29,11 @@ namespace Yes
 
         public IJsValue Execute(string source)
         {
-            var ast = new JavascriptParser().Parse(new AstFactory(), source);
+            var ast = new JavascriptParser().Parse(new AstFactory(Operators), source);
             return ast.Evaluate(Environment);
         }
+
+        public IOperators Operators { get; set; }
 
         public IEnvironment Environment { get; protected set; }
 

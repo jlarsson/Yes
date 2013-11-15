@@ -19,21 +19,22 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             var obj = Instance.Evaluate(environment);
-            return obj.GetReference(MemberName.Evaluate(environment)).GetValue();
+            return obj.GetReference(MemberName.Evaluate(environment)).GetValue(obj);
         }
 
         #endregion
 
         public IJsValue SetValue(IEnvironment environment, IJsValue value)
         {
-            return Instance.Evaluate(environment).GetReference(MemberName.Evaluate(environment)).SetValue(value);
+            var obj = Instance.Evaluate(environment);
+            return obj.GetReference(MemberName.Evaluate(environment)).SetValue(obj, value);
         }
 
         public IJsValue Evaluate(IEnvironment environment, out IJsValue @this)
         {
             var obj = Instance.Evaluate(environment);
             @this = obj;
-            return obj.GetReference(MemberName.Evaluate(environment)).GetValue();
+            return obj.GetReference(MemberName.Evaluate(environment)).GetValue(obj);
         }
     }
 }

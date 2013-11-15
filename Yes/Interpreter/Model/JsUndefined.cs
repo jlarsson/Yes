@@ -21,6 +21,11 @@ namespace Yes.Interpreter.Model
             return double.NaN;
         }
 
+        public int ToInteger()
+        {
+            return 0;
+        }
+
         public override string ToString()
         {
             return "undefined";

@@ -1,35 +1,27 @@
 using System;
 using System.Globalization;
-using Yes.Runtime;
+using Yes.Runtime.Environment;
+using Yes.Runtime.Prototypes;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsString : IJsString
+    public class JsString : JsObject, IJsString
     {
-        public JsString(string value)
+        public JsString(IEnvironment environment, IJsObject prototype, string value)
+            : base(environment, prototype)
         {
             Value = value;
         }
 
         protected string Value { get; set; }
 
-        public JsTypeCode TypeCode
+        public override JsTypeCode TypeCode
         {
             get { return JsTypeCode.String; }
         }
 
-        public IReference GetReference(IJsValue name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IReference GetReference(string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int? ToArrayIndex()
+        public override int? ToArrayIndex()
         {
             double result;
             return double.TryParse(Value, NumberStyles.Number, Conversion.DoubleFormat, out result)
@@ -37,12 +29,12 @@ namespace Yes.Interpreter.Model
                        : null;
         }
 
-        public bool ToBoolean()
+        public override bool ToBoolean()
         {
             return !string.IsNullOrEmpty(Value);
         }
 
-        public double ToNumber()
+        public override double ToNumber()
         {
             double result;
             return double.TryParse(Value, NumberStyles.Number, Conversion.DoubleFormat, out result)
@@ -50,9 +42,25 @@ namespace Yes.Interpreter.Model
                        : double.NaN;
         }
 
+        public override int ToInteger()
+        {
+            var n = ToNumber();
+            if (double.IsNaN(n))
+            {
+                return 0;
+            }
+            return (int)(Math.Sign(n) * Math.Floor(Math.Abs(n)));
+        }
+
         public override string ToString()
         {
             return Value;
+        }
+
+        [JsInstanceProperty("length", Enumerable = false, Configurable = false)]
+        public IJsValue JsLength
+        {
+            get { return Environment.CreateNumber((Value ?? "").Length); }
         }
     }
 }

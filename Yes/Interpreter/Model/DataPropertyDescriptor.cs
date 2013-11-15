@@ -19,12 +19,12 @@ namespace Yes.Interpreter.Model
 
         public IJsValue Value { get; protected set; }
 
-        public IJsValue GetValue()
+        public IJsValue GetValue(IJsValue self)
         {
             return Value;
         }
 
-        public IJsValue SetValue(IJsValue value)
+        public IJsValue SetValue(IJsValue self, IJsValue value)
         {
             return Value = value;
         }

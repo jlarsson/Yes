@@ -18,7 +18,7 @@ namespace Yes.Interpreter.Ast
             var obj = environment.CreateObject();
             foreach (var member in Members)
             {
-                obj.GetReference(member.Item1.Name).SetValue(member.Item2.Evaluate(environment));
+                obj.GetReference(member.Item1.Name).SetValue(obj, member.Item2.Evaluate(environment));
             }
             return obj;
         }

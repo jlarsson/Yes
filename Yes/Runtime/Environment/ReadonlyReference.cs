@@ -15,12 +15,12 @@ namespace Yes.Runtime.Environment
             _inner = inner;
         }
 
-        public IJsValue GetValue()
+        public IJsValue GetValue(IJsValue self)
         {
-            return _inner == null ? JsUndefined.Instance : _inner.GetValue();
+            return _inner == null ? JsUndefined.Instance : _inner.GetValue(self);
         }
 
-        public IJsValue SetValue(IJsValue value)
+        public IJsValue SetValue(IJsValue self, IJsValue value)
         {
             throw new JsReferenceError();
         }

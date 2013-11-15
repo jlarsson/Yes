@@ -11,6 +11,7 @@ namespace Yes.Interpreter.Model
         int? ToArrayIndex();
         bool ToBoolean();
         double ToNumber();
+        int ToInteger();
         string ToString();
     }
 }

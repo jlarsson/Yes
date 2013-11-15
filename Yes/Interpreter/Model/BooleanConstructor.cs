@@ -17,7 +17,7 @@ namespace Yes.Interpreter.Model
 
         public IJsBool Construct(bool value)
         {
-            return new JsBool(value);
+            return new JsBool(Environment, ClassPrototype, value);
         }
     }
 }

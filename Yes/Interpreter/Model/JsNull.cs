@@ -13,12 +13,12 @@ namespace Yes.Interpreter.Model
 
         public IReference GetReference(IJsValue name)
         {
-            throw new System.NotImplementedException();
+            throw new JsReferenceError();
         }
 
         public IReference GetReference(string name)
         {
-            throw new System.NotImplementedException();
+            throw new JsReferenceError();
         }
 
         public int? ToArrayIndex()
@@ -34,6 +34,16 @@ namespace Yes.Interpreter.Model
         public double ToNumber()
         {
             return 0;
+        }
+
+        public int ToInteger()
+        {
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return "null";
         }
     }
 }

@@ -159,7 +159,9 @@
     <Compile Include="Runtime\JsTypeError.cs" />
     <Compile Include="Runtime\JsUriError.cs" />
     <Compile Include="Runtime\Prototypes\Class1.cs" />
+    <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
     <Compile Include="Runtime\Prototypes\JsInstanceMethodAttribute.cs" />
+    <Compile Include="Runtime\Prototypes\JsInstancePropertyAttribute.cs" />
     <Compile Include="Utility\Conversion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

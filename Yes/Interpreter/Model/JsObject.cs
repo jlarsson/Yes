@@ -72,36 +72,46 @@ namespace Yes.Interpreter.Model
             return pd;
         }
 
-        public int? ToArrayIndex()
+        public virtual int? ToArrayIndex()
         {
             return null;
         }
 
-        public bool ToBoolean()
+        public virtual bool ToBoolean()
         {
             return true;
         }
 
-        public double ToNumber()
+        public virtual double ToNumber()
         {
             // TODO: Call ToNumber of primitive value
             return double.NaN;
         }
 
+        public virtual int ToInteger()
+        {
+            return 0;
+        }
+
+        public override string ToString()
+        {
+            return "[object Object]";
+        }
+
         public bool Extensible { get; set; }
 
-        public IJsObject GetPrototype()
+        public virtual IJsObject GetPrototype()
         {
             return Prototype;
         }
 
-        public IPropertyDescriptor GetOwnProperty(string name)
+        public virtual IPropertyDescriptor GetOwnProperty(string name)
         {
             IPropertyDescriptor pd;
             return ((_properties != null) && _properties.TryGetValue(name, out pd)) ? pd : null;
         }
 
-        public IPropertyDescriptor DefineOwnProperty(IPropertyDescriptor descriptor)
+        public virtual IPropertyDescriptor DefineOwnProperty(IPropertyDescriptor descriptor)
         {
             if (_properties == null)
             {
@@ -115,7 +125,7 @@ namespace Yes.Interpreter.Model
             var pd = GetOwnProperty(name);
             if (pd != null)
             {
-                return pd.SetValue(value);
+                return pd.SetValue(this, value);
             }
 
             if (!Extensible)
@@ -151,12 +161,12 @@ namespace Yes.Interpreter.Model
                 _inheritedPropertyDescriptor = inheritedPropertyDescriptor;
             }
 
-            public IJsValue GetValue()
+            public IJsValue GetValue(IJsValue self)
             {
-                return (_owner.GetOwnProperty(_name) ?? _inheritedPropertyDescriptor).GetValue();
+                return (_owner.GetOwnProperty(_name) ?? _inheritedPropertyDescriptor).GetValue(self);
             }
 
-            public IJsValue SetValue(IJsValue value)
+            public IJsValue SetValue(IJsValue self, IJsValue value)
             {
                 return _owner.SetOwnOrUpgradeInheritedProperty(_name, value);
             }

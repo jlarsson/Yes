@@ -11,7 +11,22 @@ namespace Yes.Runtime.Prototypes
     {
         public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType<T>(IEnvironment environment) where T : IJsObject
         {
-            return CreateMethodPropertyDescriptorsForType(environment, typeof(T));
+            return 
+                CreateMethodPropertyDescriptorsForType(environment, typeof(T))
+                .Union(CreateAccessorPropertyDescriptorsForType(environment, typeof(T)));
+        }
+
+        private IEnumerable<IPropertyDescriptor> CreateAccessorPropertyDescriptorsForType(IEnvironment environment, Type type)
+        {
+            return
+                from prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                let propertyAttributes = prop.GetCustomAttributes(typeof (JsInstancePropertyAttribute), false)
+                where propertyAttributes != null
+                let getMethod = prop.GetGetMethod()
+                let setMethod = prop.GetSetMethod()
+
+                from a in propertyAttributes.OfType<JsInstancePropertyAttribute>()
+                select new InstancePropertyDescriptor(a.Name, getMethod, setMethod){Enumerable = a.Enumerable, Configurable = a.Configurable};
         }
 
         private IEnumerable<IPropertyDescriptor> CreateMethodPropertyDescriptorsForType(IEnvironment environment, Type type)

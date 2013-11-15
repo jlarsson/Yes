@@ -11,12 +11,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue Construct(IEnumerable<IJsValue> arguments)
         {
-            return Construct(Environment, arguments);
-        }
-
-        public IJsArray Construct(IEnvironment environment, IEnumerable<IJsValue> arguments)
-        {
-            return new JsArray(environment, ClassPrototype, arguments);
+            return new JsArray(Environment, ClassPrototype, arguments);
         }
 
         protected override IJsObject CreatePrototype()

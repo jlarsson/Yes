@@ -1,38 +1,28 @@
 using System;
-using Yes.Runtime;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsNumber : IJsNumber
+    public class JsNumber : JsObject, IJsNumber
     {
-        public JsNumber(double value) : base()
+        public JsNumber(IEnvironment environment, IJsObject prototype, double value) : base(environment, prototype)
         {
             Value = value;
         }
 
         public double Value { get; set; }
 
-        public JsTypeCode TypeCode
+        public override JsTypeCode TypeCode
         {
             get { return JsTypeCode.Number; }
         }
 
-        public IReference GetReference(IJsValue name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IReference GetReference(string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int? ToArrayIndex()
+        public override int? ToArrayIndex()
         {
             return (int)Math.Floor(Value);
         }
 
-        public bool ToBoolean()
+        public override bool ToBoolean()
         {
             if (double.IsNaN(Value))
             {
@@ -41,9 +31,14 @@ namespace Yes.Interpreter.Model
             return (Value > double.Epsilon) || (Value < -double.Epsilon);
         }
 
-        public double ToNumber()
+        public override double ToNumber()
         {
             return Value;
+        }
+
+        public override int ToInteger()
+        {
+            return (int)(Math.Sign(Value)*Math.Floor(Math.Abs(Value)));
         }
 
         public override string ToString()

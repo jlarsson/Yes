@@ -6,6 +6,7 @@ using Yes.Interpreter;
 using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Parsing;
+using Yes.Runtime;
 using Yes.Runtime.Environment;
 
 namespace Yes.Tests

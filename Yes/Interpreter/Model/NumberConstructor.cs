@@ -11,12 +11,12 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue Construct(IEnumerable<IJsValue> arguments)
         {
-            return new JsNumber(arguments.Select(a => a.ToNumber()).FirstOrDefault());
+            return Construct(arguments.Select(a => a.ToNumber()).FirstOrDefault());
         }
 
         public IJsNumber Construct(double value)
         {
-            return new JsNumber(value);
+            return new JsNumber(Environment,ClassPrototype, value);
         }
     }
 }

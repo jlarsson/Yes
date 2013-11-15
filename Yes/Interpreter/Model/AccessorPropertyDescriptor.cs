@@ -14,12 +14,12 @@ namespace Yes.Interpreter.Model
             _setter = setter;
         }
 
-        public IJsValue GetValue()
+        public IJsValue GetValue(IJsValue self)
         {
             return _getter();
         }
 
-        public IJsValue SetValue(IJsValue value)
+        public IJsValue SetValue(IJsValue self, IJsValue value)
         {
             return _setter(value);
         }

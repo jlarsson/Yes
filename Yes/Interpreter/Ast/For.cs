@@ -22,7 +22,12 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var loopEnvironment = new Environment(environment);
+            var needsExplicitLoopEnvironment = (Initial is IAstModifiesEnvironment) &&
+                                               ((IAstModifiesEnvironment) Initial).ModifiesEnvironment;
+            var needsExplicitBlockEnvironment = (Block is IAstModifiesEnvironment) &&
+                                               ((IAstModifiesEnvironment)Block).ModifiesEnvironment;
+
+            var loopEnvironment = needsExplicitLoopEnvironment ? new Environment(environment) : environment;
 
             if (Initial != null)
             {
@@ -31,15 +36,14 @@ namespace Yes.Interpreter.Ast
 
             while ((Condition == null) || Condition.Evaluate(loopEnvironment).ToBoolean())
             {
-                // TODO: If block has variable declarations or control flow (break/continue/return), we need to setup an enviroment in each loop
-                var blockEnvironment = new Environment(loopEnvironment);
+                var blockEnvironment = needsExplicitBlockEnvironment ? new Environment(loopEnvironment) : loopEnvironment;
                 Block.Evaluate(blockEnvironment);
 
                 if (blockEnvironment.ControlFlow.Break)
                 {
                     break;
                 }
-                if (blockEnvironment.Return)
+                if (blockEnvironment.ControlFlow.Return)
                 {
                     break;
                 }

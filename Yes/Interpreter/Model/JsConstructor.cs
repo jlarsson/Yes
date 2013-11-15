@@ -4,7 +4,7 @@ using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
-    public abstract class JsConstructor : JsObject, IJsConstructor
+    public abstract class JsConstructor : JsObject, IJsConstructor, IJsFunction
     {
         private IJsObject _prototype;
 
@@ -34,6 +34,11 @@ namespace Yes.Interpreter.Model
                 proto.DefineOwnProperty(pd);
             }
             return proto;
+        }
+
+        public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
+        {
+            return Construct(arguments);
         }
     }
 }

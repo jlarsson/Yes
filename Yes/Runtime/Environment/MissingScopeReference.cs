@@ -11,7 +11,7 @@ namespace Yes.Runtime.Environment
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
         {
-            throw new JsException();
+            throw new JsReferenceError();
         }
     }
 }

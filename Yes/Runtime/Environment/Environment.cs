@@ -37,7 +37,7 @@ namespace Yes.Runtime.Environment
             IReference reference;
             if (_references.TryGetValue(name, out reference))
             {
-                throw new JsException(); // TODO: throw if strict only
+                throw new JsReferenceError(); // TODO: throw if strict only
             }
             return _references[name] = reference = new ValueReference(value);
         }

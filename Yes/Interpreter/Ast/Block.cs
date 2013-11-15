@@ -1,9 +1,10 @@
+using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
-    public class Block : IAst
+    public class Block : IAst, IAstModifiesEnvironment
     {
         public Block(IAst[] statements)
         {
@@ -29,5 +30,10 @@ namespace Yes.Interpreter.Ast
         }
 
         #endregion
+
+        public bool ModifiesEnvironment
+        {
+            get { return Statements.OfType<IAstModifiesEnvironment>().Any(m => m.ModifiesEnvironment); }
+        }
     }
 }

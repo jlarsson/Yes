@@ -47,7 +47,9 @@
     <Compile Include="Interpreter\Ast\Assign.cs" />
     <Compile Include="Interpreter\Ast\Break.cs" />
     <Compile Include="Interpreter\Ast\Construct.cs" />
+    <Compile Include="Interpreter\Ast\Continue.cs" />
     <Compile Include="Interpreter\Ast\For.cs" />
+    <Compile Include="Interpreter\Ast\IAstModifiesEnvironment.cs" />
     <Compile Include="Interpreter\Ast\IEvaluateThisAndMember.cs" />
     <Compile Include="Interpreter\Ast\IfThenElse.cs" />
     <Compile Include="Interpreter\Ast\ILValue.cs" />

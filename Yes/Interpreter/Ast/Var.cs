@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
-    public class Var : IAst
+    public class Var : IAst, IAstModifiesEnvironment
     {
         public Var(IAst name, IAst value)
         {
@@ -23,5 +23,10 @@ namespace Yes.Interpreter.Ast
         }
 
         #endregion
+
+        public bool ModifiesEnvironment
+        {
+            get { return true; }
+        }
     }
 }

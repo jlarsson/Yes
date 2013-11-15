@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Yes.Parsing.Tdop;
+using Yes.Runtime;
 
 namespace Yes.Parsing
 {
@@ -88,7 +89,8 @@ namespace Yes.Parsing
 
             public void Error(string message)
             {
-                throw new ParsingException(message, Source, SourcePosition);
+                throw new JsSyntaxError();
+                //throw new ParsingException(message, Source, SourcePosition);
             }
 
             #endregion

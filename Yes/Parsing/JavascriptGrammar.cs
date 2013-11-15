@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Yes.Parsing.Tdop;
+using Yes.Runtime;
 
 namespace Yes.Parsing
 {
@@ -296,6 +297,11 @@ namespace Yes.Parsing
                                 p.Advance("]");
                                 return p.Factory.Array(members);
                             });
+
+
+            // Error production
+            // We end up here with scrips such as '{}.x;', since parser takes a block but user typed an object literal
+            Nud(".", (p, l) => { throw new JsSyntaxError(); });
         }
 
         protected StaticScope Scope

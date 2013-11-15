@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Yes.Interpreter.Model;
 using Yes.Parsing;
 using Yes.Runtime;
-using Yes.Runtime.Environment;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
@@ -194,14 +192,5 @@ namespace Yes.Interpreter.Ast
         }
 
         #endregion
-    }
-
-    public class Continue : IAst
-    {
-        public IJsValue Evaluate(IEnvironment environment)
-        {
-            environment.ControlFlow.Continue = true;
-            return JsUndefined.Value;
-        }
     }
 }

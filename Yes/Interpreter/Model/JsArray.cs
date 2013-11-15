@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
@@ -10,7 +11,7 @@ namespace Yes.Interpreter.Model
     {
         private readonly List<IJsValue> _array;
 
-        public JsArray(IEnvironment environment, IJsObject protype, IEnumerable<IJsValue> members) : base(environment, protype)
+        public JsArray(IEnvironment environment, IJsObject prototype, IEnumerable<IJsValue> members) : base(environment, prototype)
         {
             DefineOwnProperty(new AccessorPropertyDescriptor("length",
                                                              JsGetLength,
@@ -104,6 +105,14 @@ namespace Yes.Interpreter.Model
                 JsGetElement,
                 JsSetElement
                 );
+        }
+
+
+        [JsInstanceMethod("push")]
+        public IJsValue JsPush(IJsValue argument)
+        {
+            _array.Add(argument);
+            return this;
         }
 
         public class ArrayElementReference : IReference

@@ -6,6 +6,7 @@ namespace Yes.Runtime.Environment
 {
     public interface IEnvironment
     {
+        IContext Context { get; }
         IEnvironment Parent { get; }
         IControlFlow ControlFlow { get; }
         IReference CreateReference(string name, IJsValue value);
@@ -15,29 +16,29 @@ namespace Yes.Runtime.Environment
 
     public static class EnvironmentExtensions
     {
-        public static IJsValue CreateArray(this IEnvironment environment, IEnumerable<IJsValue> arguments)
+        public static IJsArray CreateArray(this IEnvironment environment, IEnumerable<IJsValue> arguments)
         {
-            return ArrayConstructor.Construct(environment, arguments);
+            return environment.Context.CreateArray(arguments);
         }
-        public static IJsValue CreateBool(this IEnvironment environment, bool value)
+        public static IJsBool CreateBool(this IEnvironment environment, bool value)
         {
-            return BooleanConstructor.Construct(value);
+            return environment.Context.CreateBool(value);
         }
-        public static IJsValue CreateFunction(this IEnvironment environment, string name, string[] argumentNames, IAst body)
+        public static IJsFunction CreateFunction(this IEnvironment environment, string name, string[] argumentNames, IAst body)
         {
-            return FunctionConstructor.Construct(environment, name, argumentNames, body);
+            return environment.Context.CreateFunction(name, argumentNames, body);
         }
-        public static IJsValue CreateNumber(this IEnvironment environment, double value)
+        public static IJsNumber CreateNumber(this IEnvironment environment, double value)
         {
-            return NumberConstructor.Construct(value);
+            return environment.Context.CreateNumber(value);
         }
-        public static IJsValue CreateObject(this IEnvironment environment)
+        public static IJsObject CreateObject(this IEnvironment environment)
         {
-            return ObjectConstructor.Construct(environment);
+            return environment.Context.CreateObject();
         }
-        public static IJsValue CreateString(this IEnvironment environment, string value)
+        public static IJsString CreateString(this IEnvironment environment, string value)
         {
-            return StringConstructor.Construct(value);
+            return environment.Context.CreateString(value);
         }
     }
 }

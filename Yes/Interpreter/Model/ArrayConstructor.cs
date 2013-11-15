@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class ArrayConstructor: JsConstructor
+    public class ArrayConstructor: JsConstructor, IArrayConstructor
     {
         public ArrayConstructor(IEnvironment environment) : base(environment)
         {
@@ -14,9 +14,14 @@ namespace Yes.Interpreter.Model
             return Construct(Environment, arguments);
         }
 
-        public static IJsValue Construct(IEnvironment environment, IEnumerable<IJsValue> arguments)
+        public IJsArray Construct(IEnvironment environment, IEnumerable<IJsValue> arguments)
         {
-            return new JsArray(environment, null, arguments);
+            return new JsArray(environment, ClassPrototype, arguments);
+        }
+
+        protected override IJsObject CreatePrototype()
+        {
+            return CreateProtypeForImplementation<JsArray>(base.CreatePrototype());
         }
     }
 }

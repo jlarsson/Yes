@@ -4,7 +4,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class StringConstructor : JsConstructor
+    public class StringConstructor : JsConstructor, IStringConstructor
     {
         public StringConstructor(IEnvironment environment) : base(environment)
         {
@@ -15,7 +15,7 @@ namespace Yes.Interpreter.Model
             return new JsString(arguments.Select(a => a.ToString()).FirstOrDefault() ?? "");
         }
 
-        public static IJsValue Construct(string value)
+        public IJsString Construct(string value)
         {
             return new JsString(value);
         }

@@ -9,38 +9,45 @@ namespace Yes
     public interface IContext
     {
         IEnvironment Environment { get; }
+
+        IArrayConstructor ArrayConstructor { get; }
+        IBooleanConstructor BooleanConstructor { get; }
+        IFunctionConstructor FunctionConstructor { get; }
+        INumberConstructor NumberConstructor { get; }
+        IObjectConstructor ObjectConstructor { get; }
+        IStringConstructor StringConstructor { get; }
     }
 
     public static class ContextExtensions
     {
-        public static IJsValue CreateArray(this IContext context, IEnumerable<IJsValue> arguments)
+        public static IJsArray CreateArray(this IContext context, IEnumerable<IJsValue> arguments)
         {
-            return context.Environment.CreateArray(arguments);
+            return context.ArrayConstructor.Construct(arguments) as IJsArray;
         }
 
-        public static IJsValue CreateBool(this IContext context, bool value)
+        public static IJsBool CreateBool(this IContext context, bool value)
         {
-            return context.Environment.CreateBool(value);
+            return context.BooleanConstructor.Construct(value);
         }
 
-        public static IJsValue CreateFunction(this IContext context, string name, string[] argumentNames, IAst body)
+        public static IJsFunction CreateFunction(this IContext context, string name, string[] argumentNames, IAst body)
         {
-            return context.Environment.CreateFunction(name, argumentNames, body);
+            return context.FunctionConstructor.Construct(context.Environment, name, argumentNames, body);
         }
 
-        public static IJsValue CreateNumber(this IContext context, double value)
+        public static IJsNumber CreateNumber(this IContext context, double value)
         {
-            return context.Environment.CreateNumber(value);
+            return context.NumberConstructor.Construct(value);
         }
 
-        public static IJsValue CreateObject(this IContext context)
+        public static IJsObject CreateObject(this IContext context)
         {
-            return context.Environment.CreateObject();
+            return context.ObjectConstructor.Construct(context.Environment);
         }
 
-        public static IJsValue CreateString(this IContext context, string value)
+        public static IJsString CreateString(this IContext context, string value)
         {
-            return context.Environment.CreateString(value);
+            return context.StringConstructor.Construct(value);
         }
 
         public static IJsFunction CreateHostFunction(this IContext context,

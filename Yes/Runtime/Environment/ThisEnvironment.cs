@@ -9,11 +9,18 @@ namespace Yes.Runtime.Environment
 
         public ThisEnvironment(IEnvironment parent, IJsValue @this)
         {
+            if (parent == null) throw new ArgumentNullException("parent");
             Parent = parent;
             This = @this;
         }
 
         public IJsValue This { get; protected set; }
+
+        public IContext Context
+        {
+            get { return Parent.Context; }
+        }
+
         public IEnvironment Parent { get; protected set; }
 
         public IControlFlow ControlFlow

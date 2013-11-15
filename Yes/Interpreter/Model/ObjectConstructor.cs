@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class ObjectConstructor : JsConstructor
+    public class ObjectConstructor : JsConstructor, IObjectConstructor
     {
         public ObjectConstructor(IEnvironment environment) : base(environment)
         {
@@ -14,9 +14,14 @@ namespace Yes.Interpreter.Model
             return new JsObject(Environment, null);
         }
 
-        public static IJsValue Construct(IEnvironment environment)
+        public IJsObject Construct(IEnvironment environment)
         {
-            return new JsObject(environment, null);
+            return new JsObject(environment, ClassPrototype);
+        }
+
+        protected override IJsObject CreatePrototype()
+        {
+            return CreateProtypeForImplementation<JsObject>(null);
         }
     }
 }

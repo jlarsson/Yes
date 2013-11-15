@@ -4,7 +4,8 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class BooleanConstructor: JsConstructor{
+    public class BooleanConstructor : JsConstructor, IBooleanConstructor
+    {
         public BooleanConstructor(IEnvironment environment) : base(environment)
         {
         }
@@ -14,7 +15,7 @@ namespace Yes.Interpreter.Model
             return Construct(arguments.Select(a => a.ToBoolean()).FirstOrDefault());
         }
 
-        public static IJsValue Construct(bool value)
+        public IJsBool Construct(bool value)
         {
             return new JsBool(value);
         }

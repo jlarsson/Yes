@@ -9,9 +9,15 @@ namespace Yes.Runtime.Environment
 
         public BoundArgumentsEnvironment(IEnvironment parent, string[] names, IJsValue[] values)
         {
+            if (parent == null) throw new ArgumentNullException("parent");
             Parent = parent;
             Names = names;
             Values = values;
+        }
+
+        public IContext Context
+        {
+            get { return Parent.Context; }
         }
 
         public IEnvironment Parent { get; private set; }

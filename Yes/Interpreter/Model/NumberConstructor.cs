@@ -4,7 +4,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class NumberConstructor: JsConstructor{
+    public class NumberConstructor: JsConstructor, INumberConstructor{
         public NumberConstructor(IEnvironment environment) : base(environment)
         {
         }
@@ -14,7 +14,7 @@ namespace Yes.Interpreter.Model
             return new JsNumber(arguments.Select(a => a.ToNumber()).FirstOrDefault());
         }
 
-        public static IJsValue Construct(double value)
+        public IJsNumber Construct(double value)
         {
             return new JsNumber(value);
         }

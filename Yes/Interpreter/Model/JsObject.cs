@@ -6,10 +6,12 @@ using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsObject: IJsObject{
+    public class JsObject : IJsObject
+    {
         private Dictionary<string, IPropertyDescriptor> _properties;
         public IEnvironment Environment { get; private set; }
         public IJsObject Prototype { get; protected set; }
+
         public JsObject(IEnvironment environment, IJsObject prototype)
         {
             Environment = environment;
@@ -31,6 +33,9 @@ namespace Yes.Interpreter.Model
 
         public virtual IReference GetReference(string name)
         {
+            // TODO: By specifying wether reference is readonly or not, we can optimze
+            // especially when property is inherited
+
             // Find property definition in inheritance chain
             // Equivalent of CanPut
             IJsObject proto = this;
@@ -42,7 +47,7 @@ namespace Yes.Interpreter.Model
                 {
                     if (!pd.Writable)
                     {
-                        return new ReadonlyReference();
+                        return new ReadonlyReference(pd);
                     }
                     break;
                 }
@@ -58,97 +63,13 @@ namespace Yes.Interpreter.Model
                 return _properties[name] = new DataPropertyDescriptor(name);
             }
 
-            // If the property is not own, we make a copy that is own
+            // If the property is not own, we make a copy on write that is own
             // This is equivalent of calling DefineOwnProperty
             if (!_properties.ContainsKey(name))
             {
-                return new LambdaReference(name, LazyGetOwnValue, LazySetOwnValue);
+                return new DefineOwnPropertyOnWriteReference(this, name, pd);
             }
             return pd;
-        }
-
-        private IJsValue LazyGetOwnValue(string name)
-        {
-            var pd = GetOwnProperty(name);
-            return pd == null ? JsUndefined.Instance : pd.GetValue();
-        }
-
-        private IJsValue LazySetOwnValue(string name, IJsValue value)
-        {
-            var pd = GetOwnProperty(name);
-            if (pd != null)
-            {
-                return pd.SetValue(value);
-            }
-
-            if (!Extensible)
-            {
-                throw new ApplicationException();
-            }
-
-            var proto = GetPrototype();
-            while (proto != null)
-            {
-                pd = GetOwnProperty(name);
-                if (pd != null)
-                {
-                    DefineOwnProperty(pd.MakeOwnCopy(Environment, value));
-                    return value;
-                }
-                proto = proto.GetPrototype();
-            }
-            throw new ApplicationException();
-        }
-
-        public class DataPropertyDescriptor : IPropertyDescriptor
-        {
-            public DataPropertyDescriptor(string name): this(name, JsUndefined.Instance, PropertyDescriptorFlags.Enumerable|PropertyDescriptorFlags.Writable|PropertyDescriptorFlags.Configurable)
-            {
-            }
-
-            public DataPropertyDescriptor(string name, IJsValue value, PropertyDescriptorFlags flags)
-            {
-                Name = name;
-                Value = value;
-                Flags = flags;
-            }
-
-            public IJsValue Value { get; protected set; }
-
-            public IJsValue GetValue()
-            {
-                return Value;
-            }
-
-            public IJsValue SetValue(IJsValue value)
-            {
-                return Value = value;
-            }
-
-            public string Name { get; private set; }
-
-            public PropertyDescriptorFlags Flags { get; private set; }
-            public bool Writable { get { return (Flags & PropertyDescriptorFlags.Writable) != 0; } }
-            public bool Enumerable { get { return (Flags & PropertyDescriptorFlags.Enumerable) != 0; } }
-            public bool Configurable { get { return (Flags & PropertyDescriptorFlags.Configurable) != 0; } }
-
-            public IPropertyDescriptor MakeOwnCopy(IEnvironment environment, IJsValue value)
-            {
-                return new DataPropertyDescriptor(Name, value, Flags);
-            }
-        }
-
-        public class ReadonlyReference : IReference
-        {
-            public IJsValue GetValue()
-            {
-                return JsUndefined.Instance;
-            }
-
-            public IJsValue SetValue(IJsValue value)
-            {
-                throw new System.NotImplementedException();
-            }
         }
 
         public int? ToArrayIndex()
@@ -187,6 +108,58 @@ namespace Yes.Interpreter.Model
                 _properties = new Dictionary<string, IPropertyDescriptor>();
             }
             return _properties[descriptor.Name] = descriptor;
+        }
+
+        protected IJsValue SetOwnOrUpgradeInheritedProperty(string name, IJsValue value)
+        {
+            var pd = GetOwnProperty(name);
+            if (pd != null)
+            {
+                return pd.SetValue(value);
+            }
+
+            if (!Extensible)
+            {
+                throw new ApplicationException();
+            }
+
+            var proto = GetPrototype();
+            while (proto != null)
+            {
+                pd = GetOwnProperty(name);
+                if (pd != null)
+                {
+                    DefineOwnProperty(pd.MakeOwnCopy(value));
+                    return value;
+                }
+                proto = proto.GetPrototype();
+            }
+            throw new JsError();
+        }
+
+        protected class DefineOwnPropertyOnWriteReference : IReference
+        {
+            private readonly JsObject _owner;
+            private readonly string _name;
+            private readonly IPropertyDescriptor _inheritedPropertyDescriptor;
+
+            public DefineOwnPropertyOnWriteReference(JsObject owner, string name,
+                                                     IPropertyDescriptor inheritedPropertyDescriptor)
+            {
+                _owner = owner;
+                _name = name;
+                _inheritedPropertyDescriptor = inheritedPropertyDescriptor;
+            }
+
+            public IJsValue GetValue()
+            {
+                return (_owner.GetOwnProperty(_name) ?? _inheritedPropertyDescriptor).GetValue();
+            }
+
+            public IJsValue SetValue(IJsValue value)
+            {
+                return _owner.SetOwnOrUpgradeInheritedProperty(_name, value);
+            }
         }
     }
 }

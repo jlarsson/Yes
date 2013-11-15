@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Yes.Interpreter.Model;
 
@@ -6,6 +7,7 @@ namespace Yes.Runtime.Environment
     public class Environment : IEnvironment, IControlFlow
     {
         private Dictionary<string, IReference> _references;
+        public IContext Context { get; protected set; }
         public IEnvironment Parent { get; protected set; }
 
         public IControlFlow ControlFlow
@@ -13,9 +15,17 @@ namespace Yes.Runtime.Environment
             get { return this; }
         }
 
+        public Environment(IContext context)
+        {
+            if (context == null) throw new ArgumentNullException("context");
+            Context = context;
+        }
+
         public Environment(IEnvironment parent)
         {
+            if (parent == null) throw new ArgumentNullException("parent");
             Parent = parent;
+            Context = Parent.Context;
         }
 
         public IReference CreateReference(string name, IJsValue value)

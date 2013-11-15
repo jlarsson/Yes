@@ -9,13 +9,20 @@ namespace Yes
     {
         public Context()
         {
-            Environment = new Environment(null);
-            Environment.CreateReference("Array", new ArrayConstructor(Environment));
-            Environment.CreateReference("Boolean", new BooleanConstructor(Environment));
-            Environment.CreateReference("Function", new FunctionConstructor(Environment));
-            Environment.CreateReference("Number", new NumberConstructor(Environment));
-            Environment.CreateReference("Object", new ObjectConstructor(Environment));
-            Environment.CreateReference("String", new StringConstructor(Environment));
+            Environment = new Environment(this);
+            ArrayConstructor = new ArrayConstructor(Environment);
+            BooleanConstructor = new BooleanConstructor(Environment);
+            FunctionConstructor = new FunctionConstructor(Environment);
+            NumberConstructor = new NumberConstructor(Environment);
+            ObjectConstructor = new ObjectConstructor(Environment);
+            StringConstructor = new StringConstructor(Environment);
+
+            Environment.CreateReference("Array", ArrayConstructor);
+            Environment.CreateReference("Boolean", BooleanConstructor);
+            Environment.CreateReference("Function", FunctionConstructor);
+            Environment.CreateReference("Number", NumberConstructor);
+            Environment.CreateReference("Object", ObjectConstructor);
+            Environment.CreateReference("String", StringConstructor);
         }
 
         public IJsValue Execute(string source)
@@ -25,5 +32,13 @@ namespace Yes
         }
 
         public IEnvironment Environment { get; protected set; }
+
+        public IArrayConstructor ArrayConstructor { get; private set; }
+
+        public IBooleanConstructor BooleanConstructor { get; private set; }
+        public IFunctionConstructor FunctionConstructor { get; private set; }
+        public INumberConstructor NumberConstructor { get; private set; }
+        public IObjectConstructor ObjectConstructor { get; private set; }
+        public IStringConstructor StringConstructor { get; private set; }
     }
 }

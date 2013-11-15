@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{13414B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yes.Tests", "Yes.Tests\Yes.Tests.csproj", "{E2093C94-E0EC-4185-BD58-35F6BB639FB2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yesh", "Yesh\Yesh.csproj", "{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,16 @@ Global
 		{E2093C94-E0EC-4185-BD58-35F6BB639FB2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E2093C94-E0EC-4185-BD58-35F6BB639FB2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E2093C94-E0EC-4185-BD58-35F6BB639FB2}.Release|x86.ActiveCfg = Release|Any CPU
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Debug|x86.ActiveCfg = Debug|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Debug|x86.Build.0 = Debug|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Release|Any CPU.ActiveCfg = Release|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Release|x86.ActiveCfg = Release|x86
+		{06871A0D-D30C-41C0-AE90-C3A3DEBD687C}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

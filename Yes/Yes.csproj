@@ -78,7 +78,11 @@
     <Compile Include="Interpreter\Model\AccessorPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\ArrayConstructor.cs" />
     <Compile Include="Interpreter\Model\BooleanConstructor.cs" />
+    <Compile Include="Interpreter\Model\DataPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\FunctionConstructor.cs" />
+    <Compile Include="Interpreter\Model\IArrayConstructor.cs" />
+    <Compile Include="Interpreter\Model\IBooleanConstructor.cs" />
+    <Compile Include="Interpreter\Model\IFunctionConstructor.cs" />
     <Compile Include="Interpreter\Model\IJsArray.cs" />
     <Compile Include="Interpreter\Model\IJsConstructor.cs" />
     <Compile Include="Interpreter\Model\IJsFunction.cs" />
@@ -89,7 +93,10 @@
     <Compile Include="Interpreter\Model\IJsString.cs" />
     <Compile Include="Interpreter\Model\IJsUndefined.cs" />
     <Compile Include="Interpreter\Model\IJsValue.cs" />
+    <Compile Include="Interpreter\Model\INumberConstructor.cs" />
+    <Compile Include="Interpreter\Model\IObjectConstructor.cs" />
     <Compile Include="Interpreter\Model\IPropertyDescriptor.cs" />
+    <Compile Include="Interpreter\Model\IStringConstructor.cs" />
     <Compile Include="Interpreter\Model\JsArray.cs" />
     <Compile Include="Interpreter\Model\JsBool.cs" />
     <Compile Include="Interpreter\Model\JsConstructor.cs" />
@@ -107,13 +114,14 @@
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
     <Compile Include="Interpreter\ProtoTypes.cs" />
+    <Compile Include="Runtime\Environment\ReadonlyReference.cs" />
     <Compile Include="Runtime\JsArgumentError.cs" />
     <Compile Include="Runtime\Environment\BoundArgumentsEnvironment.cs" />
     <Compile Include="Runtime\Environment\Environment.cs" />
     <Compile Include="Runtime\Environment\IControlFlow.cs" />
     <Compile Include="Runtime\Environment\IEnvironment.cs" />
     <Compile Include="Runtime\Environment\MissingScopeReference.cs" />
-    <Compile Include="Runtime\Environment\ScopeReference.cs" />
+    <Compile Include="Runtime\Environment\ValueReference.cs" />
     <Compile Include="Runtime\Environment\ThisEnvironment.cs" />
     <Compile Include="Runtime\EvalError.cs" />
     <Compile Include="Runtime\IReference.cs" />
@@ -150,6 +158,8 @@
     <Compile Include="Runtime\JsSyntaxError.cs" />
     <Compile Include="Runtime\JsTypeError.cs" />
     <Compile Include="Runtime\JsUriError.cs" />
+    <Compile Include="Runtime\Prototypes\Class1.cs" />
+    <Compile Include="Runtime\Prototypes\JsInstanceMethodAttribute.cs" />
     <Compile Include="Utility\Conversion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

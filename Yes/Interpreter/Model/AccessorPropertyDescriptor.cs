@@ -35,7 +35,7 @@ namespace Yes.Interpreter.Model
 
         public bool Configurable { get; set; }
 
-        public IPropertyDescriptor MakeOwnCopy(IEnvironment environment, IJsValue value)
+        public IPropertyDescriptor MakeOwnCopy(IJsValue value)
         {
             return new AccessorPropertyDescriptor(Name, _getter, _setter)
                        {

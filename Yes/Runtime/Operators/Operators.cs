@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 using Yes.Runtime.Error;
@@ -10,148 +8,29 @@ namespace Yes.Runtime.Operators
 {
     public class Operators : IOperators
     {
-        private static readonly Dictionary<string, IBinaryOperator> BinaryOperators = new[]
-                                                                                          {
-                                                                                              new BinaryOperator("+",
-                                                                                                                 Add),
-                                                                                              new BinaryOperator("-",
-                                                                                                                 Arith(
-                                                                                                                     (l,
-                                                                                                                      r)
-                                                                                                                     =>
-                                                                                                                     l -
-                                                                                                                     r))
-                                                                                              ,
-                                                                                              new BinaryOperator("*",
-                                                                                                                 Arith(
-                                                                                                                     (l,
-                                                                                                                      r)
-                                                                                                                     =>
-                                                                                                                     l*r))
-                                                                                              ,
-                                                                                              new BinaryOperator("/",
-                                                                                                                 Arith(
-                                                                                                                     (l,
-                                                                                                                      r)
-                                                                                                                     =>
-                                                                                                                     Math
-                                                                                                                         .
-                                                                                                                         Abs
-                                                                                                                         (r) <
-                                                                                                                     double
-                                                                                                                         .
-                                                                                                                         Epsilon
-                                                                                                                         ? double
-                                                                                                                               .
-                                                                                                                               NaN
-                                                                                                                         : l/
-                                                                                                                           r))
-                                                                                              ,
-                                                                                              new BinaryOperator("%",
-                                                                                                                 Arith(
-                                                                                                                     (l,
-                                                                                                                      r)
-                                                                                                                     =>
-                                                                                                                     Math
-                                                                                                                         .
-                                                                                                                         Abs
-                                                                                                                         (r) <
-                                                                                                                     double
-                                                                                                                         .
-                                                                                                                         Epsilon
-                                                                                                                         ? double
-                                                                                                                               .
-                                                                                                                               NaN
-                                                                                                                         : Math
-                                                                                                                               .
-                                                                                                                               IEEERemainder
-                                                                                                                               (l,
-                                                                                                                                r)))
-                                                                                              ,
-                                                                                              new BinaryOperator("<",
-                                                                                                                 Relational
-                                                                                                                     ((l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      l <
-                                                                                                                      r,
-                                                                                                                      (l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      StringComparer
-                                                                                                                          .
-                                                                                                                          Ordinal
-                                                                                                                          .
-                                                                                                                          Compare
-                                                                                                                          (l,
-                                                                                                                           r) <
-                                                                                                                      0))
-                                                                                              ,
-                                                                                              new BinaryOperator("<=",
-                                                                                                                 Relational
-                                                                                                                     ((l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      l <=
-                                                                                                                      r,
-                                                                                                                      (l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      StringComparer
-                                                                                                                          .
-                                                                                                                          Ordinal
-                                                                                                                          .
-                                                                                                                          Compare
-                                                                                                                          (l,
-                                                                                                                           r) <=
-                                                                                                                      0))
-                                                                                              ,
-                                                                                              new BinaryOperator(">",
-                                                                                                                 Relational
-                                                                                                                     ((l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      l >
-                                                                                                                      r,
-                                                                                                                      (l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      StringComparer
-                                                                                                                          .
-                                                                                                                          Ordinal
-                                                                                                                          .
-                                                                                                                          Compare
-                                                                                                                          (l,
-                                                                                                                           r) >
-                                                                                                                      0))
-                                                                                              ,
-                                                                                              new BinaryOperator(">=",
-                                                                                                                 Relational
-                                                                                                                     ((l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      l >=
-                                                                                                                      r,
-                                                                                                                      (l,
-                                                                                                                       r)
-                                                                                                                      =>
-                                                                                                                      StringComparer
-                                                                                                                          .
-                                                                                                                          Ordinal
-                                                                                                                          .
-                                                                                                                          Compare
-                                                                                                                          (l,
-                                                                                                                           r) >=
-                                                                                                                      0))
-                                                                                              ,
-                                                                                          }
-            .ToDictionary(o => o.Symbol, o => o as IBinaryOperator);
+        private static readonly Dictionary<string, IUnaryOperator> UnaryOperators =
+            new Dictionary<string, IUnaryOperator>();
 
-        private static readonly Dictionary<string, IUnaryOperator> UnaryOperators = new[]
-                                                                                        {
-                                                                                            new UnaryOperator("-", Neg)
-                                                                                        }
-            .ToDictionary(o => o.Symbol, o => o as IUnaryOperator);
+        private static readonly Dictionary<string, IBinaryOperator> BinaryOperators =
+            new Dictionary<string, IBinaryOperator>();
+
+        static Operators()
+        {
+            Unary("-", Neg);
+
+            Binary("+", Add);
+            Binary("-", Arith((l, r) => l - r));
+            Binary("*", Arith((l, r) => l*r));
+            Binary("/", Arith((l, r) => Math.Abs(r) < double.Epsilon ? double.NaN : l/r));
+            Binary("%", Arith((l, r) => Math.Abs(r) < double.Epsilon ? double.NaN : Math.IEEERemainder(l, r)));
+            Binary("<", Relational((l, r) => l < r, (l, r) => StringComparer.Ordinal.Compare(l, r) < 0));
+            Binary("<=", Relational((l, r) => l <= r, (l, r) => StringComparer.Ordinal.Compare(l, r) <= 0));
+            Binary(">", Relational((l, r) => l > r, (l, r) => StringComparer.Ordinal.Compare(l, r) > 0));
+            Binary(">=", Relational((l, r) => l >= r, (l, r) => StringComparer.Ordinal.Compare(l, r) >= 0));
+
+            // TODO: in operator should consider whole prototype chain
+            Binary("in", (environment, l,r) => environment.CreateBool((r is IJsObject) && (null != (r as IJsObject).GetOwnProperty(l.ToString()))));
+        }
 
         #region IOperators Members
 
@@ -172,6 +51,16 @@ namespace Yes.Runtime.Operators
         }
 
         #endregion
+
+        private static void Unary(string symbol, Func<IEnvironment, IJsValue, IJsValue> eval)
+        {
+            UnaryOperators[symbol] = new UnaryOperator(symbol, eval);
+        }
+
+        private static void Binary(string symbol, Func<IEnvironment, IJsValue, IJsValue, IJsValue> eval)
+        {
+            BinaryOperators[symbol] = new BinaryOperator(symbol, eval);
+        }
 
         public static Func<IEnvironment, IJsValue, IJsValue, IJsValue> Arith(Func<double, double, double> mathOperator)
         {
@@ -278,10 +167,15 @@ namespace Yes.Runtime.Operators
 
             public string Symbol { get; protected set; }
             public Func<IEnvironment, IJsValue, IJsValue> Eval { get; protected set; }
+
+            #region IUnaryOperator Members
+
             public IJsValue Evaluate(IEnvironment environment, IJsValue value)
             {
                 return Eval(environment, value);
             }
+
+            #endregion
         }
 
         #endregion

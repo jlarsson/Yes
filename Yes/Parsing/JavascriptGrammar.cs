@@ -22,7 +22,7 @@ namespace Yes.Parsing
         protected JavascriptGrammar()
         {
             NewScope();
-            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new");
+            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in");
 
             Literal("(number)", (f, l) => f.Number(l.Value));
             Literal("(string)", (f, l) => f.String(l.Value));
@@ -46,8 +46,9 @@ namespace Yes.Parsing
             Prefix("!", 70, (f, v) => f.Not(v));
             Prefix("typeof", 70, (f, v) => f.TypeOf(v));
 
-//            Prefix("++", 80, (f, v) => f.UnaryOperation("++"));
-//            Prefix("--", 80, (f, v) => f.UnaryOperation("++"));
+            // TODO: Check prcedence of in operator
+            Infix("in", 80, (f, lhs, rhs) => f.BinaryOperation("in", lhs, rhs));
+
 
 
             Assignment("=", (f, lhs, rhs) => f.Assign(lhs, rhs));
@@ -197,6 +198,8 @@ namespace Yes.Parsing
                                using (NewScope(Feature.Break|Feature.Continue))
                                {
                                    p.Advance("(");
+
+                                   // Todo: handle 'for var m in x'
 
                                    var initial = default(TAst);
                                    if (p.CanAdvance("var"))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Yes.Parsing;
 using Yes.Runtime;
+using Yes.Runtime.Operators;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
@@ -110,6 +111,11 @@ namespace Yes.Interpreter.Ast
         public IAst IncAssign(IAst lhs, IAst rhs)
         {
             throw new NotImplementedException();
+        }
+
+        public IAst UnaryOperation(string @operator, IAst value)
+        {
+            return new UnaryOperation(Operators.GetUnaryOperator(@operator), value);
         }
 
         public IAst BinaryOperation(string @operator, IAst lhs, IAst rhs)

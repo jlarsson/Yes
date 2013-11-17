@@ -60,6 +60,7 @@
     <Compile Include="Interpreter\Ast\NamedConstruct.cs" />
     <Compile Include="Interpreter\Ast\ObjectLiteral.cs" />
     <Compile Include="Interpreter\Ast\String.cs" />
+    <Compile Include="Interpreter\Ast\UnaryOperation.cs" />
     <Compile Include="Interpreter\Ast\Var.cs" />
     <Compile Include="Interpreter\Ast\While.cs" />
     <Compile Include="Interpreter\Model\AccessorPropertyDescriptor.cs" />
@@ -102,8 +103,8 @@
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
     <Compile Include="Runtime\Environment\ReadonlyReference.cs" />
     <Compile Include="Runtime\Error\JsNotImplemented.cs" />
-    <Compile Include="Runtime\IBinaryOperator.cs" />
-    <Compile Include="Runtime\IOperators.cs" />
+    <Compile Include="Runtime\Operators\IBinaryOperator.cs" />
+    <Compile Include="Runtime\Operators\IOperators.cs" />
     <Compile Include="Runtime\Error\JsArgumentError.cs" />
     <Compile Include="Runtime\Environment\BoundArgumentsEnvironment.cs" />
     <Compile Include="Runtime\Environment\Environment.cs" />
@@ -143,6 +144,8 @@
     <Compile Include="Runtime\Error\JsSyntaxError.cs" />
     <Compile Include="Runtime\Error\JsTypeError.cs" />
     <Compile Include="Runtime\Error\JsUriError.cs" />
+    <Compile Include="Runtime\Operators\IUnaryOperator.cs" />
+    <Compile Include="Runtime\Operators\Operators.cs" />
     <Compile Include="Runtime\Prototypes\PrototypeBuilder.cs" />
     <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
     <Compile Include="Runtime\Prototypes\JsInstanceMethodAttribute.cs" />

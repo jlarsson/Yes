@@ -19,6 +19,7 @@ namespace Yes.Parsing
         TAst Assign(TAst lhs, TAst rhs);
         TAst DecAssign(TAst lhs, TAst rhs);
         TAst IncAssign(TAst lhs, TAst rhs);
+        TAst UnaryOperation(string @operator, TAst value); 
         TAst BinaryOperation(string @operator, TAst lhs, TAst rhs);
 
         TAst Neg(TAst v);

@@ -1,7 +1,7 @@
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 
-namespace Yes.Runtime
+namespace Yes.Runtime.Operators
 {
     public interface IBinaryOperator
     {

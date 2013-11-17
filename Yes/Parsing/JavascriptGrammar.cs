@@ -42,9 +42,12 @@ namespace Yes.Parsing
             Infix("*", 60, (f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
             Infix("/", 60, (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
 
-            Prefix("-", 70, (f, v) => f.Neg(v));
+            Prefix("-", 70, (f, v) => f.UnaryOperation("-",v));
             Prefix("!", 70, (f, v) => f.Not(v));
             Prefix("typeof", 70, (f, v) => f.TypeOf(v));
+
+//            Prefix("++", 80, (f, v) => f.UnaryOperation("++"));
+//            Prefix("--", 80, (f, v) => f.UnaryOperation("++"));
 
 
             Assignment("=", (f, lhs, rhs) => f.Assign(lhs, rhs));

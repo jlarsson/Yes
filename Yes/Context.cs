@@ -5,6 +5,7 @@ using Yes.Interpreter.Model;
 using Yes.Parsing;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Operators;
 using Yes.Runtime.Prototypes;
 using Environment = Yes.Runtime.Environment.Environment;
 

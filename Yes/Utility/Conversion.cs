@@ -28,7 +28,7 @@ namespace Yes.Utility
 
     public static class Conversion
     {
-        public static readonly IFormatProvider DoubleFormat = CultureInfo.GetCultureInfo("sv-SE");
+        public static readonly IFormatProvider DoubleFormat = CultureInfo.GetCultureInfo("en-US");
 
         public static T Cast<T>(IJsValue value, bool @throw) where T : class
         {

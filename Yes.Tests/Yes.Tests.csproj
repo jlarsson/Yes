@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Array\Class1.cs" />
+    <Compile Include="DoubleBehaviourExplorativeFixture.cs" />
     <Compile Include="ExplorativeFixture.cs" />
     <Compile Include="Lexing\JavascriptLexerFixture.cs" />
     <Compile Include="Lexing\NumberLexingFixture.cs" />

@@ -61,6 +61,7 @@ namespace Yes.Runtime
 
         public static IJsValue ArithEval(IEnvironment environment, IJsValue lhs, IJsValue rhs, Func<double,double,double> mathOperator)
         {
+/*
             var l = lhs.ToNumber();
             if (double.IsNaN(l) || double.IsInfinity(l))
             {
@@ -72,6 +73,9 @@ namespace Yes.Runtime
                 return environment.CreateNumber(double.NaN);
             }
             return environment.CreateNumber(mathOperator(l, r));
+ */
+            var v = mathOperator(lhs.ToNumber(), rhs.ToNumber());
+            return environment.CreateNumber(double.IsInfinity(v) ? double.NaN : v);
 
         }
 

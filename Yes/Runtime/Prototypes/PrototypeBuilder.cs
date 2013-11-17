@@ -13,17 +13,17 @@ namespace Yes.Runtime.Prototypes
         {
             return
                 CreateMethodPropertyDescriptorsForType(environment, type, prototype)
-                .Union(CreateAccessorPropertyDescriptorsForType(environment, type));
+                .Union(CreateAccessorPropertyDescriptorsForType(type));
         }
 
         public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType<T>(IEnvironment environment, IJsObject prototype) where T : IJsObject
         {
             return 
                 CreateMethodPropertyDescriptorsForType(environment, typeof(T), prototype)
-                .Union(CreateAccessorPropertyDescriptorsForType(environment, typeof(T)));
+                .Union(CreateAccessorPropertyDescriptorsForType(typeof(T)));
         }
 
-        private IEnumerable<IPropertyDescriptor> CreateAccessorPropertyDescriptorsForType(IEnvironment environment, Type type)
+        private IEnumerable<IPropertyDescriptor> CreateAccessorPropertyDescriptorsForType(Type type)
         {
             return
                 from prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)

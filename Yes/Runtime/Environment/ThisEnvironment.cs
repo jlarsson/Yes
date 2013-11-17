@@ -1,5 +1,6 @@
 using System;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Error;
 
 namespace Yes.Runtime.Environment
 {
@@ -44,7 +45,7 @@ namespace Yes.Runtime.Environment
             {
                 return _reference ??
                        (_reference =
-                        new LambdaReference("this", _ => This, delegate { throw new ApplicationException(); }));
+                        new LambdaReference("this", _ => This, delegate { throw new JsReferenceError(); }));
             }
             return null;
         }

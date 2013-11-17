@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
@@ -11,10 +12,32 @@ namespace Yes.Interpreter.Model
     {
         private readonly List<IJsValue> _array;
 
+        public JsArray(IEnvironment environment, IJsObject prototype, int length)
+            : this(environment, prototype, Enumerable.Range(0,length).Select(_ => JsUndefined.Value))
+        {
+        }
+
         public JsArray(IEnvironment environment, IJsObject prototype, IEnumerable<IJsValue> members)
+            : this(environment, prototype, members.ToList())
+        {
+        }
+        public JsArray(IEnvironment environment, IJsObject prototype, List<IJsValue> members)
             : base(environment, prototype)
         {
-            _array = members.ToList();
+            _array = members;
+        }
+
+        private void SetLength(int length)
+        {
+            if (length < _array.Count)
+            {
+                _array.RemoveRange(length, _array.Count - length);
+            }
+            else if (length > _array.Count)
+            {
+                _array.AddRange(Enumerable.Range(0, length - _array.Count).Select(i => JsUndefined.Value));
+            }
+
         }
 
         protected IJsValue JsGetElement(int index)
@@ -28,27 +51,19 @@ namespace Yes.Interpreter.Model
 
         protected IJsValue JsSetElement(int index, IJsValue value)
         {
-            if (index < 0)
+            // Expand array if nescessary
+            if (index >= _array.Count)
             {
-                throw new JsRangeError();
-            }
-            if (index < _array.Count)
-            {
-                return _array[index] = value;
-            }
-            if (index == _array.Count)
-            {
-                _array.Add(value);
-                return value;
-            }
-            throw new JsRangeError();
-        }
+                SetLength(index + 1);
 
+            }
+            return _array[index] = value;
+        }
 
         public override IReference GetReference(IJsValue name)
         {
             var index = name.ToArrayIndex();
-            if (index.HasValue)
+            if (index.HasValue && (index > 0))
             {
                 return GetElementReference(index.Value);
             }
@@ -68,6 +83,11 @@ namespace Yes.Interpreter.Model
         public override string ToString()
         {
             return string.Join(",", _array);
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsArray(environment, Prototype, _array ?? new List<IJsValue>());
         }
 
         protected IReference GetElementReference(int value)
@@ -93,19 +113,12 @@ namespace Yes.Interpreter.Model
                 {
                     throw new JsTypeError();
                 }
-                var l = index.Value;
-                if (l < 0)
+                var length = index.Value;
+                if (length < 0)
                 {
                     throw new JsArgumentError();
                 }
-                if (l < _array.Count)
-                {
-                    _array.RemoveRange(l, _array.Count - l);
-                }
-                else if (l > _array.Count)
-                {
-                    _array.AddRange(Enumerable.Range(0, l - _array.Count).Select(i => JsUndefined.Value));
-                }
+                SetLength(length);
             }
         }
 

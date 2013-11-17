@@ -14,12 +14,7 @@ namespace Yes.Interpreter.Model
             Value = value;
         }
 
-        protected string Value { get; set; }
-
-        public override JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.String; }
-        }
+        public string Value { get; protected set; }
 
         public override int? ToArrayIndex()
         {
@@ -60,6 +55,11 @@ namespace Yes.Interpreter.Model
         public override string ToString()
         {
             return Value;
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsString(environment,Prototype,Value);
         }
 
         [JsInstanceProperty("length", Enumerable = false, Configurable = false)]

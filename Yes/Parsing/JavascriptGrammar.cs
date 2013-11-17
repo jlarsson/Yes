@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Yes.Parsing.Tdop;
 using Yes.Runtime;
+using Yes.Runtime.Error;
 
 namespace Yes.Parsing
 {

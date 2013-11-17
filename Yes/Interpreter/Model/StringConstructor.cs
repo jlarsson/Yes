@@ -4,9 +4,10 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class StringConstructor : JsConstructor, IStringConstructor
+    public class StringConstructor : JsConstructor<JsString>, IStringConstructor
     {
-        public StringConstructor(IEnvironment environment) : base(environment)
+        public StringConstructor(IEnvironment environment)
+            : base(environment, environment.Context.GetPrototype<StringConstructor>())
         {
         }
 
@@ -20,9 +21,9 @@ namespace Yes.Interpreter.Model
             return new JsString(Environment, ClassPrototype, value);
         }
 
-        protected override IJsObject CreatePrototype()
+        public override IJsValue CloneTo(IEnvironment environment)
         {
-            return CreateProtypeForImplementation<JsString>(base.CreatePrototype());
+            return new StringConstructor(environment);
         }
     }
 }

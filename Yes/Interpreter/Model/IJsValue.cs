@@ -1,10 +1,10 @@
 using Yes.Runtime;
+using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
     public interface IJsValue
     {
-        JsTypeCode TypeCode { get; }
         IReference GetReference(IJsValue name);
         IReference GetReference(string name);
 

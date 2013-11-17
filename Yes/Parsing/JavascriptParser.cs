@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Yes.Parsing.Tdop;
 using Yes.Runtime;
+using Yes.Runtime.Error;
 
 namespace Yes.Parsing
 {

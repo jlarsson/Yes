@@ -16,6 +16,7 @@ namespace Yes
         INumberConstructor NumberConstructor { get; }
         IObjectConstructor ObjectConstructor { get; }
         IStringConstructor StringConstructor { get; }
+        IJsObject GetPrototype<T>(IJsConstructor constructor = null) where T : IJsObject;
     }
 
     public static class ContextExtensions

@@ -1,4 +1,6 @@
 namespace Yes.Interpreter.Model
 {
-    public interface IJsString: IJsValue{}
+    public interface IJsString: IJsValue{
+        string Value { get; }
+    }
 }

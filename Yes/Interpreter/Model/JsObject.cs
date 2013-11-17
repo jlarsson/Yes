@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Linq;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 using Yes.Runtime.Prototypes;
 using Yes.Utility;
 
@@ -9,26 +11,65 @@ namespace Yes.Interpreter.Model
     public class JsObject : IJsObject
     {
         private Dictionary<string, IPropertyDescriptor> _properties;
-        public IEnvironment Environment { get; private set; }
-        public IJsObject Prototype { get; protected set; }
 
         public JsObject(IEnvironment environment, IJsObject prototype)
         {
             Environment = environment;
             Prototype = prototype;
-            Extensible = true;
         }
 
+        public IEnvironment Environment { get; private set; }
+        public IJsObject Prototype { get; protected set; }
 
-        public IPropertyDescriptor CreateDataProperty(string name, IJsValue value, PropertyDescriptorFlags flags)
+        //[JsInstanceProperty("constructor", Configurable = false, Enumerable = false)]
+        //public IJsValue JsConstructor
+        //{
+        //    get { return null;}
+        //    set {  }
+        //}
+
+        [JsInstanceProperty("prototype", Configurable = false, Enumerable = false)]
+        public IJsValue JsPrototype
         {
-            return new ObjectPropertyDescriptor(this, name, value, flags);
+            get { return Prototype; }
+            set { Prototype = Conversion.Cast<IJsObject>(value, true); }
         }
 
-        public virtual JsTypeCode TypeCode
+        [JsInstanceMethod("hasOwnProperty", Configurable = false, Enumerable = false)]
+        public IJsValue JsHasOwnProperty(IJsValue[] args)
         {
-            get { return JsTypeCode.Object; }
+            return Environment.CreateBool(GetOwnProperty(args.Select(a => a.ToString()).FirstOrDefault()) != null);
         }
+        [JsInstanceMethod("isPrototypeOf", Configurable = false, Enumerable = false)]
+        public IJsValue JsIsPrototypeOf(IJsValue[] args)
+        {
+            throw new JsNotImplemented();
+        }
+
+        [JsInstanceMethod("propertyIsEnumerable", Configurable = false, Enumerable = false)]
+        public IJsValue JsPropertyIsEnumerable(IJsValue[] args)
+        {
+            throw new JsNotImplemented();
+        }
+
+        [JsInstanceMethod("toLocaleString", Configurable = false, Enumerable = false)]
+        public IJsValue JsToLocaleString(IJsValue[] args)
+        {
+            return JsToString(args);
+        }
+        [JsInstanceMethod("toString", Configurable = false, Enumerable = false)]
+        public IJsValue JsToString(IJsValue[] args)
+        {
+            return Environment.CreateString(ToString());
+        }
+
+        [JsInstanceMethod("valueOf", Configurable = false, Enumerable = false)]
+        public IJsValue JsValueOf(IJsValue[] args)
+        {
+            return this;
+        }
+
+        #region IJsObject Members
 
         public virtual IReference GetReference(IJsValue name)
         {
@@ -58,7 +99,9 @@ namespace Yes.Interpreter.Model
                 return new ReadonlyReference();
             }
             // Property not found, but we are extensible to create a new data property
-            return new ObjectPropertyDescriptor(null/* no owner, yet... */, name, JsUndefined.Value, PropertyDescriptorFlags.Configurable | PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable);
+            return new ObjectPropertyDescriptor(null /* no owner, yet... */, name, JsUndefined.Value,
+                                                PropertyDescriptorFlags.Configurable |
+                                                PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable);
         }
 
         public virtual int? ToArrayIndex()
@@ -92,17 +135,22 @@ namespace Yes.Interpreter.Model
             return "[object Object]";
         }
 
-        public bool Extensible { get; set; }
+        public virtual bool Extensible { get { return true; } }
 
         public virtual IJsObject GetPrototype()
         {
-            return Prototype;
+            return Prototype as IJsObject;
         }
 
         public virtual IPropertyDescriptor GetOwnProperty(string name)
         {
             IPropertyDescriptor pd;
             return ((_properties != null) && _properties.TryGetValue(name, out pd)) ? pd : null;
+        }
+
+        public IEnumerable<IPropertyDescriptor> GetOwnProperties()
+        {
+            return _properties == null ? Enumerable.Empty<IPropertyDescriptor>() : _properties.Values;
         }
 
         public virtual IPropertyDescriptor DefineOwnProperty(IPropertyDescriptor descriptor)
@@ -114,11 +162,16 @@ namespace Yes.Interpreter.Model
             return _properties[descriptor.Name] = descriptor;
         }
 
-        [JsInstanceProperty("prototype",Configurable = false, Enumerable = false)]
-        public IJsValue JsPrototype
+        public virtual IJsValue CloneTo(IEnvironment environment)
         {
-            get { return Prototype; }
-            set { Prototype = Conversion.Cast<IJsObject>(value, true); }
+            return new JsObject(Environment,Prototype);
+        }
+
+        #endregion
+
+        public IPropertyDescriptor CreateDataProperty(string name, IJsValue value, PropertyDescriptorFlags flags)
+        {
+            return new ObjectPropertyDescriptor(this, name, value, flags);
         }
     }
 }

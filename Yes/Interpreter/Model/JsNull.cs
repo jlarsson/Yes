@@ -1,15 +1,11 @@
 using Yes.Runtime;
+using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Model
 {
     public class JsNull : IJsNull
     {
         public static readonly JsNull Value = new JsNull();
-
-        public JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Null; }
-        }
 
         public IReference GetReference(IJsValue name)
         {

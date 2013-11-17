@@ -7,16 +7,16 @@ namespace Yes.Interpreter.Model
 {
     public class JsFunction : JsObject, IJsFunction, IJsConstructor
     {
-        public JsFunction(IEnvironment environment, IJsObject prototype, string name, string[] arguments, IAst statements) : base(environment, prototype)
+        public JsFunction(IEnvironment environment, IJsObject prototype, string name, string[] arguments, IAst body) : base(environment, prototype)
         {
             Name = name;
             Arguments = arguments;
-            Statements = statements;
+            Body = body;
         }
 
         public string Name { get; protected set; }
         public string[] Arguments { get; protected set; }
-        public IAst Statements { get; protected set; }
+        public IAst Body { get; protected set; }
 
         #region IJsFunction Members
 
@@ -33,12 +33,7 @@ namespace Yes.Interpreter.Model
                         @this
                         ));
 
-            return Statements.Evaluate(applyEnvironment);
-        }
-
-        public override JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Function; }
+            return Body.Evaluate(applyEnvironment);
         }
 
         #endregion
@@ -48,6 +43,11 @@ namespace Yes.Interpreter.Model
             var self = Environment.CreateObject();
             Apply(self, arguments.ToArray());
             return self;
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsFunction(environment, Prototype, Name, Arguments, Body);
         }
     }
 }

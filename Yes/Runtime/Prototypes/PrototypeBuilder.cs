@@ -9,6 +9,13 @@ namespace Yes.Runtime.Prototypes
 {
     public class PrototypeBuilder
     {
+        public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType(Type type, IEnvironment environment, IJsObject prototype)
+        {
+            return
+                CreateMethodPropertyDescriptorsForType(environment, type, prototype)
+                .Union(CreateAccessorPropertyDescriptorsForType(environment, type));
+        }
+
         public IEnumerable<IPropertyDescriptor> CreatePropertyDescriptorsForType<T>(IEnvironment environment, IJsObject prototype) where T : IJsObject
         {
             return 
@@ -44,7 +51,7 @@ namespace Yes.Runtime.Prototypes
 
         private IJsFunction CreateHostFunction(IEnvironment environment, MethodInfo method)
         {
-            Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func = (env, @this, args) => (method.Invoke(@this, args) as IJsValue) ?? JsUndefined.Value;
+            Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func = (env, @this, args) => (method.Invoke(@this, new object[]{args}) as IJsValue) ?? JsUndefined.Value;
             return new JsHostFunction(environment,func);
         }
     }

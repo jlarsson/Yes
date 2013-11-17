@@ -1,44 +1,31 @@
 using System.Collections.Generic;
 using Yes.Runtime.Environment;
-using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
-    public abstract class JsConstructor : JsObject, IJsConstructor, IJsFunction
+    public abstract class JsConstructor<T> : JsObject, IJsConstructor, IJsFunction where T : JsObject
     {
-        private IJsObject _prototype;
-
-        protected JsConstructor(IEnvironment environment) : base(environment, null)
+        protected JsConstructor(IEnvironment environment, IJsObject prototype)
+            : base(environment, prototype)
         {
+            ClassPrototype = environment.Context.GetPrototype<T>(this);
         }
+
+        public IJsObject ClassPrototype { get; protected set; }
+
+        #region IJsConstructor Members
 
         public abstract IJsValue Construct(IEnumerable<IJsValue> arguments);
 
-        protected IJsObject ClassPrototype
-        {
-            get { return _prototype ?? (_prototype = CreatePrototype()); }
-        }
+        #endregion
 
-        protected virtual IJsObject CreatePrototype()
-        {
-            return new JsObject(Environment, null);
-        }
-
-        protected JsObject CreateProtypeForImplementation<T>(IJsObject basePrototype) where T: IJsObject
-        {
-            var proto = new JsObject(Environment, basePrototype);
-            proto.DefineOwnProperty(proto.CreateDataProperty("constructor", this, PropertyDescriptorFlags.Enumerable));
-
-            foreach (var pd in new PrototypeBuilder().CreatePropertyDescriptorsForType<T>(Environment, proto))
-            {
-                proto.DefineOwnProperty(pd);
-            }
-            return proto;
-        }
+        #region IJsFunction Members
 
         public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
             return Construct(arguments);
         }
+
+        #endregion
     }
 }

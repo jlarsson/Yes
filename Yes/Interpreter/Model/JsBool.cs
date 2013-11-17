@@ -13,11 +13,6 @@ namespace Yes.Interpreter.Model
         public bool Value { get; protected set; }
 
 
-        public override JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Bool; }
-        }
-
         public override int? ToArrayIndex()
         {
             return Value ? 1 : 0;
@@ -46,6 +41,11 @@ namespace Yes.Interpreter.Model
         public override string ToString()
         {
             return Value ? "true" : "false";
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsBool(environment, Prototype, Value);
         }
     }
 }

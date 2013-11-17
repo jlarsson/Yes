@@ -4,8 +4,9 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class NumberConstructor: JsConstructor, INumberConstructor{
-        public NumberConstructor(IEnvironment environment) : base(environment)
+    public class NumberConstructor: JsConstructor<JsNumber>, INumberConstructor{
+        public NumberConstructor(IEnvironment environment)
+            : base(environment, environment.Context.GetPrototype<NumberConstructor>())
         {
         }
 
@@ -17,6 +18,11 @@ namespace Yes.Interpreter.Model
         public IJsNumber Construct(double value)
         {
             return new JsNumber(Environment,ClassPrototype, value);
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new NumberConstructor(environment);
         }
     }
 }

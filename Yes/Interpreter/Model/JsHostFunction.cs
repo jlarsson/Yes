@@ -13,14 +13,14 @@ namespace Yes.Interpreter.Model
 
         public Func<IEnvironment, IJsValue, IJsValue[], IJsValue> Func { get; protected set; }
 
-        public override JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Function; }
-        }
-
         public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
             return Func(Environment, @this, arguments) ?? JsUndefined.Value;
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsHostFunction(environment,Func);
         }
     }
 }

@@ -12,11 +12,6 @@ namespace Yes.Interpreter.Model
 
         public double Value { get; set; }
 
-        public override JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Number; }
-        }
-
         public override int? ToArrayIndex()
         {
             return (int)Math.Floor(Value);
@@ -49,6 +44,11 @@ namespace Yes.Interpreter.Model
         public override string ToString()
         {
             return Value.ToString();
+        }
+
+        public override IJsValue CloneTo(IEnvironment environment)
+        {
+            return new JsNumber(environment,Prototype,Value);
         }
     }
 }

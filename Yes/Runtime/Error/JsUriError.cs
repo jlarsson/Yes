@@ -1,4 +1,4 @@
-namespace Yes.Runtime
+namespace Yes.Runtime.Error
 {
     public class JsUriError : JsError
     {

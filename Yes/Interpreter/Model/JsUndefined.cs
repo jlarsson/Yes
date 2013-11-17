@@ -1,4 +1,5 @@
 using Yes.Runtime;
+using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Model
 {
@@ -34,11 +35,6 @@ namespace Yes.Interpreter.Model
         public override string ToString()
         {
             return "undefined";
-        }
-
-        public JsTypeCode TypeCode
-        {
-            get { return JsTypeCode.Undefined; }
         }
 
         public IReference GetReference(IJsValue name)

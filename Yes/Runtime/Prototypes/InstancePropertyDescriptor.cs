@@ -1,5 +1,6 @@
 using System.Reflection;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Error;
 
 namespace Yes.Runtime.Prototypes
 {

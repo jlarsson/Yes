@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 
 namespace Yes.Runtime
 {

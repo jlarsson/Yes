@@ -1,4 +1,5 @@
 using Yes.Interpreter.Model;
+using Yes.Runtime.Error;
 
 namespace Yes.Runtime.Environment
 {

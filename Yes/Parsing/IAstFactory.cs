@@ -9,8 +9,8 @@ namespace Yes.Parsing
         TAst LiteralName(string name);
         TAst Null();
         TAst Bool(bool value);
-        TAst Number(object value);
-        TAst String(object value);
+        TAst Number(double value);
+        TAst String(string value);
         TAst Function(TAst name, IEnumerable<TAst> arguments, TAst statements);
         TAst Object(IEnumerable<Tuple<TAst, TAst>> members);
         TAst Array(IEnumerable<TAst> members);

@@ -39,5 +39,10 @@ namespace Yes.Utility
             }
             return v;
         }
+
+        public static double ParseDouble(string text)
+        {
+            return double.Parse(text, DoubleFormat);
+        }
     }
 }

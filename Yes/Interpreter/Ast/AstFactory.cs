@@ -63,14 +63,14 @@ namespace Yes.Interpreter.Ast
             return new Bool(value);
         }
 
-        public IAst Number(object value)
+        public IAst Number(double value)
         {
-            return new Number(Convert.ToDouble(value, Conversion.DoubleFormat));
+            return new Number(value);
         }
 
-        public IAst String(object value)
+        public IAst String(string value)
         {
-            return new String(value.ToString());
+            return new String(value);
         }
 
         public IAst Function(IAst name, IEnumerable<IAst> arguments, IAst statements)

@@ -12,15 +12,11 @@ namespace Yes.Parsing.Tdop
         public IRule<TLexeme, TAst, TAstFactory, TState> GetRule(TLexeme lexeme)
         {
             Rule rule;
-            return _rules.TryGetValue(GetRuleId(lexeme), out rule) ? rule : null;
+            //return _rules.TryGetValue(GetRuleId(lexeme), out rule) ? rule : null;
+            return _rules.TryGetValue(lexeme.Id, out rule) || _rules.TryGetValue(lexeme.Text, out rule) ? rule : null;
         }
 
         #endregion
-
-        protected virtual string GetRuleId(TLexeme lexeme)
-        {
-            return lexeme.Id;
-        }
 
         public Rule MakeRule(string id, int bp = 0)
         {

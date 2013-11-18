@@ -103,7 +103,9 @@
     <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
+    <Compile Include="Parsing\GetJavascriptLexemeId.cs" />
     <Compile Include="Parsing\IJavascriptParserState.cs" />
+    <Compile Include="Parsing\ILexemeMapper.cs" />
     <Compile Include="Parsing\ILexicalScope.cs" />
     <Compile Include="Parsing\JavascriptParserState.cs" />
     <Compile Include="Parsing\LexicalFeature.cs" />

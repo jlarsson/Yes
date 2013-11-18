@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Yes.Interpreter.Ast;
 using Yes.Parsing.Tdop;
 using Yes.Runtime.Error;
+using Yes.Utility;
 
 namespace Yes.Parsing
 {
@@ -18,9 +19,9 @@ namespace Yes.Parsing
         {
             Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete", "void", "instanceof");
 
-            Literal("(number)", (state, f, l) => f.Number(l.Value));
-            Literal("(string)", (state, f, l) => f.String(l.Value));
-            Literal("(name)", (state, f, l) => f.Name(l.Value.ToString()));
+            Literal("(number)", (state, f, l) => f.Number(Conversion.ParseDouble(l.Text)));
+            Literal("(string)", (state, f, l) => f.String(l.Text));
+            Literal("(name)", (state, f, l) => f.Name(l.Text));
 
             // For operator precedence: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FOperators%2FOperator_Precedence
 
@@ -172,6 +173,9 @@ namespace Yes.Parsing
                              return s;
                          });
 
+            Std("(comment)", (state, p, f) => null);
+            Std("(error)", (state, p, f) => { throw new JsSyntaxError(); });
+
             Std("var", (state, p, f) =>
                            {
                                var declarations = new List<TAst>();
@@ -275,7 +279,7 @@ namespace Yes.Parsing
                              {
                                  if (!state.Scope.IsAllowed(LexicalFeature.Break))
                                  {
-                                     p.Token.Lexeme.Error("Keyword break is not valid here.");
+                                     throw new JsSyntaxError();
                                  }
                                  AdvanceOptionalSemiColon(p);
                                  return f.Break();
@@ -284,7 +288,7 @@ namespace Yes.Parsing
                                 {
                                     if (!state.Scope.IsAllowed(LexicalFeature.Continue))
                                     {
-                                        p.Token.Lexeme.Error("Keyword continue is not valid here.");
+                                        throw new JsSyntaxError();
                                     }
                                     AdvanceOptionalSemiColon(p);
                                     return f.Continue();
@@ -350,20 +354,6 @@ namespace Yes.Parsing
             }
         }
 
-        protected override string GetRuleId(TLexeme lexeme)
-        {
-            var id = lexeme.Id;
-            if ("(name)".Equals(id))
-            {
-                var kwd = lexeme.Value.ToString();
-                if (_keywords.Contains(kwd))
-                {
-                    return kwd;
-                }
-            }
-            return id;
-        }
-
         private bool AdvanceOptionalSemiColon(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance(";"))
@@ -378,14 +368,14 @@ namespace Yes.Parsing
         {
             var t = p.Token;
             p.Advance("(name)");
-            return p.Factory.LiteralName(t.Lexeme.Value.ToString());
+            return p.Factory.LiteralName(t.Lexeme.Text);
         }
 
         private TAst TryParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance("(name)"))
             {
-                var name = p.Factory.Name(p.Token.Lexeme.Value.ToString());
+                var name = p.Factory.Name(p.Token.Lexeme.Text);
                 p.Advance();
                 return name;
             }
@@ -396,7 +386,7 @@ namespace Yes.Parsing
         {
             if (p.CanAdvance("(string)"))
             {
-                var s = p.Factory.String(p.Token.Lexeme.Value.ToString());
+                var s = p.Factory.String(p.Token.Lexeme.Text);
                 p.Advance();
                 return s;
             }

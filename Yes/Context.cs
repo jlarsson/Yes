@@ -59,7 +59,7 @@ namespace Yes
         public IJsValue Execute(string source)
         {
             var ast = new JavascriptParser().Parse(new AstFactory(Operators), source);
-            return ast.Evaluate(Environment);
+            return (ast != null) ? ast.Evaluate(Environment) : JsUndefined.Value;
         }
 
         public IJsObject GetPrototype(Type type, IJsConstructor constructor = null)

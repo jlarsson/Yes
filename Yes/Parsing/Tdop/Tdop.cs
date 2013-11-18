@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Yes.Runtime.Error;
 
 namespace Yes.Parsing.Tdop
 {
@@ -23,7 +24,7 @@ namespace Yes.Parsing.Tdop
 
         public bool CanAdvance(string id)
         {
-            return (Token != null) && ((Token.Lexeme.Id == id) || (Token.Lexeme.Value.ToString() == id));
+            return (Token != null) && ((Token.Lexeme.Id == id) || (Token.Lexeme.Text == id));
         }
 
         public void Advance()
@@ -54,8 +55,7 @@ namespace Yes.Parsing.Tdop
             }
             if (Token.Lexeme.Id != id)
             {
-                Token.Lexeme.Error("Expected " + id);
-                throw new ApplicationException("Expected " + id);
+                throw new JsSyntaxError();
             }
             Advance();
         }
@@ -67,7 +67,7 @@ namespace Yes.Parsing.Tdop
                 return false;
             }
             var canAdvance = Token.Lexeme.Id == id;
-            canAdvance |= Token.Lexeme.Value.ToString() == id;
+            canAdvance |= Token.Lexeme.Text == id;
             if (canAdvance)
             {
                 Advance();
@@ -82,15 +82,8 @@ namespace Yes.Parsing.Tdop
 
             Advance();
 
-            //if (t.Rule.Std != null)
-            //{
-            //    return t.Rule.Std(this);
-            //}
-
             var left = Nud(t, state);
 
-            //while (rbp < Token.Rule.Lbp)
-            //while ((Token != null) && (rbp < Token.Rule.Lbp))
             while ((Token != null) && (Token.Rule != null) && (rbp < Token.Rule.Lbp))
             {
                 t = Token;

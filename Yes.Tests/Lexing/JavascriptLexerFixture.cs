@@ -16,7 +16,7 @@ _ // hello /*
 
             foreach (var l in new JavascriptLexer().Lex(source))
             {
-                Console.Out.WriteLine("{0}: {1}", l.Type, l.Value);
+                Console.Out.WriteLine("{0}: {1}", l.Id, l.Value);
             }
             
         }

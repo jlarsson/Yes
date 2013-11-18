@@ -19,7 +19,7 @@ namespace Yes.Tests.Lexing
                 .123e45
                 .123e-45
                 ";
-            Assert.That(new JavascriptLexer().Lex(source).All(l => l.Type == JavascriptLexer.LexemeType.Number));
+            Assert.That(new JavascriptLexer().Lex(source).All(l => l.Id == "(number)"));
         }
 
         [Test]
@@ -36,7 +36,7 @@ namespace Yes.Tests.Lexing
                 ";
             Assert.That(
                 from l in new JavascriptLexer().Lex(source)
-                select l.Value,
+                select l.Text,
                 Is.EquivalentTo(new string[] {"1", ".1", "1.2", "1.23e45", "1.23e-45", ".123e45", ".123e-45"}));
         }
 

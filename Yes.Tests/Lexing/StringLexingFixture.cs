@@ -14,7 +14,7 @@ namespace Yes.Tests.Lexing
 'a'
 'a \r\n'
 ";
-            Assert.That(new JavascriptLexer().Lex(source).All(l => l.Type == JavascriptLexer.LexemeType.String));
+            Assert.That(new JavascriptLexer().Lex(source).All(l => l.Id == "(string)"));
             
         }
     }

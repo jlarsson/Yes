@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Yes.Parsing.Tdop;
 
 namespace Yes.Parsing
 {
@@ -23,23 +24,23 @@ namespace Yes.Parsing
 
         #endregion
 
-        public IEnumerable<Lexeme> Lex(string source)
+        public IEnumerable<Lexeme> Lex(string source, ILexemeMapper lexemeMapper = null)
         {
-            return new Runner(source).Lex().Where(l => l != null);
+            return new Runner(source, lexemeMapper ?? new JavascriptLexemeMapper()).Lex().Where(l => l != null);
         }
 
         #region Nested type: Lexeme
 
-        public class Lexeme
+        public class Lexeme: ILexeme
         {
+            public string Id { get; set; }
+            public string Text { get; set; }
+            public object Value { get; set; }
             public string Source { get; set; }
             public int Position { get; set; }
             public int Length { get; set; }
             public int Line { get; set; }
             public int Column { get; set; }
-            public LexemeType Type { get; set; }
-
-            public string Value { get; set; }
         }
 
         #endregion
@@ -130,6 +131,7 @@ namespace Yes.Parsing
                     @"(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n)");
 
             private readonly string _source;
+            private readonly ILexemeMapper _lexemeMapper;
             private int _column;
             private int _line;
             private int _pos;
@@ -169,9 +171,10 @@ namespace Yes.Parsing
                 }
             }
 
-            public Runner(string source)
+            public Runner(string source, ILexemeMapper lexemeMapper)
             {
                 _source = source;
+                _lexemeMapper = lexemeMapper;
             }
 
             private Lexeme TryLexOperator()
@@ -181,7 +184,7 @@ namespace Yes.Parsing
                     );
                 if (v != null)
                 {
-                    return CreateLexeme(LexemeType.Operator, v.Length);
+                    return CreateLexeme(_lexemeMapper.OperatorId, v.Length);
                 }
                 return null;
             }
@@ -205,7 +208,7 @@ namespace Yes.Parsing
                         e = _source.Length;
                     }
                     var l = e - _pos;
-                    return CreateLexeme(LexemeType.Comment, l);
+                    return CreateLexeme(_lexemeMapper.CommentId, l);
                 }
 
                 if (_source[_pos + 1] == '*')
@@ -213,10 +216,10 @@ namespace Yes.Parsing
                     var e = _source.IndexOf("*/", _pos + 2, StringComparison.Ordinal);
                     if (e < 0)
                     {
-                        return CreateLexeme(LexemeType.Error, "Unterminated comment", _source.Length - _pos);
+                        return CreateLexeme(_lexemeMapper.ErrorId, "Unterminated comment", _source.Length - _pos);
                     }
                     var l = e + 2 - _pos;
-                    return CreateLexeme(LexemeType.Comment, l);
+                    return CreateLexeme(_lexemeMapper.CommentId, l);
                 }
                 return null;
             }
@@ -224,13 +227,13 @@ namespace Yes.Parsing
             private Lexeme TryLexSingleQuotedString()
             {
                 var m = MatchSingleQuotedString.Match(_source, _pos);
-                return m.Success ? CreateLexeme(LexemeType.String, UnsecapeString(m.Value), m.Length) : null;
+                return m.Success ? CreateLexeme(_lexemeMapper.StringId, UnsecapeString(m.Value), m.Length) : null;
             }
 
             private Lexeme TryLexDoubleQuotedString()
             {
                 var m = MatchDoubleQuotedString.Match(_source, _pos);
-                return m.Success ? CreateLexeme(LexemeType.String, UnsecapeString(m.Value), m.Length) : null;
+                return m.Success ? CreateLexeme(_lexemeMapper.StringId, UnsecapeString(m.Value), m.Length) : null;
             }
 
             private Lexeme TryLexIdentifier(char c)
@@ -243,7 +246,7 @@ namespace Yes.Parsing
                         ++p;
                     }
                     var l = p - _pos;
-                    return CreateLexeme(LexemeType.Name, l);
+                    return CreateLexeme(_lexemeMapper.NameId, l);
                 }
                 return null;
             }
@@ -285,34 +288,35 @@ namespace Yes.Parsing
 
                 if ((l > 1) || char.IsDigit(c))
                 {
-                    return CreateLexeme(LexemeType.Number, l);
+                    return CreateLexeme(_lexemeMapper.NumberId, l);
                 }
                 return null;
             }
 
             private Lexeme TryLexSingleCharacterOperator()
             {
-                return CreateLexeme(LexemeType.Operator, 1);
+                return CreateLexeme(_lexemeMapper.OperatorId, 1);
             }
 
-            private Lexeme CreateLexeme(LexemeType type, string value, int length)
+            private Lexeme CreateLexeme(Func<string, string> getId, string value, int length)
             {
                 var l = new Lexeme
                             {
-                                Line = _line,
-                                Column = _column,
+                                Id = getId(value),
+                                Text = value,
+                                Source = _source,
                                 Position = _pos,
-                                Type = type,
-                                Value = value,
-                                Source = _source
+                                Length = length,
+                                Line = _line,
+                                Column = _column
                             };
                 Advance(length);
                 return l;
             }
 
-            private Lexeme CreateLexeme(LexemeType type, int length)
+            private Lexeme CreateLexeme(Func<string,string> getId, int length)
             {
-                return CreateLexeme(type, _source.Substring(_pos, length), length);
+                return CreateLexeme(getId, _source.Substring(_pos, length), length);
             }
 
             private void Advance(int count)
@@ -363,7 +367,7 @@ namespace Yes.Parsing
 
             private Lexeme LexFail()
             {
-                return CreateLexeme(LexemeType.Error, "Illegal character in input", 1);
+                return CreateLexeme(_lexemeMapper.ErrorId, "Illegal character in input", 1);
             }
 
             private Lexeme TryLookupLex(char c, Func<Runner, char, Lexeme>[] lookup)

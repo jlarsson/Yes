@@ -123,9 +123,9 @@ namespace Yes.Interpreter.Model
         }
 
         [JsInstanceMethod("push")]
-        public IJsValue JsPush(IJsValue argument)
+        public IJsValue JsPush(IJsValue[] argument)
         {
-            _array.Add(argument);
+            _array.Add(argument.FirstOrDefault() ?? JsUndefined.Value);
             return this;
         }
 

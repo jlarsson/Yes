@@ -6,102 +6,94 @@ using Yes.Runtime.Error;
 
 namespace Yes.Parsing
 {
-    public interface IStaticScope
-    {
-    }
-
-    public class JavascriptGrammar<TLexeme, TAst> : Grammar<TLexeme, TAst, IAstFactory<TAst>> where TLexeme : ILexeme
+    public class JavascriptGrammar<TLexeme, TAst> : Grammar<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState>
+        where TLexeme : ILexeme
                                                                                               where TAst : class
     {
         public static readonly JavascriptGrammar<TLexeme, TAst> Default = new JavascriptGrammar<TLexeme, TAst>();
 
         private readonly HashSet<string> _keywords = new HashSet<string>();
 
-        protected Stack<StaticScope> Scopes = new Stack<StaticScope>();
-
         protected JavascriptGrammar()
         {
-            NewScope();
             Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete", "void", "instanceof");
 
-            Literal("(number)", (f, l) => f.Number(l.Value));
-            Literal("(string)", (f, l) => f.String(l.Value));
-            Literal("(name)", (f, l) => f.Name(l.Value.ToString()));
+            Literal("(number)", (state, f, l) => f.Number(l.Value));
+            Literal("(string)", (state, f, l) => f.String(l.Value));
+            Literal("(name)", (state, f, l) => f.Name(l.Value.ToString()));
 
             // For operator precedence: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FOperators%2FOperator_Precedence
 
-            Assignment(10, "=", (f, lhs, rhs) => f.Assign(lhs, rhs));
-            Assignment(10, "-=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("-",lhs,rhs)));
-            Assignment(10, "+=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("+", lhs, rhs)));
+            Assignment(10, "=", (state, f, lhs, rhs) => f.Assign(lhs, rhs));
+            Assignment(10, "-=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("-", lhs, rhs)));
+            Assignment(10, "+=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("+", lhs, rhs)));
 
-            Assignment(10, "*=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("*", lhs, rhs)));
-            Assignment(10, "/=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("/", lhs, rhs)));
-            Assignment(10, "<<=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("<<", lhs, rhs)));
-            Assignment(10, ">>=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>", lhs, rhs)));
-            Assignment(10, ">>>=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>>", lhs, rhs)));
-            Assignment(10, "&=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("&", lhs, rhs)));
-            Assignment(10, "^=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("^", lhs, rhs)));
-            Assignment(10, "!=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("!", lhs, rhs)));
+            Assignment(10, "*=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("*", lhs, rhs)));
+            Assignment(10, "/=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("/", lhs, rhs)));
+            Assignment(10, "<<=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("<<", lhs, rhs)));
+            Assignment(10, ">>=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>", lhs, rhs)));
+            Assignment(10, ">>>=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>>", lhs, rhs)));
+            Assignment(10, "&=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("&", lhs, rhs)));
+            Assignment(10, "^=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("^", lhs, rhs)));
+            Assignment(10, "!=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("!", lhs, rhs)));
 
-            Led("?", 15, (p, l) =>
+            Led("?", 15, (state, p, l) =>
                              {
-                                 var t = p.Expression(0);
+                                 var t = p.Expression(state, 0);
                                  p.Advance(":");
-                                 var f = p.Expression(1);
+                                 var f = p.Expression(state, 0);
 
                                  return p.Factory.Conditional(l, t, f);
                              });
-            //Ternary(15,"?:")
+            Infix(20, "||", (state, f, lhs, rhs) => f.BinaryOperation("||", lhs, rhs));
+            Infix(21, "&&", (state, f, lhs, rhs) => f.BinaryOperation("&&", lhs, rhs));
+            Infix(22, "|", (state, f, lhs, rhs) => f.BinaryOperation("|", lhs, rhs));
+            Infix(23, "^", (state, f, lhs, rhs) => f.BinaryOperation("^", lhs, rhs));
+            Infix(24, "&", (state, f, lhs, rhs) => f.BinaryOperation("&", lhs, rhs));
 
-            Infix(20, "||", (f, lhs, rhs) => f.BinaryOperation("||", lhs, rhs));
-            Infix(21, "&&", (f, lhs, rhs) => f.BinaryOperation("&&", lhs, rhs));
-            Infix(22, "|", (f, lhs, rhs) => f.BinaryOperation("|", lhs, rhs));
-            Infix(23, "^", (f, lhs, rhs) => f.BinaryOperation("^", lhs, rhs));
-            Infix(24, "&", (f, lhs, rhs) => f.BinaryOperation("&", lhs, rhs));
+            Prefix(40, "instanceof", (state, f, v) => f.UnaryOperation("instanceof", v));
+            Infix(40, "in", (state, f, lhs, rhs) => f.BinaryOperation("in", lhs, rhs));
 
-            Prefix(40, "instanceof", (f, v) => f.UnaryOperation("instanceof", v));
-            Infix(40, "in", (f, lhs, rhs) => f.BinaryOperation("in", lhs, rhs));
+            Infix(40, "===", (state, f, lhs, rhs) => f.BinaryOperation("===", lhs, rhs));
+            Infix(40, "!==", (state, f, lhs, rhs) => f.BinaryOperation("!==", lhs, rhs));
+            Infix(40, "==", (state, f, lhs, rhs) => f.BinaryOperation("==", lhs, rhs));
+            Infix(40, "!=", (state, f, lhs, rhs) => f.BinaryOperation("!=", lhs, rhs));
+            Infix(40, "<", (state, f, lhs, rhs) => f.BinaryOperation("<", lhs, rhs));
+            Infix(40, "<=", (state, f, lhs, rhs) => f.BinaryOperation("<=", lhs, rhs));
+            Infix(40, ">", (state, f, lhs, rhs) => f.BinaryOperation(">", lhs, rhs));
+            Infix(40, ">=", (state, f, lhs, rhs) => f.BinaryOperation(">=", lhs, rhs));
 
-            Infix(40, "===", (f, lhs, rhs) => f.BinaryOperation("===", lhs, rhs));
-            Infix(40, "!==", (f, lhs, rhs) => f.BinaryOperation("!==", lhs, rhs));
-            Infix(40, "==", (f, lhs, rhs) => f.BinaryOperation("==", lhs, rhs));
-            Infix(40, "!=", (f, lhs, rhs) => f.BinaryOperation("!=", lhs, rhs));
-            Infix(40, "<", (f, lhs, rhs) => f.BinaryOperation("<", lhs, rhs));
-            Infix(40, "<=", (f, lhs, rhs) => f.BinaryOperation("<=", lhs, rhs));
-            Infix(40, ">", (f, lhs, rhs) => f.BinaryOperation(">", lhs, rhs));
-            Infix(40, ">=", (f, lhs, rhs) => f.BinaryOperation(">=", lhs, rhs));
+            Infix(50, "+", (state, f, lhs, rhs) => f.BinaryOperation("+", lhs, rhs));
+            Infix(50, "-", (state, f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
+            Infix(60, "*", (state, f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
+            Infix(60, "/", (state, f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
+            Infix(60, "%", (state, f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
 
-            Infix(50, "+", (f, lhs, rhs) => f.BinaryOperation("+", lhs, rhs));
-            Infix(50, "-", (f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
-            Infix(60, "*", (f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
-            Infix(60, "/", (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
-            Infix(60, "%", (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
-
-            Prefix(70, "-", (f, v) => f.UnaryOperation("-",v));
-            Prefix(70, "+", (f, v) => f.UnaryOperation("-", v));
-            Prefix(70, "!", (f, v) => f.UnaryOperation("!", v));
-            Prefix(70, "~", (f, v) => f.UnaryOperation("!", v));
-            Prefix(70, "typeof", (f, v) => f.UnaryOperation("typeof", v));
-            Prefix(70, "delete", (f, v) => f.Delete(v));
-            Prefix(70, "void", (f, v) => f.UnaryOperation("void", v));
+            Prefix(70, "-", (state, f, v) => f.UnaryOperation("-", v));
+            Prefix(70, "+", (state, f, v) => f.UnaryOperation("-", v));
+            Prefix(70, "!", (state, f, v) => f.UnaryOperation("!", v));
+            Prefix(70, "~", (state, f, v) => f.UnaryOperation("!", v));
+            Prefix(70, "typeof", (state, f, v) => f.UnaryOperation("typeof", v));
+            Prefix(70, "delete", (state, f, v) => f.Delete(v));
+            Prefix(70, "void", (state, f, v) => f.UnaryOperation("void", v));
 
 
 
 
             // Infix (".",80) - member access
-            Led(".", 80, (p, left) =>
+            Led(".", 80, (state, p, left) =>
                              {
                                  var name = ParseName(p);
                                  return p.Factory.Member(left, name);
                              });
 
             // Infix("(",80) - function application
-            Led("(", 80, (p, left) =>
+            Led("(", 80, (state, p, left) =>
                              {
                                  var arguments = new List<TAst>();
                                  while (!p.CanAdvance(")"))
                                  {
-                                     arguments.Add(p.Expression(0));
+                                     arguments.Add(p.Expression(state, 0));
                                      if (!p.TryAdvance(","))
                                      {
                                          break;
@@ -111,29 +103,29 @@ namespace Yes.Parsing
                                  return p.Factory.Apply(left, arguments);
                              });
 
-            Led("[", 80, (p, left) =>
+            Led("[", 80, (state, p, left) =>
                              {
-                                 var argument = p.Expression(0);
+                                 var argument = p.Expression(state, 0);
                                  p.Advance("]");
                                  return p.Factory.Member(left, argument);
                              });
 
             // Handle E => (E)
-            Nud("(", (p, l) =>
+            Nud("(", (state, p, l) =>
                          {
-                             var e = p.Expression(0);
+                             var e = p.Expression(state, 0);
                              p.Advance(")");
                              return e;
                          });
 
-            Prefix("new", (p, f) =>
+            Prefix("new", (state, p, f) =>
                               {
-                                  var constructor = p.Expression(100);
+                                  var constructor = p.Expression(state, 100);
                                   var arguments = new List<TAst>();
                                   p.Advance("(");
                                   while (!p.CanAdvance(")"))
                                   {
-                                      arguments.Add(p.Expression(0));
+                                      arguments.Add(p.Expression(state, 0));
                                       if (!p.TryAdvance(","))
                                       {
                                           break;
@@ -143,9 +135,9 @@ namespace Yes.Parsing
 
                                   return p.Factory.Construct(constructor,arguments);
                               });
-            Prefix("function", (p, f) =>
+            Prefix("function", (state, p, f) =>
                                    {
-                                       using (NewScope())
+                                       using (state.NewScope())
                                        {
                                            var name = TryParseName(p);
                                            var arguments = new List<TAst>();
@@ -167,20 +159,20 @@ namespace Yes.Parsing
                                            p.Advance(")");
                                            p.Advance("{");
 
-                                           var statements = Statements(p);
+                                           var statements = Statements(state, p);
                                            var result = p.Factory.Function(name, arguments, statements);
                                            p.Advance("}");
                                            return result;
                                        }
                                    });
-            Std("{", (p, f) =>
+            Std("{", (state, p, f) =>
                          {
-                             var s = Statements(p);
+                             var s = Statements(state, p);
                              p.Advance("}");
                              return s;
                          });
 
-            Std("var", (p, f) =>
+            Std("var", (state, p, f) =>
                            {
                                var declarations = new List<TAst>();
                                while (true)
@@ -189,7 +181,7 @@ namespace Yes.Parsing
                                    var value = default(TAst);
                                    if (p.TryAdvance("="))
                                    {
-                                       value = p.Expression(0);
+                                       value = p.Expression(state, 0);
                                    }
                                    declarations.Add(f.Var(name, value));
                                    if (!p.TryAdvance(","))
@@ -201,34 +193,34 @@ namespace Yes.Parsing
                                return f.Seq(declarations);
                            });
 
-            Std("return", (p, f) =>
+            Std("return", (state, p, f) =>
                               {
                                   //if (!Scope.IsAllowed(Feature.Return))
                                   if (p.TryAdvance(";"))
                                   {
                                       return f.Return(null);
                                   }
-                                  var v = p.Expression(0);
+                                  var v = p.Expression(state, 0);
                                   AdvanceOptionalSemiColon(p);
                                   return f.Return(v);
                               });
 
-            Std("if", (p, f) =>
+            Std("if", (state, p, f) =>
                           {
                               p.Advance("(");
-                              var @if = p.Expression(0);
+                              var @if = p.Expression(state, 0);
                               p.Advance(")");
-                              var @then = Block(p);
+                              var @then = Block(state, p);
                               TAst @else = null;
                               if (p.TryAdvance("else"))
                               {
-                                  @else = p.CanAdvance("if") ? Statement(p) : Block(p);
+                                  @else = p.CanAdvance("if") ? Statement(state, p) : Block(state, p);
                               }
                               return f.IfThenElse(@if, @then, @else);
                           });
-            Std("for", (p, f) =>
+            Std("for", (state, p, f) =>
                            {
-                               using (NewScope(Feature.Break|Feature.Continue))
+                               using (state.NewScope(LexicalFeature.Break | LexicalFeature.Continue))
                                {
                                    p.Advance("(");
 
@@ -237,13 +229,13 @@ namespace Yes.Parsing
                                    var initial = default(TAst);
                                    if (p.CanAdvance("var"))
                                    {
-                                       initial = Statement(p);
+                                       initial = Statement(state, p);
                                    }
                                    else
                                    {
                                        if (!p.CanAdvance(";"))
                                        {
-                                           initial = p.Expression(0);
+                                           initial = p.Expression(state, 0);
                                        }
                                        p.Advance(";");
                                    }
@@ -252,61 +244,61 @@ namespace Yes.Parsing
                                    var condition = default(TAst);
                                    if (!p.CanAdvance(";"))
                                    {
-                                       condition = p.Expression(0);
+                                       condition = p.Expression(state, 0);
                                    }
                                    p.Advance(";");
 
                                    var loop = default(TAst);
                                    if (!p.CanAdvance(")"))
                                    {
-                                       loop = p.Expression(0);
+                                       loop = p.Expression(state, 0);
                                    }
                                    p.Advance(")");
 
-                                   var block = Block(p);
+                                   var block = Block(state, p);
 
                                    return f.For(initial, condition, loop, block);
                                }
                            });
-            Std("while", (p, f) =>
+            Std("while", (state, p, f) =>
                              {
-                                 using (NewScope(Feature.Break|Feature.Continue))
+                                 using (state.NewScope(LexicalFeature.Break|LexicalFeature.Continue))
                                  {
                                      p.Advance("(");
-                                     var cond = p.Expression(0);
+                                     var cond = p.Expression(state, 0);
                                      p.Advance(")");
-                                     var block = Block(p);
+                                     var block = Block(state, p);
                                      return f.While(cond, block);
                                  }
                              });
-            Std("break", (p, f) =>
+            Std("break", (state, p, f) =>
                              {
-                                 if (!Scope.IsAllowed(Feature.Break))
+                                 if (!state.Scope.IsAllowed(LexicalFeature.Break))
                                  {
                                      p.Token.Lexeme.Error("Keyword break is not valid here.");
                                  }
                                  AdvanceOptionalSemiColon(p);
                                  return f.Break();
                              });
-            Std("continue", (p, f) =>
+            Std("continue", (state, p, f) =>
                                 {
-                                    if (!Scope.IsAllowed(Feature.Continue))
+                                    if (!state.Scope.IsAllowed(LexicalFeature.Continue))
                                     {
                                         p.Token.Lexeme.Error("Keyword continue is not valid here.");
                                     }
                                     AdvanceOptionalSemiColon(p);
                                     return f.Continue();
                                 });
-            
 
-            Prefix("{", (p, l) =>
+
+            Prefix("{", (state, p, l) =>
                             {
                                 var members = new List<Tuple<TAst, TAst>>();
                                 while (!p.CanAdvance("}"))
                                 {
                                     var name = TryParseStringLiteral(p) ?? ParseName(p);
                                     p.Advance(":");
-                                    var value = p.Expression(0);
+                                    var value = p.Expression(state, 0);
 
                                     members.Add(Tuple.Create(name, value));
                                     if (!p.CanAdvance(","))
@@ -320,12 +312,12 @@ namespace Yes.Parsing
                                 return p.Factory.Object(members);
                             });
 
-            Prefix("[", (p, l) =>
+            Prefix("[", (state, p, l) =>
                             {
                                 var members = new List<TAst>();
                                 while(!p.CanAdvance("]"))
                                 {
-                                    var member = p.Expression(0);
+                                    var member = p.Expression(state, 0);
                                     members.Add(member);
 
                                     if (!p.CanAdvance(","))
@@ -341,36 +333,13 @@ namespace Yes.Parsing
 
             // Error production
             // We end up here with scrips such as '{}.x;', since parser takes a block but user typed an object literal
-            Nud(".", (p, l) => { throw new JsSyntaxError(); });
+            Nud(".", (state, p, l) => { throw new JsSyntaxError(); });
         }
 
-        protected StaticScope Scope
-        {
-            get { return Scopes.Peek(); }
-        }
-
-        protected StaticScope NewScope()
-        {
-            return NewScope(Feature.None);
-        }
-
-        protected StaticScope NewScope(Feature allowedFeatures)
-        {
-            var scope = new StaticScope(this, allowedFeatures);
-            Scopes.Push(scope);
-            return scope;
-        }
-
-        private void PopScope()
-        {
-            Scopes.Pop();
-        }
-
-
-        private Rule Assignment(int bp, string id, Func<IAstFactory<TAst>, TAst, TAst, TAst> reduce)
+        private Rule Assignment(int bp, string id, Func<IJavascriptParserState, IAstFactory<TAst>, TAst, TAst, TAst> reduce)
         {
             // TODO: Ensure left is -lvalue
-            return Led(id, bp, (p, left) => reduce(p.Factory, left, p.Expression(bp - 1)));
+            return Led(id, bp, (state, p, left) => reduce(state, p.Factory, left, p.Expression(state, bp - 1)));
         }
 
         protected void Keywords(params string[] keywords)
@@ -395,7 +364,7 @@ namespace Yes.Parsing
             return id;
         }
 
-        private bool AdvanceOptionalSemiColon(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        private bool AdvanceOptionalSemiColon(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance(";"))
             {
@@ -405,14 +374,14 @@ namespace Yes.Parsing
             return false;
         }
 
-        private TAst ParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        private TAst ParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             var t = p.Token;
             p.Advance("(name)");
             return p.Factory.LiteralName(t.Lexeme.Value.ToString());
         }
 
-        private TAst TryParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        private TAst TryParseName(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance("(name)"))
             {
@@ -423,7 +392,7 @@ namespace Yes.Parsing
             return null;
         }
 
-        private TAst TryParseStringLiteral(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        private TAst TryParseStringLiteral(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance("(string)"))
             {
@@ -434,19 +403,19 @@ namespace Yes.Parsing
             return null;
         }
 
-        protected TAst Block(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        protected TAst Block(IJavascriptParserState state, ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             if (p.CanAdvance("{"))
             {
                 p.Advance("{");
-                var block = Statements(p);
+                var block = Statements(state, p);
                 p.Advance("}");
                 return block;
             }
-            return Statement(p);
+            return Statement(state, p);
         }
 
-        protected TAst Statement(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        protected TAst Statement(IJavascriptParserState state, ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             while (AdvanceOptionalSemiColon(p))
             {
@@ -461,24 +430,24 @@ namespace Yes.Parsing
             if ((t.Rule != null) && (t.Rule.Std != null))
             {
                 p.Advance();
-                return t.Rule.Std(p);
+                return t.Rule.Std(state, p);
             }
-            var e = p.Expression(0);
+            var e = p.Expression(state, 0);
             if ((e is IAstDirective) && (e as IAstDirective).IsUseStrict)
             {
-                Scope.UseStrict = true;
+                state.Scope.UseStrict = true;
             }
 
             AdvanceOptionalSemiColon(p);
             return e;
         }
 
-        public TAst Statements(ITdop<TLexeme, TAst, IAstFactory<TAst>> p)
+        public TAst Statements(IJavascriptParserState state, ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)
         {
             var statements = new List<TAst>();
             while ((p.Token != null) && !p.CanAdvance("}"))
             {
-                var s = Statement(p);
+                var s = Statement(state, p);
                 if (s != null)
                 {
                     statements.Add(s);
@@ -486,49 +455,5 @@ namespace Yes.Parsing
             }
             return p.Factory.Block(statements);
         }
-
-        #region Nested type: Feature
-
-        [Flags]
-        protected enum Feature
-        {
-            None = 0x00,
-            Break = 0x01,
-            Continue = 0x02,
-        }
-
-        #endregion
-
-        #region Nested type: StaticScope
-
-        protected class StaticScope : IStaticScope, IDisposable
-        {
-            public StaticScope(JavascriptGrammar<TLexeme, TAst> grammar, Feature allowedFeatures)
-            {
-                Grammar = grammar;
-                AllowedFeatures = allowedFeatures;
-            }
-
-            public JavascriptGrammar<TLexeme, TAst> Grammar { get; protected set; }
-            public Feature AllowedFeatures { get; protected set; }
-
-            public bool UseStrict { get; set; }
-
-            #region IDisposable Members
-
-            public void Dispose()
-            {
-                Grammar.PopScope();
-            }
-
-            #endregion
-
-            public bool IsAllowed(Feature feature)
-            {
-                return (AllowedFeatures & feature) == feature;
-            }
-        }
-
-        #endregion
     }
 }

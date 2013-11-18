@@ -3,17 +3,16 @@ using System.Collections.Generic;
 
 namespace Yes.Parsing.Tdop
 {
-    public class Grammar<TLexeme, TAst, TAstFactory> : IGrammar<TLexeme, TAst, TAstFactory> where TLexeme : ILexeme
+    public class Grammar<TLexeme, TAst, TAstFactory, TState> : IGrammar<TLexeme, TAst, TAstFactory, TState> where TLexeme : ILexeme
     {
         private readonly Dictionary<string, Rule> _rules = new Dictionary<string, Rule>();
 
         #region IGrammar<TLexeme,TAst,TAstFactory> Members
 
-        public IRule<TLexeme, TAst, TAstFactory> GetRule(TLexeme lexeme)
+        public IRule<TLexeme, TAst, TAstFactory, TState> GetRule(TLexeme lexeme)
         {
             Rule rule;
             return _rules.TryGetValue(GetRuleId(lexeme), out rule) ? rule : null;
-            //return _rules[GetRuleId(lexeme)];
         }
 
         #endregion
@@ -42,79 +41,79 @@ namespace Yes.Parsing.Tdop
             return rule;
         }
 
-        public Rule Led(string id, int bp, Func<ITdop<TLexeme, TAst, TAstFactory>, TAst, TAst> led)
+        public Rule Led(string id, int bp, Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TAst, TAst> led)
         {
             var rule = MakeRule(id, bp);
             rule.Led = led;
             return rule;
         }
 
-        public Rule Nud(string id, Func<ITdop<TLexeme, TAst, TAstFactory>, TLexeme, TAst> nud)
+        public Rule Nud(string id, Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TLexeme, TAst> nud)
         {
             var rule = MakeRule(id);
             rule.Nud = nud;
             return rule;
         }
 
-        public Rule Std(string id, Func<ITdop<TLexeme, TAst, TAstFactory>, TAstFactory, TAst> reduce)
+        public Rule Std(string id, Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TAstFactory, TAst> reduce)
         {
             var rule = MakeRule(id);
-            rule.Std = p => reduce(p, p.Factory);
+            rule.Std = (state, p) => reduce(state, p, p.Factory);
             return rule;
         }
 
-        public Rule Literal(string id, Func<TAstFactory, TLexeme, TAst> reduce)
+        public Rule Literal(string id, Func<TState, TAstFactory, TLexeme, TAst> reduce)
         {
             var rule = MakeRule(id);
-            rule.Nud = (p, l) => reduce(p.Factory, l);
+            rule.Nud = (state, p, l) => reduce(state, p.Factory, l);
             return rule;
         }
 
-        public Rule Prefix(int bp, string id, Func<TAstFactory, TAst, TAst> reduce)
+        public Rule Prefix(int bp, string id, Func<TState, TAstFactory, TAst, TAst> reduce)
         {
-            return Prefix(id, (p, l) => reduce(p.Factory, p.Expression(bp)));
+            return Prefix(id, (state, p, l) => reduce(state, p.Factory, p.Expression(state, bp)));
         }
 
-        public Rule Prefix(string id, Func<ITdop<TLexeme, TAst, TAstFactory>, TLexeme, TAst> nud)
+        public Rule Prefix(string id, Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TLexeme, TAst> nud)
         {
             var rule = MakeRule(id);
             rule.Nud = nud;
             return rule;
         }
 
-        public Rule Infix(int bp, string id, Func<TAstFactory, TAst, TAst, TAst> reduce)
+        public Rule Infix(int bp, string id, Func<TState, TAstFactory, TAst, TAst, TAst> reduce)
         {
             var rule = MakeRule(id, bp);
-            rule.Led = (p, left) =>
+            rule.Led = (state, p, left) =>
                            {
-                               var second = p.Expression(bp);
-                               return reduce(p.Factory, left, second);
+                               var second = p.Expression(state, bp);
+                               return reduce(state, p.Factory, left, second);
                            };
             return rule;
         }
 
-        public Rule InfixR(string id, int bp, Func<TAstFactory, TAst, TAst, TAst> reduce)
+        public Rule InfixR(string id, int bp, Func<TState, TAstFactory, TAst, TAst, TAst> reduce)
         {
             var rule = MakeRule(id, bp);
-            rule.Led = (p, left) =>
+            rule.Led = (state, p, left) =>
             {
-                var second = p.Expression(bp-1);
-                return reduce(p.Factory, left, second);
+                var second = p.Expression(state, bp-1);
+                return reduce(state, p.Factory, left, second);
             };
             return rule;
         }
 
         #region Nested type: Rule
 
-        public class Rule : IRule<TLexeme, TAst, TAstFactory>
+        public class Rule : IRule<TLexeme, TAst, TAstFactory, TState>
         {
             #region IRule<TLexeme,TAst,TAstFactory> Members
 
             public string Id { get; set; }
             public int Lbp { get; set; }
-            public Func<ITdop<TLexeme, TAst, TAstFactory>, TAst, TAst> Led { get; set; }
-            public Func<ITdop<TLexeme, TAst, TAstFactory>, TLexeme, TAst> Nud { get; set; }
-            public Func<ITdop<TLexeme, TAst, TAstFactory>, TAst> Std { get; set; }
+            public Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TAst, TAst> Led { get; set; }
+            public Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TLexeme, TAst> Nud { get; set; }
+            public Func<TState, ITdop<TLexeme, TAst, TAstFactory, TState>, TAst> Std { get; set; }
 
             #endregion
         }

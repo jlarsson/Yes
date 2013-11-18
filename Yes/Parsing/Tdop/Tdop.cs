@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Yes.Parsing.Tdop
 {
-    public class Tdop<TLexeme, TAst, TAstFactory> : ITdop<TLexeme, TAst, TAstFactory> where TLexeme : ILexeme
+    public class Tdop<TLexeme, TAst, TAstFactory, TState> : ITdop<TLexeme, TAst, TAstFactory, TState> where TLexeme : ILexeme
     {
-        public Tdop(IGrammar<TLexeme, TAst, TAstFactory> grammar, TAstFactory factory, IEnumerable<TLexeme> lexemes)
+        public Tdop(IGrammar<TLexeme, TAst, TAstFactory, TState> grammar, TAstFactory factory, IEnumerable<TLexeme> lexemes)
         {
             Grammar = grammar;
             Factory = factory;
@@ -13,37 +13,13 @@ namespace Yes.Parsing.Tdop
         }
 
         public IEnumerator<TLexeme> Lexemes { get; protected set; }
-        public IGrammar<TLexeme, TAst, TAstFactory> Grammar { get; protected set; }
+        public IGrammar<TLexeme, TAst, TAstFactory, TState> Grammar { get; protected set; }
 
         #region ITdop<TLexeme,TAst,TAstFactory> Members
 
-        public ISymbol<TLexeme, TAst, TAstFactory> Token { get; protected set; }
+        public ISymbol<TLexeme, TAst, TAstFactory, TState> Token { get; protected set; }
 
         public TAstFactory Factory { get; protected set; }
-
-        public TAst Expression(int rbp)
-        {
-            var t = Token;
-
-            Advance();
-
-            //if (t.Rule.Std != null)
-            //{
-            //    return t.Rule.Std(this);
-            //}
-
-            var left = Nud(t);
-
-            //while (rbp < Token.Rule.Lbp)
-            //while ((Token != null) && (rbp < Token.Rule.Lbp))
-            while ((Token != null) && (Token.Rule != null) && (rbp < Token.Rule.Lbp))
-            {
-                t = Token;
-                Advance();
-                left = Led(t, left);
-            }
-            return left;
-        }
 
         public bool CanAdvance(string id)
         {
@@ -100,32 +76,56 @@ namespace Yes.Parsing.Tdop
             return false;
         }
 
-        public TAst Parse()
+        public TAst Expression(TState state, int rbp)
+        {
+            var t = Token;
+
+            Advance();
+
+            //if (t.Rule.Std != null)
+            //{
+            //    return t.Rule.Std(this);
+            //}
+
+            var left = Nud(t, state);
+
+            //while (rbp < Token.Rule.Lbp)
+            //while ((Token != null) && (rbp < Token.Rule.Lbp))
+            while ((Token != null) && (Token.Rule != null) && (rbp < Token.Rule.Lbp))
+            {
+                t = Token;
+                Advance();
+                left = Led(t, left, state);
+            }
+            return left;
+        }
+
+        public TAst Parse(TState state)
         {
             Advance();
-            return Expression(0);
+            return Expression(state, 0);
         }
 
         #endregion
 
-        private TAst Led(ISymbol<TLexeme, TAst, TAstFactory> symbol, TAst left)
+        private TAst Led(ISymbol<TLexeme, TAst, TAstFactory, TState> symbol, TAst left, TState state)
         {
-            return symbol.Rule.Led(this, left);
+            return symbol.Rule.Led(state, this, left);
         }
 
-        private TAst Nud(ISymbol<TLexeme, TAst, TAstFactory> symbol)
+        private TAst Nud(ISymbol<TLexeme, TAst, TAstFactory, TState> symbol, TState state)
         {
-            return symbol.Rule.Nud(this, symbol.Lexeme);
+            return symbol.Rule.Nud(state, this, symbol.Lexeme);
         }
 
         #region Nested type: Symbol
 
-        public class Symbol : ISymbol<TLexeme, TAst, TAstFactory>
+        public class Symbol : ISymbol<TLexeme, TAst, TAstFactory, TState>
         {
             #region ISymbol<TLexeme,TAst,TAstFactory> Members
 
             public TLexeme Lexeme { get; set; }
-            public IRule<TLexeme, TAst, TAstFactory> Rule { get; set; }
+            public IRule<TLexeme, TAst, TAstFactory, TState> Rule { get; set; }
 
             #endregion
         }

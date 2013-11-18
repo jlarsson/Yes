@@ -103,6 +103,10 @@
     <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
+    <Compile Include="Parsing\IJavascriptParserState.cs" />
+    <Compile Include="Parsing\ILexicalScope.cs" />
+    <Compile Include="Parsing\JavascriptParserState.cs" />
+    <Compile Include="Parsing\LexicalFeature.cs" />
     <Compile Include="Runtime\Environment\ReadonlyReference.cs" />
     <Compile Include="Runtime\Error\JsNotImplemented.cs" />
     <Compile Include="Runtime\Operators\IBinaryOperator.cs" />

@@ -2,20 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Yes.Parsing.Tdop;
-using Yes.Runtime;
 using Yes.Runtime.Error;
 
 namespace Yes.Parsing
 {
     public class JavascriptParser
     {
-        private static readonly Regex Matcher = new Regex(
-            @"\s*(===|==|!=|<<=|>>=|\+\+|--|(\d+)|(_?[a-z]+[_a-z0-9]*)|.)",
-            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
         public IEnumerable<Lexeme> Tokenize(string source)
         {
-            Dictionary<JavascriptLexer.LexemeType,string> _types = new Dictionary<JavascriptLexer.LexemeType, string>()
+            var types = new Dictionary<JavascriptLexer.LexemeType, string>()
                                                                        {
                                                                            {JavascriptLexer.LexemeType.Number, "(number)"},
                                                                            {JavascriptLexer.LexemeType.String, "(string)"},
@@ -27,20 +22,19 @@ namespace Yes.Parsing
                    select new Lexeme()
                               {
                                   Value = lexeme.Value,
-                                  Id = _types.ContainsKey(lexeme.Type) ? _types[lexeme.Type] : lexeme.Value,
+                                  Id = types.ContainsKey(lexeme.Type) ? types[lexeme.Type] : lexeme.Value,
                                   Source = source,
                                   SourcePosition = lexeme.Position
                               };
-            //return from match in Matcher.Matches(source).OfType<Match>()
-            //       select CreateLexeme(match, source);
         }
 
         public TAst Parse<TAst>(IAstFactory<TAst> factory, string source) where TAst : class
         {
             var grammar = JavascriptGrammar<Lexeme, TAst>.Default;
-            var p = new Tdop<Lexeme, TAst, IAstFactory<TAst>>(grammar, factory, Tokenize(source));
+            var state = new JavascriptParserState();
+            var p = new Tdop<Lexeme, TAst, IAstFactory<TAst>, IJavascriptParserState>(grammar, factory, Tokenize(source));
             p.Advance();
-            return grammar.Statements(p);
+            return grammar.Statements(state, p);
         }
 
         protected Lexeme CreateLexeme(Match match, string source)

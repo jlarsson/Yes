@@ -70,7 +70,7 @@ namespace Yes.Parsing.Tdop
             return rule;
         }
 
-        public Rule Prefix(string id, int bp, Func<TAstFactory, TAst, TAst> reduce)
+        public Rule Prefix(int bp, string id, Func<TAstFactory, TAst, TAst> reduce)
         {
             return Prefix(id, (p, l) => reduce(p.Factory, p.Expression(bp)));
         }
@@ -82,7 +82,7 @@ namespace Yes.Parsing.Tdop
             return rule;
         }
 
-        public Rule Infix(string id, int bp, Func<TAstFactory, TAst, TAst, TAst> reduce)
+        public Rule Infix(int bp, string id, Func<TAstFactory, TAst, TAst, TAst> reduce)
         {
             var rule = MakeRule(id, bp);
             rule.Led = (p, left) =>

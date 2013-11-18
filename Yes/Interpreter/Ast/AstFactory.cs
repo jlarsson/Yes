@@ -113,6 +113,11 @@ namespace Yes.Interpreter.Ast
             throw new NotImplementedException();
         }
 
+        public IAst Delete(IAst ast)
+        {
+            return new Delete(ast);
+        }
+
         public IAst UnaryOperation(string @operator, IAst value)
         {
             return new UnaryOperation(Operators.GetUnaryOperator(@operator), value);
@@ -121,21 +126,6 @@ namespace Yes.Interpreter.Ast
         public IAst BinaryOperation(string @operator, IAst lhs, IAst rhs)
         {
             return new BinaryOperation(Operators.GetBinaryOperator(@operator), lhs, rhs);
-        }
-
-        public IAst Neg(IAst v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAst Not(IAst v)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAst TypeOf(IAst v)
-        {
-            throw new NotImplementedException();
         }
 
         public IAst Block(IEnumerable<IAst> statements)

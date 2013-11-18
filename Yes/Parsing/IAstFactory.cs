@@ -19,12 +19,9 @@ namespace Yes.Parsing
         TAst Assign(TAst lhs, TAst rhs);
         TAst DecAssign(TAst lhs, TAst rhs);
         TAst IncAssign(TAst lhs, TAst rhs);
+        TAst Delete(TAst ast);
         TAst UnaryOperation(string @operator, TAst value); 
         TAst BinaryOperation(string @operator, TAst lhs, TAst rhs);
-
-        TAst Neg(TAst v);
-        TAst Not(TAst v);
-        TAst TypeOf(TAst v);
         TAst Block(IEnumerable<TAst> statements);
         TAst Seq(IEnumerable<TAst> statements);
         TAst Var(TAst name, TAst value);

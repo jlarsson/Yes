@@ -1,5 +1,6 @@
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Ast
 {
@@ -28,6 +29,16 @@ namespace Yes.Interpreter.Ast
         {
             var obj = Instance.Evaluate(environment);
             return obj.GetReference(MemberName.Evaluate(environment)).SetValue(obj, value);
+        }
+
+        public IJsValue Delete(IEnvironment environment)
+        {
+            var obj = Instance.Evaluate(environment) as IJsObject;
+            if (obj == null)
+            {
+                throw new JsReferenceError();
+            }
+            return environment.CreateBool(obj.DeleteProperty(MemberName.Evaluate(environment).ToString()));
         }
 
         public IJsValue Evaluate(IEnvironment environment, out IJsValue @this)

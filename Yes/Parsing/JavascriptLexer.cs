@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Yes.Parsing
@@ -45,43 +44,91 @@ namespace Yes.Parsing
 
         #endregion
 
+        public class Trie<TChar, TValue>
+        {
+            private class Node
+            {
+                public TChar Char { get; set; }
+                public TValue Value { get; set; }
+                public Dictionary<TChar, Node> Children { get; protected set; }
+
+                public Node()
+                {
+                    Children = new Dictionary<TChar, Node>();
+                }
+            }
+
+            private readonly Node _root = new Node();
+
+            public void Add(IEnumerable<TChar> path, TValue value)
+            {
+                var node = _root;
+                foreach (var c in path)
+                {
+                    Node childNode;
+                    if (!node.Children.TryGetValue(c, out childNode))
+                    {
+                        childNode = new Node {Char = c};
+                        node.Children.Add(c, childNode);
+                    }
+                    node = childNode;
+                }
+                node.Value = value;
+            }
+
+            public TValue Find(IEnumerable<TChar> path)
+            {
+                var node = _root;
+                foreach (var c in path)
+                {
+                    Node childNode;
+                    if (!node.Children.TryGetValue(c, out childNode))
+                    {
+                        break;
+                    }
+                    node = childNode;
+                }
+                return node.Value;
+            }
+        }
+
         #region Nested type: Runner
 
         [DebuggerDisplay("{_source.Substring(_pos)}")]
         protected class Runner
         {
-            private static readonly string[] Punctuators = new[]
-                                                               {
-                                                                   "=",
-                                                                   "{", "}", "(", ")", "[", "]",
-                                                                   ".", ";", ",", "<", ">", "<=",
-                                                                   ">=", "==", "!=", "===", "!==",
-                                                                   "+", "-", "*", "%", "++", "--",
-                                                                   "<<", ">>", ">>>", "&", "|", "^",
-                                                                   "!", "~", "&&", "||", "?", ":",
-                                                                   "=", "+=", "-=", "*=", "%=", "<<=",
-                                                                   ">>=", ">>>=", "&=", "|=", "^=",
-                                                                   "/", "/=",
-                                                                   ","
-                                                               };
+            private static readonly string[] Operators = new[]
+                                                             {
+                                                                 "=",
+                                                                 "{", "}", "(", ")", "[", "]",
+                                                                 ".", ";", ",", "<", ">", "<=",
+                                                                 ">=", "==", "!=", "===", "!==",
+                                                                 "+", "-", "*", "%", "++", "--",
+                                                                 "<<", ">>", ">>>", "&", "|", "^",
+                                                                 "!", "~", "&&", "||", "?", ":",
+                                                                 "=", "+=", "-=", "*=", "%=", "<<=",
+                                                                 ">>=", ">>>=", "&=", "|=", "^=",
+                                                                 "/", "/=",
+                                                                 ","
+                                                             };
 
+            private static readonly Trie<char, string> OperatorTrie = new Trie<char, string>();
 
-            private static readonly Regex MatchOperator = new Regex(string.Join("|",
-                                                                                from p in Punctuators
-                                                                                orderby p.Length descending
-                                                                                select Regex.Escape(p)));
-
-
-            private static readonly Func<Runner, char, Lexeme>[] _preLookup = new Func<Runner, char, Lexeme>[127];
-            private static readonly Func<Runner, char, Lexeme>[] _postLookup = new Func<Runner, char, Lexeme>[127];
+            private static readonly Func<Runner, char, Lexeme>[] PreLookup = new Func<Runner, char, Lexeme>[127];
+            private static readonly Func<Runner, char, Lexeme>[] PostLookup = new Func<Runner, char, Lexeme>[127];
 
             private static readonly Regex MatchDoubleQuotedString =
-                new Regex(@"^""([^""\r\n\\]|(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n))*""");
+                new Regex(
+                    @"^""([^""\r\n\\]|(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n))*""");
 
             private static readonly Regex MatchSingleQuotedString =
-                new Regex(@"'([^'\r\n\\]|(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n))*'");
+                new Regex(
+                    @"'([^'\r\n\\]|(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n))*'");
 
-            private static readonly Regex MatchEscapeCharacter = new Regex(@"(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n)");
+            private static readonly Regex MatchEscapeCharacter =
+                new Regex(
+                    @"(\\""|\\'|\\\\|\\b|\\f|\\n|\\r|\\t|\\v|\\0)|(\\x[0-9a-fA-F]{2})|(\\u[0-9a-fA-F]{4})|(\\\r?\n)");
+
             private readonly string _source;
             private int _column;
             private int _line;
@@ -89,45 +136,36 @@ namespace Yes.Parsing
 
             static Runner()
             {
-                // Single character operators
-                // Notice absence of . since that can be start of a number
-                foreach (var op in "()[]{};?:,")
+                foreach (var @operator in Operators)
                 {
-                    _preLookup[op] = (r, c) => r.TryLexSingleCharacterOperator(c);
+                    OperatorTrie.Add(@operator, @operator);
+                    PreLookup[@operator[0]] = (r, c) => r.TryLexOperator();
                 }
-
-                // Multi character operators
-                // Notice absence of / since that can be the start of a comment
-                foreach (var op in "+-*%<>&|^!=")
-                {
-                    _preLookup[op] = (r, c) => r.TryLexMultiCharacterOperator(c);
-                }
-                // ...and here comments goes
-                _preLookup['/'] = (r, c) => r.TryLexComment(c);
-
+                // '/' might be start of comment...
+                PreLookup['/'] = (r, c) => r.TryLexComment(c) ?? r.TryLexOperator();
 
                 // Numbers
                 // Notice: we also try on '.' which might turn out to be an operator instead of a prefix on a number
                 foreach (var d in ".0123456789")
                 {
-                    _preLookup[d] = (r, c) => r.TryLexNumber(c);
+                    PreLookup[d] = (r, c) => r.TryLexNumber(c);
                 }
 
                 // Strings
-                _preLookup['\''] = (r, c) => r.TryLexSingleQuotedString(c);
-                _preLookup['"'] = (r, c) => r.TryLexDoubleQuotedString(c);
+                PreLookup['\''] = (r, c) => r.TryLexSingleQuotedString();
+                PreLookup['"'] = (r, c) => r.TryLexDoubleQuotedString();
 
                 // Fast identification of identifiers
                 // This is not complete (an additional ceck is made later) but it covers a wide range of typical cases
                 foreach (var prefix in "_$abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPQRSTUVXYZ")
                 {
-                    _preLookup[prefix] = (r, c) => r.TryLexIdentifier(c);
+                    PreLookup[prefix] = (r, c) => r.TryLexIdentifier(c);
                 }
 
-                // . wasnt part of a number and / didnt start a comment
-                foreach (var op in "./")
+                // '.' might be operator and not part of number
+                foreach (var op in ".")
                 {
-                    _postLookup[op] = (r, c) => r.TryLexSingleCharacterOperator(c);
+                    PostLookup[op] = (r, c) => r.TryLexSingleCharacterOperator();
                 }
             }
 
@@ -136,22 +174,63 @@ namespace Yes.Parsing
                 _source = source;
             }
 
-            private Lexeme TryLexSingleQuotedString(char c)
+            private Lexeme TryLexOperator()
+            {
+                var v = OperatorTrie.Find(
+                    Enumerable.Range(0, _source.Length - _pos).Select(i => _source[_pos + i])
+                    );
+                if (v != null)
+                {
+                    return CreateLexeme(LexemeType.Operator, v.Length);
+                }
+                return null;
+            }
+
+            private Lexeme TryLexComment(char c)
+            {
+                if (c != '/')
+                {
+                    return null;
+                }
+                if (!CanReadAtleast(2))
+                {
+                    return null;
+                }
+                if (_source[_pos + 1] == '/')
+                {
+                    // Single line comment
+                    var e = _source.IndexOf('\n', _pos + 2);
+                    if (e < 0)
+                    {
+                        e = _source.Length;
+                    }
+                    var l = e - _pos;
+                    return CreateLexeme(LexemeType.Comment, l);
+                }
+
+                if (_source[_pos + 1] == '*')
+                {
+                    var e = _source.IndexOf("*/", _pos + 2, StringComparison.Ordinal);
+                    if (e < 0)
+                    {
+                        return CreateLexeme(LexemeType.Error, "Unterminated comment", _source.Length - _pos);
+                    }
+                    var l = e + 2 - _pos;
+                    return CreateLexeme(LexemeType.Comment, l);
+                }
+                return null;
+            }
+
+            private Lexeme TryLexSingleQuotedString()
             {
                 var m = MatchSingleQuotedString.Match(_source, _pos);
                 return m.Success ? CreateLexeme(LexemeType.String, UnsecapeString(m.Value), m.Length) : null;
             }
 
-            private Lexeme TryLexDoubleQuotedString(char c)
+            private Lexeme TryLexDoubleQuotedString()
             {
                 var m = MatchDoubleQuotedString.Match(_source, _pos);
                 return m.Success ? CreateLexeme(LexemeType.String, UnsecapeString(m.Value), m.Length) : null;
-            }
-
-            private Lexeme TryLexMultiCharacterOperator(char c)
-            {
-                var m = MatchOperator.Match(_source, _pos);
-                return m.Success ? CreateLexeme(LexemeType.Operator, m.Length) : null;
             }
 
             private Lexeme TryLexIdentifier(char c)
@@ -211,7 +290,7 @@ namespace Yes.Parsing
                 return null;
             }
 
-            private Lexeme TryLexSingleCharacterOperator(char c)
+            private Lexeme TryLexSingleCharacterOperator()
             {
                 return CreateLexeme(LexemeType.Operator, 1);
             }
@@ -265,46 +344,11 @@ namespace Yes.Parsing
                         continue;
                     }
 
-                    yield return TryLookupLex(c, _preLookup)
+                    yield return TryLookupLex(c, PreLookup)
                                  ?? TryLexIdent(c)
-                                 ?? TryLookupLex(c, _postLookup)
-                                 ?? LexFail(c);
+                                 ?? TryLookupLex(c, PostLookup)
+                                 ?? LexFail();
                 }
-            }
-
-            private Lexeme TryLexComment(char c)
-            {
-                if (c != '/')
-                {
-                    return null;
-                }
-                if (!CanReadAtleast(2))
-                {
-                    return null;
-                }
-                if (_source[_pos + 1] == '/')
-                {
-                    // Single line comment
-                    var e = _source.IndexOf('\n', _pos + 2);
-                    if (e < 0)
-                    {
-                        e = _source.Length;
-                    }
-                    var l = e - _pos;
-                    return CreateLexeme(LexemeType.Comment, l);
-                }
-
-                if (_source[_pos + 1] == '*')
-                {
-                    var e = _source.IndexOf("*/", _pos + 2);
-                    if (e < 0)
-                    {
-                        return CreateLexeme(LexemeType.Error, "Unterminated comment", _source.Length - _pos);
-                    }
-                    var l = e + 2 - _pos;
-                    return CreateLexeme(LexemeType.Comment, l);
-                }
-                return null;
             }
 
             private bool CanReadAtleast(int n)
@@ -317,7 +361,7 @@ namespace Yes.Parsing
                 return TryLexIdentifier(c);
             }
 
-            private Lexeme LexFail(char c)
+            private Lexeme LexFail()
             {
                 return CreateLexeme(LexemeType.Error, "Illegal character in input", 1);
             }
@@ -345,50 +389,61 @@ namespace Yes.Parsing
                     return value.Substring(1, value.Length - 2);
                 }
 
-                return MatchEscapeCharacter.Replace(value.Substring(1,value.Length-2), m =>
-                                                               {
-                                                                   switch (m.Value[1])
-                                                                   {
-                                                                       case '"':
-                                                                           return "\"";
-                                                                       case '\'':
-                                                                           return "'";
-                                                                       case '\\':
-                                                                           return "\\";
-                                                                       case 'b':
-                                                                           return "\b";
-                                                                       case 'f':
-                                                                           return "\f";
-                                                                       case 'n':
-                                                                           return "\n";
-                                                                       case 'r':
-                                                                           return "\r";
-                                                                       case 't':
-                                                                           return "\t";
-                                                                       case 'v':
-                                                                           return "\v";
-                                                                       case '0':
-                                                                           return "\0";
-                                                                       case 'x':
-                                                                       case 'u':
-                                                                           var c =
-                                                                               (char)
-                                                                               int.Parse(m.Value.Substring(2),
-                                                                                         NumberStyles.HexNumber);
-                                                                           return c.ToString();
-                                                                       case '\r':
-                                                                       case '\n':
-                                                                           return m.Value.Substring(1);
-                                                                   }
-                                                                   return m.Value;
-                                                               });
+                return MatchEscapeCharacter.Replace(value.Substring(1, value.Length - 2), m =>
+                                                                                              {
+                                                                                                  switch (m.Value[1])
+                                                                                                  {
+                                                                                                      case '"':
+                                                                                                          return "\"";
+                                                                                                      case '\'':
+                                                                                                          return "'";
+                                                                                                      case '\\':
+                                                                                                          return "\\";
+                                                                                                      case 'b':
+                                                                                                          return "\b";
+                                                                                                      case 'f':
+                                                                                                          return "\f";
+                                                                                                      case 'n':
+                                                                                                          return "\n";
+                                                                                                      case 'r':
+                                                                                                          return "\r";
+                                                                                                      case 't':
+                                                                                                          return "\t";
+                                                                                                      case 'v':
+                                                                                                          return "\v";
+                                                                                                      case '0':
+                                                                                                          return "\0";
+                                                                                                      case 'x':
+                                                                                                      case 'u':
+                                                                                                          var c =
+                                                                                                              (char)
+                                                                                                              int.Parse(
+                                                                                                                  m.
+                                                                                                                      Value
+                                                                                                                      .
+                                                                                                                      Substring
+                                                                                                                      (2),
+                                                                                                                  NumberStyles
+                                                                                                                      .
+                                                                                                                      HexNumber);
+                                                                                                          return
+                                                                                                              c.ToString();
+                                                                                                      case '\r':
+                                                                                                      case '\n':
+                                                                                                          return
+                                                                                                              m.Value.
+                                                                                                                  Substring
+                                                                                                                  (1);
+                                                                                                  }
+                                                                                                  return m.Value;
+                                                                                              });
             }
 
             #region Nested type: IdentifierPart
 
             private static class IdentifierPart
             {
-                private static readonly UnicodeCategory[] _unicodeCategories = new[]
+                private static readonly UnicodeCategory[] UnicodeCategories = new[]
                                                                                    {
                                                                                        UnicodeCategory.UppercaseLetter,
                                                                                        UnicodeCategory.LowercaseLetter,
@@ -407,7 +462,7 @@ namespace Yes.Parsing
 
                 public static bool IsIdentifierPart(char c)
                 {
-                    return _unicodeCategories.Contains(char.GetUnicodeCategory(c))
+                    return UnicodeCategories.Contains(char.GetUnicodeCategory(c))
                            || (c == '\u200c') || (c == '\u200d');
                 }
             }

@@ -17,6 +17,7 @@ namespace Yes.Runtime.Operators
         static Operators()
         {
             Unary("-", Neg);
+            Unary("void",(environment,value) => JsUndefined.Value);
 
             Binary("+", Add);
             Binary("-", Arith((l, r) => l - r));
@@ -28,8 +29,8 @@ namespace Yes.Runtime.Operators
             Binary(">", Relational((l, r) => l > r, (l, r) => StringComparer.Ordinal.Compare(l, r) > 0));
             Binary(">=", Relational((l, r) => l >= r, (l, r) => StringComparer.Ordinal.Compare(l, r) >= 0));
 
-            // TODO: in operator should consider whole prototype chain
-            Binary("in", (environment, l,r) => environment.CreateBool((r is IJsObject) && (null != (r as IJsObject).GetOwnProperty(l.ToString()))));
+            Binary("in", (environment, l,r) => environment.CreateBool((r is IJsObject) && ((r as IJsObject).HasProperty(l.ToString()))));
+
         }
 
         #region IOperators Members

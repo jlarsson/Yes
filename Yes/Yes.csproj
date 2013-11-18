@@ -48,6 +48,7 @@
     <Compile Include="Interpreter\Ast\Break.cs" />
     <Compile Include="Interpreter\Ast\Construct.cs" />
     <Compile Include="Interpreter\Ast\Continue.cs" />
+    <Compile Include="Interpreter\Ast\Delete.cs" />
     <Compile Include="Interpreter\Ast\For.cs" />
     <Compile Include="Interpreter\Ast\IAstModifiesEnvironment.cs" />
     <Compile Include="Interpreter\Ast\IEvaluateThisAndMember.cs" />

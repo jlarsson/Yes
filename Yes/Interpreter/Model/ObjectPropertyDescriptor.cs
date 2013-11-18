@@ -1,4 +1,3 @@
-using Yes.Runtime;
 using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Model

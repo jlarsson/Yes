@@ -22,38 +22,61 @@ namespace Yes.Parsing
         protected JavascriptGrammar()
         {
             NewScope();
-            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in");
+            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete");
 
             Literal("(number)", (f, l) => f.Number(l.Value));
             Literal("(string)", (f, l) => f.String(l.Value));
             Literal("(name)", (f, l) => f.Name(l.Value.ToString()));
 
-            Infix("===", 40, (f, lhs, rhs) => f.BinaryOperation("===", lhs, rhs));
-            Infix("!==", 40, (f, lhs, rhs) => f.BinaryOperation("!==", lhs, rhs));
-            Infix("==", 40, (f, lhs, rhs) => f.BinaryOperation("==", lhs, rhs));
-            Infix("!=", 40, (f, lhs, rhs) => f.BinaryOperation("!=", lhs, rhs));
-            Infix("<", 40, (f, lhs, rhs) => f.BinaryOperation("<", lhs, rhs));
-            Infix("<=", 40, (f, lhs, rhs) => f.BinaryOperation("<=", lhs, rhs));
-            Infix(">", 40, (f, lhs, rhs) => f.BinaryOperation(">", lhs, rhs));
-            Infix(">=", 40, (f, lhs, rhs) => f.BinaryOperation(">=", lhs, rhs));
+            // For operator precedence: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FOperators%2FOperator_Precedence
 
-            Infix("+", 50, (f, lhs, rhs) => f.BinaryOperation("+", lhs, rhs));
-            Infix("-", 50, (f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
-            Infix("*", 60, (f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
-            Infix("/", 60, (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
+            Assignment(10, "=", (f, lhs, rhs) => f.Assign(lhs, rhs));
+            Assignment(10, "-=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("-",lhs,rhs)));
+            Assignment(10, "+=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("+", lhs, rhs)));
 
-            Prefix("-", 70, (f, v) => f.UnaryOperation("-",v));
-            Prefix("!", 70, (f, v) => f.Not(v));
-            Prefix("typeof", 70, (f, v) => f.TypeOf(v));
+            Assignment(10, "*=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("*", lhs, rhs)));
+            Assignment(10, "/=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("/", lhs, rhs)));
+            Assignment(10, "<<=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("<<", lhs, rhs)));
+            Assignment(10, ">>=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>", lhs, rhs)));
+            Assignment(10, ">>>=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>>", lhs, rhs)));
+            Assignment(10, "&=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("&", lhs, rhs)));
+            Assignment(10, "^=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("^", lhs, rhs)));
+            Assignment(10, "!=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("!", lhs, rhs)));
 
-            // TODO: Check prcedence of in operator
-            Infix("in", 80, (f, lhs, rhs) => f.BinaryOperation("in", lhs, rhs));
+            Infix(20, "||", (f, lhs, rhs) => f.BinaryOperation("||", lhs, rhs));
+            Infix(21, "&&", (f, lhs, rhs) => f.BinaryOperation("&&", lhs, rhs));
+            Infix(22, "|", (f, lhs, rhs) => f.BinaryOperation("|", lhs, rhs));
+            Infix(23, "^", (f, lhs, rhs) => f.BinaryOperation("^", lhs, rhs));
+            Infix(24, "&", (f, lhs, rhs) => f.BinaryOperation("&", lhs, rhs));
+
+            Prefix(40, "instanceof", (f, v) => f.UnaryOperation("instanceof", v));
+            Infix(40, "in", (f, lhs, rhs) => f.BinaryOperation("in", lhs, rhs));
+
+            Infix(40, "===", (f, lhs, rhs) => f.BinaryOperation("===", lhs, rhs));
+            Infix(40, "!==", (f, lhs, rhs) => f.BinaryOperation("!==", lhs, rhs));
+            Infix(40, "==", (f, lhs, rhs) => f.BinaryOperation("==", lhs, rhs));
+            Infix(40, "!=", (f, lhs, rhs) => f.BinaryOperation("!=", lhs, rhs));
+            Infix(40, "<", (f, lhs, rhs) => f.BinaryOperation("<", lhs, rhs));
+            Infix(40, "<=", (f, lhs, rhs) => f.BinaryOperation("<=", lhs, rhs));
+            Infix(40, ">", (f, lhs, rhs) => f.BinaryOperation(">", lhs, rhs));
+            Infix(40, ">=", (f, lhs, rhs) => f.BinaryOperation(">=", lhs, rhs));
+
+            Infix(50, "+", (f, lhs, rhs) => f.BinaryOperation("+", lhs, rhs));
+            Infix(50, "-", (f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
+            Infix(60, "*", (f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
+            Infix(60, "/", (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
+            Infix(60, "%", (f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
+
+            Prefix(70, "-", (f, v) => f.UnaryOperation("-",v));
+            Prefix(70, "+", (f, v) => f.UnaryOperation("-", v));
+            Prefix(70, "!", (f, v) => f.UnaryOperation("!", v));
+            Prefix(70, "~", (f, v) => f.UnaryOperation("!", v));
+            Prefix(70, "typeof", (f, v) => f.UnaryOperation("typeof", v));
+            Prefix(70, "delete", (f, v) => f.Delete(v));
+            Prefix(70, "void", (f, v) => f.UnaryOperation("void", v));
 
 
 
-            Assignment("=", (f, lhs, rhs) => f.Assign(lhs, rhs));
-            Assignment("-=", (f, lhs, rhs) => f.DecAssign(lhs, rhs));
-            Assignment("+=", (f, lhs, rhs) => f.IncAssign(lhs, rhs));
 
             // Infix (".",80) - member access
             Led(".", 80, (p, left) =>
@@ -334,9 +357,8 @@ namespace Yes.Parsing
         }
 
 
-        private Rule Assignment(string id, Func<IAstFactory<TAst>, TAst, TAst, TAst> reduce)
+        private Rule Assignment(int bp, string id, Func<IAstFactory<TAst>, TAst, TAst, TAst> reduce)
         {
-            var bp = 10;
             // TODO: Ensure left is -lvalue
             return Led(id, bp, (p, left) => reduce(p.Factory, left, p.Expression(bp - 1)));
         }

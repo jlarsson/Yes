@@ -1,6 +1,7 @@
 using Yes.Interpreter.Model;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Ast
 {
@@ -27,6 +28,11 @@ namespace Yes.Interpreter.Ast
         public IJsValue SetValue(IEnvironment environment, IJsValue value)
         {
             return environment.GetReference(Value).SetValue(value);
+        }
+
+        public IJsValue Delete(IEnvironment environment)
+        {
+            throw new JsReferenceError();
         }
 
         #endregion

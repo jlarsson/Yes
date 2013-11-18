@@ -43,6 +43,16 @@ namespace Yes.Parsing
             Assignment(10, "^=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("^", lhs, rhs)));
             Assignment(10, "!=", (f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("!", lhs, rhs)));
 
+            Led("?", 15, (p, l) =>
+                             {
+                                 var t = p.Expression(0);
+                                 p.Advance(":");
+                                 var f = p.Expression(1);
+
+                                 return p.Factory.Conditional(l, t, f);
+                             });
+            //Ternary(15,"?:")
+
             Infix(20, "||", (f, lhs, rhs) => f.BinaryOperation("||", lhs, rhs));
             Infix(21, "&&", (f, lhs, rhs) => f.BinaryOperation("&&", lhs, rhs));
             Infix(22, "|", (f, lhs, rhs) => f.BinaryOperation("|", lhs, rhs));

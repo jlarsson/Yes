@@ -98,13 +98,6 @@ namespace Yes.Parsing.Tdop
                 return true;
             }
             return false;
-
-            //if (Token.Lexeme.Id != id)
-            //{
-            //    return false;
-            //}
-            //Advance();
-            //return true;
         }
 
         public TAst Parse()

@@ -46,6 +46,7 @@
     <Compile Include="Interpreter\Ast\Array.cs" />
     <Compile Include="Interpreter\Ast\Assign.cs" />
     <Compile Include="Interpreter\Ast\Break.cs" />
+    <Compile Include="Interpreter\Ast\Conditional.cs" />
     <Compile Include="Interpreter\Ast\Construct.cs" />
     <Compile Include="Interpreter\Ast\Continue.cs" />
     <Compile Include="Interpreter\Ast\Delete.cs" />

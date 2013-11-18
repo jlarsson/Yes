@@ -17,11 +17,10 @@ namespace Yes.Parsing
         TAst Apply(TAst function, IEnumerable<TAst> arguments);
         TAst Member(TAst instance, TAst name);
         TAst Assign(TAst lhs, TAst rhs);
-        TAst DecAssign(TAst lhs, TAst rhs);
-        TAst IncAssign(TAst lhs, TAst rhs);
         TAst Delete(TAst ast);
         TAst UnaryOperation(string @operator, TAst value); 
         TAst BinaryOperation(string @operator, TAst lhs, TAst rhs);
+        TAst Conditional(TAst test, TAst trueValue, TAst falseValue);
         TAst Block(IEnumerable<TAst> statements);
         TAst Seq(IEnumerable<TAst> statements);
         TAst Var(TAst name, TAst value);

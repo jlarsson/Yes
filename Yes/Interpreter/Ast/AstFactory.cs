@@ -103,16 +103,6 @@ namespace Yes.Interpreter.Ast
             return new Assign(lhs, rhs);
         }
 
-        public IAst DecAssign(IAst lhs, IAst rhs)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IAst IncAssign(IAst lhs, IAst rhs)
-        {
-            throw new NotImplementedException();
-        }
-
         public IAst Delete(IAst ast)
         {
             return new Delete(ast);
@@ -126,6 +116,11 @@ namespace Yes.Interpreter.Ast
         public IAst BinaryOperation(string @operator, IAst lhs, IAst rhs)
         {
             return new BinaryOperation(Operators.GetBinaryOperator(@operator), lhs, rhs);
+        }
+
+        public IAst Conditional(IAst test, IAst trueValue, IAst falseValue)
+        {
+            return new Conditional(test, trueValue, falseValue);
         }
 
         public IAst Block(IEnumerable<IAst> statements)

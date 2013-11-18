@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Yes.Interpreter.Ast;
 using Yes.Parsing.Tdop;
-using Yes.Runtime;
 using Yes.Runtime.Error;
 
 namespace Yes.Parsing
@@ -22,7 +22,7 @@ namespace Yes.Parsing
         protected JavascriptGrammar()
         {
             NewScope();
-            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete");
+            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete", "void", "instanceof");
 
             Literal("(number)", (f, l) => f.Number(l.Value));
             Literal("(string)", (f, l) => f.String(l.Value));
@@ -464,6 +464,10 @@ namespace Yes.Parsing
                 return t.Rule.Std(p);
             }
             var e = p.Expression(0);
+            if ((e is IAstDirective) && (e as IAstDirective).IsUseStrict)
+            {
+                Scope.UseStrict = true;
+            }
 
             AdvanceOptionalSemiColon(p);
             return e;
@@ -507,6 +511,8 @@ namespace Yes.Parsing
 
             public JavascriptGrammar<TLexeme, TAst> Grammar { get; protected set; }
             public Feature AllowedFeatures { get; protected set; }
+
+            public bool UseStrict { get; set; }
 
             #region IDisposable Members
 

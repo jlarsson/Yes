@@ -32,7 +32,9 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Delete(IEnvironment environment)
         {
-            throw new JsReferenceError();
+            //throw new JsReferenceError();
+            // We end up here when deleting a scope variable, which isnt supported
+            return environment.CreateBool(false);
         }
 
         #endregion

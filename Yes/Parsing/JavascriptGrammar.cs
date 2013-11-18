@@ -13,12 +13,8 @@ namespace Yes.Parsing
     {
         public static readonly JavascriptGrammar<TLexeme, TAst> Default = new JavascriptGrammar<TLexeme, TAst>();
 
-        private readonly HashSet<string> _keywords = new HashSet<string>();
-
         protected JavascriptGrammar()
         {
-            Keywords("return", "var", "if", "else", "for", "while", "break", "continue", "function", "new", "in", "delete", "void", "instanceof");
-
             Literal("(number)", (state, f, l) => f.Number(Conversion.ParseDouble(l.Text)));
             Literal("(string)", (state, f, l) => f.String(l.Text));
             Literal("(name)", (state, f, l) => f.Name(l.Text));
@@ -228,6 +224,29 @@ namespace Yes.Parsing
                                {
                                    p.Advance("(");
 
+                                   if (p.CanAdvance("var","(name)","in"))
+                                   {
+                                       p.Advance("var");
+                                       var binding = ParseName(p);
+                                       p.Advance("in");
+                                       var inspected = p.Expression(state, 0);
+                                       p.Advance(")");
+                                       var b = Block(state, p);
+
+                                       return f.ForIn(binding, inspected, b, true);
+                                   }
+                                   if (p.CanAdvance("(name)","in"))
+                                   {
+                                       var binding = ParseName(p);
+                                       p.Advance("in");
+                                       var inspected = p.Expression(state, 0);
+                                       p.Advance(")");
+                                       var b = Block(state, p);
+
+                                       return f.ForIn(binding, inspected, b, false);
+
+                                   }
+
                                    // Todo: handle 'for var m in x'
 
                                    var initial = default(TAst);
@@ -344,14 +363,6 @@ namespace Yes.Parsing
         {
             // TODO: Ensure left is -lvalue
             return Led(id, bp, (state, p, left) => reduce(state, p.Factory, left, p.Expression(state, bp - 1)));
-        }
-
-        protected void Keywords(params string[] keywords)
-        {
-            foreach (var keyword in keywords)
-            {
-                _keywords.Add(keyword);
-            }
         }
 
         private bool AdvanceOptionalSemiColon(ITdop<TLexeme, TAst, IAstFactory<TAst>, IJavascriptParserState> p)

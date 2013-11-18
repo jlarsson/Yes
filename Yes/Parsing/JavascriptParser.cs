@@ -15,8 +15,7 @@ namespace Yes.Parsing
         {
             var grammar = JavascriptGrammar<ILexeme, TAst>.Default;
             var state = new JavascriptParserState();
-            var p = new Tdop<ILexeme, TAst, IAstFactory<TAst>, IJavascriptParserState>(grammar, factory, Tokenize(source));
-            p.Advance();
+            var p = new Tdop<ILexeme, TAst, IAstFactory<TAst>, IJavascriptParserState>(grammar, factory, Tokenize(source).ToList());
             return grammar.Statements(state, p);
         }
     }

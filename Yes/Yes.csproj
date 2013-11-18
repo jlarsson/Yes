@@ -51,6 +51,7 @@
     <Compile Include="Interpreter\Ast\Continue.cs" />
     <Compile Include="Interpreter\Ast\Delete.cs" />
     <Compile Include="Interpreter\Ast\For.cs" />
+    <Compile Include="Interpreter\Ast\ForIn.cs" />
     <Compile Include="Interpreter\Ast\IAstModifiesEnvironment.cs" />
     <Compile Include="Interpreter\Ast\IEvaluateThisAndMember.cs" />
     <Compile Include="Interpreter\Ast\IfThenElse.cs" />

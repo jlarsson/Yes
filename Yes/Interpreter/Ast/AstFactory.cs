@@ -173,6 +173,11 @@ namespace Yes.Interpreter.Ast
             return new For(initial, condition, loop, block);
         }
 
+        public IAst ForIn(IAst binding, IAst inspected, IAst block, bool declareBinding)
+        {
+            return new ForIn(binding, inspected, block, declareBinding);
+        }
+
         public IAst Construct(IAst constructor, IEnumerable<IAst> arguments)
         {
             if (constructor is IAstWithName)

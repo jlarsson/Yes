@@ -6,19 +6,37 @@ namespace Yes.Parsing.Tdop
 {
     public class Tdop<TLexeme, TAst, TAstFactory, TState> : ITdop<TLexeme, TAst, TAstFactory, TState> where TLexeme : ILexeme
     {
-        public Tdop(IGrammar<TLexeme, TAst, TAstFactory, TState> grammar, TAstFactory factory, IEnumerable<TLexeme> lexemes)
+        public Tdop(IGrammar<TLexeme, TAst, TAstFactory, TState> grammar, TAstFactory factory, IList<TLexeme> lexemes)
         {
             Grammar = grammar;
             Factory = factory;
-            Lexemes = lexemes.GetEnumerator();
+            Lexemes = lexemes;
         }
 
-        public IEnumerator<TLexeme> Lexemes { get; protected set; }
+        public int LexemeIndex { get; protected set; }
+        public IList<TLexeme> Lexemes { get; protected set; }
+        public TLexeme Lexeme { get { return LexemeIndex < Lexemes.Count ? Lexemes[LexemeIndex] : default(TLexeme); } }
         public IGrammar<TLexeme, TAst, TAstFactory, TState> Grammar { get; protected set; }
 
         #region ITdop<TLexeme,TAst,TAstFactory> Members
 
-        public ISymbol<TLexeme, TAst, TAstFactory, TState> Token { get; protected set; }
+        private ISymbol<TLexeme, TAst, TAstFactory, TState> _token;
+        public ISymbol<TLexeme, TAst, TAstFactory, TState> Token { get
+        {
+            if (_token == null)
+            {
+                if (LexemeIndex < Lexemes.Count)
+                {
+                    var lexeme = Lexemes[LexemeIndex];
+                    _token = new Symbol
+                    {
+                        Lexeme = lexeme,
+                        Rule = Grammar.GetRule(lexeme)
+                    };
+                }
+            }
+            return _token;
+        } }
 
         public TAstFactory Factory { get; protected set; }
 
@@ -27,24 +45,47 @@ namespace Yes.Parsing.Tdop
             return (Token != null) && ((Token.Lexeme.Id == id) || (Token.Lexeme.Text == id));
         }
 
+        public bool CanAdvance(params string[] ids)
+        {
+            for(var i = 0; i < ids.Length; ++i)
+            {
+                var li = LexemeIndex + i;
+                if (li >= Lexemes.Count)
+                {
+                    return false;
+                }
+                var l = Lexemes[li];
+                if (!((l.Id == ids[i]) || (l.Text == ids[i])))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void Advance()
         {
+            _token = null;
+            ++LexemeIndex;
+/*
             if (Lexemes == null)
             {
                 return;
             }
-            if (!Lexemes.MoveNext())
+            if (LexemeIndex >= Lexemes.Count)
             {
                 Token = null;
                 Lexemes = null;
                 return;
             }
-            var lexeme = Lexemes.Current;
+            var lexeme = Lexeme;
             Token = new Symbol
                         {
                             Lexeme = lexeme,
                             Rule = Grammar.GetRule(lexeme)
                         };
+            ++LexemeIndex;
+ */ 
         }
 
         public void Advance(string id)

@@ -31,6 +31,7 @@ namespace Yes.Parsing
 
         #region Nested type: Lexeme
 
+        [DebuggerDisplay("{Id} '{Text}'")]
         public class Lexeme: ILexeme
         {
             public string Id { get; set; }

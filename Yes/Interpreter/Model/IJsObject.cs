@@ -9,6 +9,7 @@ namespace Yes.Interpreter.Model
         IJsObject GetPrototype();
         IPropertyDescriptor GetOwnProperty(string name);
         IPropertyDescriptor GetProperty(string name);
+        IEnumerable<IPropertyDescriptor> GetProperties();
         //IJsValue Get(string name);
         //bool CanPut(string name);
         //void Put(string name);

@@ -24,9 +24,9 @@ namespace Yes.Parsing
             Assignment(10, "=", (state, f, lhs, rhs) => f.Assign(lhs, rhs));
             Assignment(10, "-=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("-", lhs, rhs)));
             Assignment(10, "+=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("+", lhs, rhs)));
-
             Assignment(10, "*=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("*", lhs, rhs)));
             Assignment(10, "/=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("/", lhs, rhs)));
+            Assignment(10, "%=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("%", lhs, rhs)));
             Assignment(10, "<<=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation("<<", lhs, rhs)));
             Assignment(10, ">>=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>", lhs, rhs)));
             Assignment(10, ">>>=", (state, f, lhs, rhs) => f.Assign(lhs, f.BinaryOperation(">>>", lhs, rhs)));
@@ -64,7 +64,7 @@ namespace Yes.Parsing
             Infix(50, "-", (state, f, lhs, rhs) => f.BinaryOperation("-", lhs, rhs));
             Infix(60, "*", (state, f, lhs, rhs) => f.BinaryOperation("*", lhs, rhs));
             Infix(60, "/", (state, f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
-            Infix(60, "%", (state, f, lhs, rhs) => f.BinaryOperation("/", lhs, rhs));
+            Infix(60, "%", (state, f, lhs, rhs) => f.BinaryOperation("%", lhs, rhs));
 
             Prefix(70, "-", (state, f, v) => f.UnaryOperation("-", v));
             Prefix(70, "+", (state, f, v) => f.UnaryOperation("-", v));

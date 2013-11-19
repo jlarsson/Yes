@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
@@ -23,7 +24,11 @@ namespace Yes.Interpreter.Ast
         {
             var inspected = Inspected.Evaluate(environment) as IJsObject;
 
-            var propertyNames = inspected.GetOwnProperties().Select(pd => pd.Name).ToList();
+            var names = new HashSet<string>();
+            var propertyNames = (inspected.GetProperties()
+                .Where(pd => pd.Enumerable)
+                .Where(pd => names.Add(pd.Name))
+                .Select(pd => pd.Name)).ToList();
 
 
             var bindingName = ((IAstWithName) Binding).Name;

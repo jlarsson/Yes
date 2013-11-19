@@ -8,6 +8,7 @@ namespace Yesh
     {
         static void Main(string[] _)
         {
+            
             var context = new Context();
 
             var console = context.CreateObject();

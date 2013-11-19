@@ -23,14 +23,16 @@ namespace Yes.Runtime.Operators
             Binary("-", Arith((l, r) => l - r));
             Binary("*", Arith((l, r) => l*r));
             Binary("/", Arith((l, r) => Math.Abs(r) < double.Epsilon ? double.NaN : l/r));
-            Binary("%", Arith((l, r) => Math.Abs(r) < double.Epsilon ? double.NaN : Math.IEEERemainder(l, r)));
+            Binary("%", Arith((l, r) => Math.Abs(r) < double.Epsilon ? double.NaN : l - r*Math.Floor(l/r)));
             Binary("<", Relational((l, r) => l < r, (l, r) => StringComparer.Ordinal.Compare(l, r) < 0));
             Binary("<=", Relational((l, r) => l <= r, (l, r) => StringComparer.Ordinal.Compare(l, r) <= 0));
             Binary(">", Relational((l, r) => l > r, (l, r) => StringComparer.Ordinal.Compare(l, r) > 0));
             Binary(">=", Relational((l, r) => l >= r, (l, r) => StringComparer.Ordinal.Compare(l, r) >= 0));
 
-            Binary("in", (environment, l,r) => environment.CreateBool((r is IJsObject) && ((r as IJsObject).HasProperty(l.ToString()))));
+            Binary("||", (e, a, b) => a.ToBoolean() ? a : b);
+            Binary("&&", (e, a, b) => !a.ToBoolean() ? a : b);
 
+            Binary("in", (environment, l,r) => environment.CreateBool((r is IJsObject) && ((r as IJsObject).HasProperty(l.ToString()))));
         }
 
         #region IOperators Members

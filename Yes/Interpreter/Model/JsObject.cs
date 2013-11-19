@@ -151,6 +151,19 @@ namespace Yes.Interpreter.Model
             return null;
         }
 
+        public IEnumerable<IPropertyDescriptor> GetProperties()
+        {
+            IJsObject proto = this;
+            while (proto != null)
+            {
+                foreach (var pd in proto.GetOwnProperties())
+                {
+                    yield return pd;
+                }
+                proto = proto.GetPrototype();
+            }
+        }
+
         public bool HasProperty(string name)
         {
             return GetProperty(name) != null;

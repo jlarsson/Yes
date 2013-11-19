@@ -33,7 +33,7 @@ namespace Yes.Interpreter.Model
 
         #endregion
 
-        [JsInstanceMethod("create", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("create", Configurable = false)]
         public IJsValue JsCreate(IJsValue[] args)
         {
             var proto = BindParameters.OfTypeOrNull<IJsObject>(args, 0);
@@ -41,25 +41,25 @@ namespace Yes.Interpreter.Model
             return new JsObject(Environment, proto);
         }
 
-        [JsInstanceMethod("defineProperty", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("defineProperty", Configurable = false)]
         public IJsValue JsDefineProperty(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("defineProperties", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("defineProperties", Configurable = false)]
         public IJsValue JsDefineProperties(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("getOwnPropertyDescriptor", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("getOwnPropertyDescriptor", Configurable = false)]
         public IJsValue JsGetOwnPropertyDescriptor(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("keys", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("keys", Configurable = false)]
         public IJsValue Keys(IJsValue[] args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
@@ -70,7 +70,7 @@ namespace Yes.Interpreter.Model
                 select Environment.CreateString(pd.Name));
         }
 
-        [JsInstanceMethod("getOwnPropertyNames", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("getOwnPropertyNames", Configurable = false)]
         public IJsValue GetOwnPropertyNames(IJsValue[] args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
@@ -80,49 +80,49 @@ namespace Yes.Interpreter.Model
                 select Environment.CreateString(pd.Name));
         }
 
-        [JsInstanceMethod("getPrototypeOf", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("getPrototypeOf", Configurable = false)]
         public IJsValue JsGetPrototypeOf(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("preventExtensions", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("preventExtensions", Configurable = false)]
         public IJsValue JsPreventExtensions(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isExtensible", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("isExtensible", Configurable = false)]
         public IJsValue JsIsExtensible(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("seal", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("seal", Configurable = false)]
         public IJsValue JsSeal(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("is", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("is", Configurable = false)]
         public IJsValue JsIs(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isSealed", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("isSealed", Configurable = false)]
         public IJsValue JsIsSealed(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("freeze", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("freeze", Configurable = false)]
         public IJsValue JsFreeze(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isFrozen", Configurable = false, Enumerable = false)]
+        [JsInstanceMethod("isFrozen", Configurable = false)]
         public IJsValue JsIsFrozen(IJsValue[] args)
         {
             throw new JsNotImplemented();

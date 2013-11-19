@@ -8,6 +8,7 @@ namespace Yes.Interpreter.Model
         IReference GetReference(string name);
 
         int? ToArrayIndex();
+        JsVariant ToVariant();
         object ToPrimitive();
         bool ToBoolean();
         double ToNumber();

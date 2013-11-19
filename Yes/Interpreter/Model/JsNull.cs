@@ -22,6 +22,11 @@ namespace Yes.Interpreter.Model
             return null;
         }
 
+        public JsVariant ToVariant()
+        {
+            return new JsVariant(this);
+        }
+
         public object ToPrimitive()
         {
             return this;

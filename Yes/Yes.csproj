@@ -98,6 +98,8 @@
     <Compile Include="Interpreter\Model\JsString.cs" />
     <Compile Include="Interpreter\Model\JsUndefined.cs" />
     <Compile Include="Interpreter\Model\JsTypeCode.cs" />
+    <Compile Include="Interpreter\Model\JsVariant.cs" />
+    <Compile Include="Interpreter\Model\JsVariantKind.cs" />
     <Compile Include="Interpreter\Model\LambdaReference.cs" />
     <Compile Include="Interpreter\Model\NumberConstructor.cs" />
     <Compile Include="Interpreter\Model\ObjectConstructor.cs" />

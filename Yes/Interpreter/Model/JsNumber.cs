@@ -1,5 +1,6 @@
 using System;
 using Yes.Runtime.Environment;
+using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
@@ -44,7 +45,7 @@ namespace Yes.Interpreter.Model
 
         public override string ToString()
         {
-            return Value.ToString();
+            return Value.ToString(Conversion.DoubleFormat);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

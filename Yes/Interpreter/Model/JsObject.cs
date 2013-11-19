@@ -96,6 +96,11 @@ namespace Yes.Interpreter.Model
             return null;
         }
 
+        public JsVariant ToVariant()
+        {
+            return new JsVariant(this);
+        }
+
         public virtual object ToPrimitive()
         {
             return this;

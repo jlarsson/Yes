@@ -22,13 +22,14 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
+            // TODO: Throw on cast failure
             var inspected = Inspected.Evaluate(environment) as IJsObject;
 
-            var names = new HashSet<string>();
             var propertyNames = (inspected.GetProperties()
                 .Where(pd => pd.Enumerable)
-                .Where(pd => names.Add(pd.Name))
-                .Select(pd => pd.Name)).ToList();
+                .Select(pd => pd.Name)
+                .Distinct())
+                .ToList();
 
 
             var bindingName = ((IAstWithName) Binding).Name;

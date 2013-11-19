@@ -62,12 +62,7 @@ namespace Yes.Interpreter.Model
         [JsInstanceMember("keys", Configurable = false)]
         public IJsValue Keys(IJsValue[] args)
         {
-            var obj = args.Select(a => a as IJsObject).FirstOrDefault();
-
-            return Environment.CreateArray(
-                from pd in (obj == null ? Enumerable.Empty<IPropertyDescriptor>() : obj.GetOwnProperties())
-                where pd.Enumerable
-                select Environment.CreateString(pd.Name));
+            return GetOwnPropertyNames(args);
         }
 
         [JsInstanceMember("getOwnPropertyNames", Configurable = false)]
@@ -76,8 +71,11 @@ namespace Yes.Interpreter.Model
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
 
             return Environment.CreateArray(
-                from pd in (obj == null ? Enumerable.Empty<IPropertyDescriptor>() : obj.GetOwnProperties())
-                select Environment.CreateString(pd.Name));
+                (obj == null ? Enumerable.Empty<IPropertyDescriptor>() : obj.GetOwnProperties())
+                .Where(pd => pd.Enumerable)
+                .Select(pd => pd.Name)
+                //.Distinct()
+                .Select(n => Environment.CreateString(n)));
         }
 
         [JsInstanceMember("getPrototypeOf", Configurable = false)]

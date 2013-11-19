@@ -8,7 +8,7 @@ namespace Yes.Interpreter.Model
     public class FunctionConstructor : JsConstructor<JsFunction>, IFunctionConstructor
     {
         public FunctionConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<FunctionConstructor>())
+            : base(environment, environment.Context.GetClass<FunctionConstructor>())
         {
         }
 

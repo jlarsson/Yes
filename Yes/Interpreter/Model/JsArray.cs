@@ -12,17 +12,17 @@ namespace Yes.Interpreter.Model
     {
         private readonly List<IJsValue> _array;
 
-        public JsArray(IEnvironment environment, IJsObject prototype, int length)
-            : this(environment, prototype, Enumerable.Range(0,length).Select(_ => JsUndefined.Value))
+        public JsArray(IEnvironment environment, IJsClass @class, int length)
+            : this(environment, @class, Enumerable.Range(0, length).Select(_ => JsUndefined.Value))
         {
         }
 
-        public JsArray(IEnvironment environment, IJsObject prototype, IEnumerable<IJsValue> members)
-            : this(environment, prototype, members.ToList())
+        public JsArray(IEnvironment environment, IJsClass @class, IEnumerable<IJsValue> members)
+            : this(environment, @class, members.ToList())
         {
         }
-        public JsArray(IEnvironment environment, IJsObject prototype, List<IJsValue> members)
-            : base(environment, prototype)
+        public JsArray(IEnvironment environment, IJsClass @class, List<IJsValue> members)
+            : base(environment, @class)
         {
             _array = members;
         }
@@ -87,7 +87,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsArray(environment, Prototype, _array ?? new List<IJsValue>());
+            return new JsArray(environment, Class, _array ?? new List<IJsValue>());
         }
 
         protected IReference GetElementReference(int value)
@@ -99,7 +99,7 @@ namespace Yes.Interpreter.Model
         }
 
 
-        [JsInstanceProperty("length")]
+        [JsInstanceMember("length")]
         public IJsValue JsLength
         {
             get
@@ -122,7 +122,7 @@ namespace Yes.Interpreter.Model
             }
         }
 
-        [JsInstanceMethod("push")]
+        [JsPrototypeMember("push", Enumerable = true)]
         public IJsValue JsPush(IJsValue[] argument)
         {
             _array.Add(argument.FirstOrDefault() ?? JsUndefined.Value);

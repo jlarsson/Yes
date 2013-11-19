@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Parsing;
-using Yes.Runtime;
 using Yes.Runtime.Environment;
 using Yes.Runtime.Operators;
-using Yes.Runtime.Prototypes;
 using Environment = Yes.Runtime.Environment.Environment;
 
 namespace Yes
@@ -14,7 +12,7 @@ namespace Yes
     public class Context : IContext
     {
         private readonly Dictionary<Tuple<Type,IJsConstructor>, IJsObject> _type2protype = new Dictionary<Tuple<Type, IJsConstructor>, IJsObject>();
-
+        private readonly Dictionary<Tuple<Type,IJsConstructor>, IJsClass> _classes = new Dictionary<Tuple<Type, IJsConstructor>, IJsClass>(); 
         public Context()
         {
             Operators = new Operators();
@@ -49,9 +47,9 @@ namespace Yes
         public IStringConstructor StringConstructor { get; private set; }
 
 
-        public IJsObject GetPrototype<T>(IJsConstructor constructor = null) where T : IJsObject
+        public IJsClass GetClass<T>(IJsConstructor constructor = null) where T : IJsObject
         {
-            return GetPrototype(typeof (T), constructor);
+            return GetClass(typeof (T), constructor);
         }
 
         #endregion
@@ -62,30 +60,20 @@ namespace Yes
             return (ast != null) ? ast.Evaluate(Environment) : JsUndefined.Value;
         }
 
-        public IJsObject GetPrototype(Type type, IJsConstructor constructor = null)
+        private IJsClass GetClass(Type type, IJsConstructor constructor)
         {
-            if (!typeof (IJsObject).IsAssignableFrom(type))
+            if (!typeof(IJsObject).IsAssignableFrom(type))
             {
                 return null;
             }
-            IJsObject prototype;
             var key = Tuple.Create(type, constructor);
-            if (!_type2protype.TryGetValue(key, out prototype))
+            IJsClass @class;
+            if (!_classes.TryGetValue(key, out @class))
             {
-                prototype = new JsObject(Environment, GetPrototype(type.BaseType));
-                foreach (var pd in new PrototypeBuilder().CreatePropertyDescriptorsForType(type, Environment, prototype))
-                {
-                    prototype.DefineOwnProperty(pd);
-                }
-                if ((constructor != null) && (null == prototype.GetOwnProperty("constructor")))
-                {
-                    prototype.DefineOwnProperty(new ObjectPropertyDescriptor(prototype, "constructor", constructor,
-                                                                             PropertyDescriptorFlags.None));
-                }
-
-                _type2protype.Add(key, prototype);
+                @class = JsClass.Create(Environment, type, constructor);
+                _classes.Add(key, @class);
             }
-            return prototype;
+            return @class;
         }
     }
 }

@@ -22,5 +22,10 @@ namespace Yes.Interpreter.Model
         {
             return new JsHostFunction(environment,Func);
         }
+
+        public override string ToString()
+        {
+            return "function () {/*native code*/}";
+        }
     }
 }

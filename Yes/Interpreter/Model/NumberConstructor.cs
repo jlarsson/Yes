@@ -6,7 +6,7 @@ namespace Yes.Interpreter.Model
 {
     public class NumberConstructor: JsConstructor<JsNumber>, INumberConstructor{
         public NumberConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<NumberConstructor>())
+            : base(environment, environment.Context.GetClass<NumberConstructor>())
         {
         }
 
@@ -17,7 +17,7 @@ namespace Yes.Interpreter.Model
 
         public IJsNumber Construct(double value)
         {
-            return new JsNumber(Environment,ClassPrototype, value);
+            return new JsNumber(Environment,ConstructedClass, value);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

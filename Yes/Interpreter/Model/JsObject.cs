@@ -12,53 +12,56 @@ namespace Yes.Interpreter.Model
     {
         private Dictionary<string, IPropertyDescriptor> _properties;
 
-        public JsObject(IEnvironment environment, IJsObject prototype)
+        public JsObject(IEnvironment environment, IJsClass @class)
         {
             Environment = environment;
-            Prototype = prototype;
+            Class = @class ?? JsClass.Default;
+            Prototype = Class.Prototype;
         }
+
+        protected IJsClass Class { get; set; }
 
         public IEnvironment Environment { get; private set; }
         public IJsObject Prototype { get; protected set; }
 
-        [JsInstanceProperty("prototype", Configurable = false, Enumerable = false)]
+        [JsInstanceMember("prototype", Configurable = false, Enumerable = false)]
         public IJsValue JsPrototype
         {
             get { return Prototype; }
             set { Prototype = Conversion.Cast<IJsObject>(value, true); }
         }
 
-        [JsInstanceMethod("hasOwnProperty", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("hasOwnProperty", Configurable = false, Enumerable = false)]
         public IJsValue JsHasOwnProperty(IJsValue[] args)
         {
             return Environment.CreateBool(GetOwnProperty(args.Select(a => a.ToString()).FirstOrDefault()) != null);
         }
 
-        [JsInstanceMethod("isPrototypeOf", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("isPrototypeOf", Configurable = false, Enumerable = false)]
         public IJsValue JsIsPrototypeOf(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("propertyIsEnumerable", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("propertyIsEnumerable", Configurable = false, Enumerable = false)]
         public IJsValue JsPropertyIsEnumerable(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("toLocaleString", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("toLocaleString", Configurable = false, Enumerable = false)]
         public IJsValue JsToLocaleString(IJsValue[] args)
         {
             return JsToString(args);
         }
 
-        [JsInstanceMethod("toString", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("toString", Configurable = false, Enumerable = false)]
         public IJsValue JsToString(IJsValue[] args)
         {
             return Environment.CreateString(ToString());
         }
 
-        [JsInstanceMethod("valueOf", Configurable = false, Enumerable = false)]
+        [JsPrototypeMember("valueOf", Configurable = false, Enumerable = false)]
         public IJsValue JsValueOf(IJsValue[] args)
         {
             return this;
@@ -132,7 +135,7 @@ namespace Yes.Interpreter.Model
         public virtual IPropertyDescriptor GetOwnProperty(string name)
         {
             IPropertyDescriptor pd;
-            return ((_properties != null) && _properties.TryGetValue(name, out pd)) ? pd : null;
+            return ((_properties != null) && _properties.TryGetValue(name, out pd)) ? pd : Class.GetInstanceProperty(name);
         }
 
         public IPropertyDescriptor GetProperty(string name)
@@ -186,21 +189,32 @@ namespace Yes.Interpreter.Model
 
         public IEnumerable<IPropertyDescriptor> GetOwnProperties()
         {
-            return _properties == null ? Enumerable.Empty<IPropertyDescriptor>() : _properties.Values;
+            return (_properties == null ? Enumerable.Empty<IPropertyDescriptor>() : _properties.Values).
+                Concat(Class.GetInstanceProperties());
         }
 
         public virtual IPropertyDescriptor DefineOwnProperty(IPropertyDescriptor descriptor)
         {
+            if (!Extensible)
+            {
+                throw new JsTypeError();
+            }
+            var existing = GetOwnProperty(descriptor.Name);
+            if ((existing != null) && !existing.Configurable)
+            {
+                throw new JsTypeError();
+            }
             if (_properties == null)
             {
                 _properties = new Dictionary<string, IPropertyDescriptor>();
             }
+
             return _properties[descriptor.Name] = descriptor;
         }
 
         public virtual IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsObject(Environment, Prototype);
+            return new JsObject(Environment, Class);
         }
 
         #endregion

@@ -5,13 +5,13 @@ namespace Yes.Interpreter.Model
 {
     public abstract class JsConstructor<T> : JsObject, IJsConstructor, IJsFunction where T : JsObject
     {
-        protected JsConstructor(IEnvironment environment, IJsObject prototype)
-            : base(environment, prototype)
+        protected JsConstructor(IEnvironment environment, IJsClass @class)
+            : base(environment, @class)
         {
-            ClassPrototype = environment.Context.GetPrototype<T>(this);
+            ConstructedClass = environment.Context.GetClass<T>(this);
         }
 
-        public IJsObject ClassPrototype { get; protected set; }
+        protected IJsClass ConstructedClass { get; set; }
 
         #region IJsConstructor Members
 

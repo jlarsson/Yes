@@ -7,7 +7,8 @@ namespace Yes.Interpreter.Model
 {
     public class JsFunction : JsObject, IJsFunction, IJsConstructor
     {
-        public JsFunction(IEnvironment environment, IJsObject prototype, string name, string[] arguments, IAst body) : base(environment, prototype)
+        public JsFunction(IEnvironment environment, IJsClass @class, string name, string[] arguments, IAst body)
+            : base(environment, @class)
         {
             Name = name;
             Arguments = arguments;
@@ -47,7 +48,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsFunction(environment, Prototype, Name, Arguments, Body);
+            return new JsFunction(environment, Class, Name, Arguments, Body);
         }
     }
 }

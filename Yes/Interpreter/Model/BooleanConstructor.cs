@@ -7,7 +7,7 @@ namespace Yes.Interpreter.Model
     public class BooleanConstructor : JsConstructor<JsBool>, IBooleanConstructor
     {
         public BooleanConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<BooleanConstructor>())
+            : base(environment, environment.Context.GetClass<BooleanConstructor>())
         {
         }
 
@@ -18,7 +18,7 @@ namespace Yes.Interpreter.Model
 
         public IJsBool Construct(bool value)
         {
-            return new JsBool(Environment, ClassPrototype, value);
+            return new JsBool(Environment, ConstructedClass, value);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

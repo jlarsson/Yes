@@ -104,6 +104,7 @@
     <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
+    <Compile Include="JsClass.cs" />
     <Compile Include="Parsing\GetJavascriptLexemeId.cs" />
     <Compile Include="Parsing\IJavascriptParserState.cs" />
     <Compile Include="Parsing\ILexemeMapper.cs" />
@@ -155,10 +156,10 @@
     <Compile Include="Runtime\Error\JsUriError.cs" />
     <Compile Include="Runtime\Operators\IUnaryOperator.cs" />
     <Compile Include="Runtime\Operators\Operators.cs" />
-    <Compile Include="Runtime\Prototypes\PrototypeBuilder.cs" />
     <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
-    <Compile Include="Runtime\Prototypes\JsInstanceMethodAttribute.cs" />
+    <Compile Include="Runtime\Prototypes\JsInstanceMember.cs" />
     <Compile Include="Runtime\Prototypes\JsInstancePropertyAttribute.cs" />
+    <Compile Include="Runtime\Prototypes\JsPrototypeMember.cs" />
     <Compile Include="Utility\Conversion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

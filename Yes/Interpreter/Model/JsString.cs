@@ -8,8 +8,8 @@ namespace Yes.Interpreter.Model
 {
     public class JsString : JsObject, IJsString
     {
-        public JsString(IEnvironment environment, IJsObject prototype, string value)
-            : base(environment, prototype)
+        public JsString(IEnvironment environment, IJsClass @class, string value)
+            : base(environment, @class)
         {
             Value = value;
         }
@@ -59,10 +59,10 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsString(environment,Prototype,Value);
+            return new JsString(environment,Class,Value);
         }
 
-        [JsInstanceProperty("length", Enumerable = false, Configurable = false)]
+        [JsInstanceMember("length", Enumerable = false, Configurable = false)]
         public IJsValue JsLength
         {
             get { return Environment.CreateNumber((Value ?? "").Length); }

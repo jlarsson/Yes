@@ -4,8 +4,8 @@ namespace Yes.Interpreter.Model
 {
     public class JsBool : JsObject, IJsBool
     {
-        public JsBool(IEnvironment environment, IJsObject prototype, bool value)
-            : base(environment, prototype)
+        public JsBool(IEnvironment environment, IJsClass @class, bool value)
+            : base(environment, @class)
         {
             Value = value;
         }
@@ -45,7 +45,8 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsBool(environment, Prototype, Value);
+            // TODO: FIX
+            return new JsBool(environment, Class, Value);
         }
     }
 }

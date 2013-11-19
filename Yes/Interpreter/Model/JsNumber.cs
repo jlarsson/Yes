@@ -5,7 +5,8 @@ namespace Yes.Interpreter.Model
 {
     public class JsNumber : JsObject, IJsNumber
     {
-        public JsNumber(IEnvironment environment, IJsObject prototype, double value) : base(environment, prototype)
+        public JsNumber(IEnvironment environment, IJsClass @class, double value)
+            : base(environment, @class)
         {
             Value = value;
         }
@@ -48,7 +49,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new JsNumber(environment,Prototype,Value);
+            return new JsNumber(environment,Class,Value);
         }
     }
 }

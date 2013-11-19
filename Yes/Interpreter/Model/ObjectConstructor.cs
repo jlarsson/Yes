@@ -10,7 +10,7 @@ namespace Yes.Interpreter.Model
     public class ObjectConstructor : JsConstructor<JsObject>, IObjectConstructor
     {
         public ObjectConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<ObjectConstructor>())
+            : base(environment, environment.Context.GetClass<ObjectConstructor>())
         {
         }
 
@@ -28,38 +28,38 @@ namespace Yes.Interpreter.Model
 
         public IJsObject Construct(IEnvironment environment)
         {
-            return new JsObject(environment, ClassPrototype);
+            return new JsObject(environment, ConstructedClass);
         }
 
         #endregion
 
-        [JsInstanceMethod("create", Configurable = false)]
+        [JsInstanceMember("create", Configurable = false)]
         public IJsValue JsCreate(IJsValue[] args)
         {
             var proto = BindParameters.OfTypeOrNull<IJsObject>(args, 0);
             // TODO: Handle properties, https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/create?redirect=no
-            return new JsObject(Environment, proto);
+            return new JsObject(Environment, new JsClass(){Prototype = proto});
         }
 
-        [JsInstanceMethod("defineProperty", Configurable = false)]
+        [JsInstanceMember("defineProperty", Configurable = false)]
         public IJsValue JsDefineProperty(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("defineProperties", Configurable = false)]
+        [JsInstanceMember("defineProperties", Configurable = false)]
         public IJsValue JsDefineProperties(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("getOwnPropertyDescriptor", Configurable = false)]
+        [JsInstanceMember("getOwnPropertyDescriptor", Configurable = false)]
         public IJsValue JsGetOwnPropertyDescriptor(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("keys", Configurable = false)]
+        [JsInstanceMember("keys", Configurable = false)]
         public IJsValue Keys(IJsValue[] args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
@@ -70,7 +70,7 @@ namespace Yes.Interpreter.Model
                 select Environment.CreateString(pd.Name));
         }
 
-        [JsInstanceMethod("getOwnPropertyNames", Configurable = false)]
+        [JsInstanceMember("getOwnPropertyNames", Configurable = false)]
         public IJsValue GetOwnPropertyNames(IJsValue[] args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
@@ -80,49 +80,49 @@ namespace Yes.Interpreter.Model
                 select Environment.CreateString(pd.Name));
         }
 
-        [JsInstanceMethod("getPrototypeOf", Configurable = false)]
+        [JsInstanceMember("getPrototypeOf", Configurable = false)]
         public IJsValue JsGetPrototypeOf(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("preventExtensions", Configurable = false)]
+        [JsInstanceMember("preventExtensions", Configurable = false)]
         public IJsValue JsPreventExtensions(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isExtensible", Configurable = false)]
+        [JsInstanceMember("isExtensible", Configurable = false)]
         public IJsValue JsIsExtensible(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("seal", Configurable = false)]
+        [JsInstanceMember("seal", Configurable = false)]
         public IJsValue JsSeal(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("is", Configurable = false)]
+        [JsInstanceMember("is", Configurable = false)]
         public IJsValue JsIs(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isSealed", Configurable = false)]
+        [JsInstanceMember("isSealed", Configurable = false)]
         public IJsValue JsIsSealed(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("freeze", Configurable = false)]
+        [JsInstanceMember("freeze", Configurable = false)]
         public IJsValue JsFreeze(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMethod("isFrozen", Configurable = false)]
+        [JsInstanceMember("isFrozen", Configurable = false)]
         public IJsValue JsIsFrozen(IJsValue[] args)
         {
             throw new JsNotImplemented();

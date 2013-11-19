@@ -7,7 +7,7 @@ namespace Yes.Interpreter.Model
     public class ArrayConstructor: JsConstructor<JsArray>, IArrayConstructor
     {
         public ArrayConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<ArrayConstructor>())
+            : base(environment, environment.Context.GetClass<ArrayConstructor>())
         {
         }
 
@@ -19,10 +19,10 @@ namespace Yes.Interpreter.Model
                 var length = a[0].ToArrayIndex();
                 if (length.HasValue && (length >= 0))
                 {
-                    return new JsArray(Environment,ClassPrototype,length.Value);
+                    return new JsArray(Environment,ConstructedClass,length.Value);
                 }
             }
-            return new JsArray(Environment, ClassPrototype, a);
+            return new JsArray(Environment, ConstructedClass, a);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

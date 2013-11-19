@@ -7,7 +7,7 @@ namespace Yes.Interpreter.Model
     public class StringConstructor : JsConstructor<JsString>, IStringConstructor
     {
         public StringConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetPrototype<StringConstructor>())
+            : base(environment, environment.Context.GetClass<StringConstructor>())
         {
         }
 
@@ -18,7 +18,7 @@ namespace Yes.Interpreter.Model
 
         public IJsString Construct(string value)
         {
-            return new JsString(Environment, ClassPrototype, value);
+            return new JsString(Environment, ConstructedClass, value);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

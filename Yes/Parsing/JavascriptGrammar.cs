@@ -74,7 +74,10 @@ namespace Yes.Parsing
             Prefix(70, "delete", (state, f, v) => f.Delete(v));
             Prefix(70, "void", (state, f, v) => f.UnaryOperation("void", v));
 
-
+            Prefix(80, "++", (state, f, v) => f.Assign(v, f.BinaryOperation("+", v, f.Number(1))));
+            Prefix(80, "--", (state, f, v) => f.Assign(v, f.BinaryOperation("-", v, f.Number(1))));
+            //Postfix(80, "++", (state, f, v) => f.Assign(v, f.BinaryOperation("+", v, f.Number(1))));
+            //Postfix(80, "--", (state, f, v) => f.Assign(v, f.BinaryOperation("-", v, f.Number(1))));
 
 
             // Infix (".",80) - member access

@@ -77,6 +77,11 @@ namespace Yes.Parsing.Tdop
             return rule;
         }
 
+        public Rule Postfix(int bp, string id, Func<TState, TAstFactory, TAst, TAst> reduce)
+        {
+            return Led(id, bp, (state,p, r) => reduce(state, p.Factory, r));
+        }
+
         public Rule Infix(int bp, string id, Func<TState, TAstFactory, TAst, TAst, TAst> reduce)
         {
             var rule = MakeRule(id, bp);

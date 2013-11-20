@@ -1,7 +1,6 @@
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
-using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
 {
@@ -18,8 +17,10 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var ctor = Conversion.Cast<IJsConstructor>(Constructor.Evaluate(environment));
-            return ctor.Construct(Arguments.Select(a => a.Evaluate(environment)));
+            var ctor = Constructor.Evaluate(environment);
+            return ctor
+                .Cast<IJsConstructor>("{0} is not a function", ctor)
+                .Construct(Arguments.Select(a => a.Evaluate(environment)));
         }
     }
 }

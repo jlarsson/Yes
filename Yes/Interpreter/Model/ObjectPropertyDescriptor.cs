@@ -35,12 +35,12 @@ namespace Yes.Interpreter.Model
         {
             if (!Writable)
             {
-                throw new JsReferenceError();
+                throw new JsReferenceError("Property {0} is not writable", Name);
             }
             if (!ReferenceEquals(self, Owner))
             {
-                // We are setting an inherite dproperty in a subclassed instance
-                var @this = self.Cast<IJsObject>();
+                // We are setting an inherited property in a subclassed instance
+                var @this = self.Cast<IJsObject>("Cannot set property {0} on non-object", Name);
 
                 // Is the property present in subclassed instance?
                 var pd = @this.GetOwnProperty(Name);

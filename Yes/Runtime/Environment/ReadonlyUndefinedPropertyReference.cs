@@ -3,11 +3,11 @@ using Yes.Runtime.Error;
 
 namespace Yes.Runtime.Environment
 {
-    public class MissingScopeReference : IReference
+    public class ReadonlyUndefinedPropertyReference : IReference
     {
         public string Name { get; protected set; }
 
-        public MissingScopeReference(string name)
+        public ReadonlyUndefinedPropertyReference(string name)
         {
             Name = name;
         }
@@ -19,7 +19,7 @@ namespace Yes.Runtime.Environment
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
         {
-            throw new JsReferenceError("{0} is not defined", Name);
+            throw new JsReferenceError("Cannot set property {0}", Name);
         }
     }
 }

@@ -22,7 +22,12 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             // TODO: Throw on cast failure
-            var inspected = Inspected.Evaluate(environment).Cast<IJsObject>();
+            var inspected = Inspected.Evaluate(environment) as IJsObject;
+            if (inspected == null)
+            {
+                // Note: 'for (var m in undefined)' and 'for (var m in null)' is allowed...
+                return JsUndefined.Value;
+            }
 
             var propertyNames = (inspected.GetProperties()
                 .Where(pd => pd.Enumerable)

@@ -17,8 +17,10 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var ctor = environment.GetReference(Constructor).GetValue().Cast<IJsConstructor>();
-            return ctor.Construct(Arguments.Select(a => a.Evaluate(environment)).ToArray());
+            var ctor = environment.GetReference(Constructor).GetValue();
+            return ctor
+                .Cast<IJsConstructor>("{0} is not a function", Constructor)
+                .Construct(Arguments.Select(a => a.Evaluate(environment)).ToArray());
         }
     }
 }

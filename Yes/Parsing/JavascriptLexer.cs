@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Yes.Parsing.Tdop;
+using Yes.Utility;
 
 namespace Yes.Parsing
 {
@@ -50,7 +51,6 @@ namespace Yes.Parsing
         {
             private class Node
             {
-                public TChar Char { private get; set; }
                 public TValue Value { get; set; }
                 public Dictionary<TChar, Node> Children { get; private set; }
 
@@ -70,7 +70,7 @@ namespace Yes.Parsing
                     Node childNode;
                     if (!node.Children.TryGetValue(c, out childNode))
                     {
-                        childNode = new Node {Char = c};
+                        childNode = new Node();
                         node.Children.Add(c, childNode);
                     }
                     node = childNode;
@@ -432,7 +432,7 @@ namespace Yes.Parsing
                                                                                                                       .
                                                                                                                       HexNumber);
                                                                                                           return
-                                                                                                              c.ToString();
+                                                                                                              c.ToString(Conversion.DoubleFormat);
                                                                                                       case '\r':
                                                                                                       case '\n':
                                                                                                           return

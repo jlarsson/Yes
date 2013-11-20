@@ -45,11 +45,14 @@
     <Compile Include="IContext.cs" />
     <Compile Include="Interpreter\Ast\AstExtensions.cs" />
     <Compile Include="Interpreter\Ast\PostAssign.cs" />
+    <Compile Include="Interpreter\Ast\PreAssign.cs" />
     <Compile Include="Interpreter\Model\JsArrayProtype.cs" />
     <Compile Include="Interpreter\Model\JsBooleanPrototype.cs" />
     <Compile Include="Interpreter\Model\JsFunctionPrototype.cs" />
     <Compile Include="Interpreter\Model\JsNumberPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsObjectPrototype.cs" />
     <Compile Include="Interpreter\Model\JsStringPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsValueExtensions.cs" />
     <Compile Include="Runtime\Classes\IJsClass.cs" />
     <Compile Include="Interpreter\Ast\Array.cs" />
     <Compile Include="Interpreter\Ast\Assign.cs" />
@@ -122,7 +125,7 @@
     <Compile Include="Parsing\ILexicalScope.cs" />
     <Compile Include="Parsing\JavascriptParserState.cs" />
     <Compile Include="Parsing\LexicalFeature.cs" />
-    <Compile Include="Runtime\Environment\ReadonlyReference.cs" />
+    <Compile Include="Runtime\Environment\ReadonlyUndefinedPropertyReference.cs" />
     <Compile Include="Runtime\Error\JsNotImplemented.cs" />
     <Compile Include="Runtime\Classes\IReflectedPropertyDescriptors.cs" />
     <Compile Include="Runtime\Classes\JsClasses.cs" />

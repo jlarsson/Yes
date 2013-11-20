@@ -9,12 +9,12 @@ namespace Yes.Interpreter.Model
 
         public IReference GetReference(IJsValue name)
         {
-            throw new JsReferenceError();
+            throw new JsReferenceError("Cannot read property {0} of {1}", name, this);
         }
 
         public IReference GetReference(string name)
         {
-            throw new JsReferenceError();
+            throw new JsReferenceError("Cannot read property {0} of {1}", name, this);
         }
 
         public int? ToArrayIndex()

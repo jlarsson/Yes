@@ -30,16 +30,6 @@ namespace Yes.Utility
     {
         public static readonly IFormatProvider DoubleFormat = CultureInfo.GetCultureInfo("en-US");
 
-        public static T Cast<T>(IJsValue value, bool @throw = true) where T : class
-        {
-            var v = value as T;
-            if ((v == null) && @throw)
-            {
-                throw new JsTypeError();
-            }
-            return v;
-        }
-
         public static double ParseDouble(string text)
         {
             return double.Parse(text, DoubleFormat);

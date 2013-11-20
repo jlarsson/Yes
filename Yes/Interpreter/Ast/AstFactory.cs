@@ -101,6 +101,11 @@ namespace Yes.Interpreter.Ast
             return new Assign(lhs, rhs);
         }
 
+        public IAst PreAssign(IAst lhs, IAst rhs)
+        {
+            return new PreAssign(lhs, rhs);
+        }
+
         public IAst PostAssign(IAst lhs, IAst rhs)
         {
             return new PostAssign(lhs, rhs);

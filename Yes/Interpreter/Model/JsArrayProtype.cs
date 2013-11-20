@@ -5,7 +5,6 @@ using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 using Yes.Runtime.Error;
 using Yes.Runtime.Prototypes;
-using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
@@ -58,7 +57,7 @@ namespace Yes.Interpreter.Model
         [JsMember("push", Enumerable = true)]
         public IJsValue JsPush(IJsValue[] argument)
         {
-            Conversion.Cast<IJsArray>(this).Push(argument.FirstOrDefault() ?? JsUndefined.Value);
+            Push(argument.FirstOrDefault() ?? JsUndefined.Value);
             return this;
         }
 

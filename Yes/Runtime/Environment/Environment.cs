@@ -58,7 +58,8 @@ namespace Yes.Runtime.Environment
                 }
                 env = env.Parent;
             }
-            return new MissingScopeReference();
+            throw new JsReferenceError("{0} is not defined", name);
+            //return new MissingScopeReference(name);
         }
 
         public IReference GetOwnReference(string name)

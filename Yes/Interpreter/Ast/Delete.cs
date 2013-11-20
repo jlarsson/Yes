@@ -14,7 +14,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var lvalue = Member.Cast<ILValue>();
+            var lvalue = Member.ReferenceCast<ILValue>("Invalid left-hand side expression in prefix operation");
             return lvalue.Delete(environment);
         }
     }

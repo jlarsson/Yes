@@ -79,7 +79,17 @@ namespace Yes.Runtime.Classes
         private IJsFunction CreateHostFunction(MethodInfo method)
         {
             Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func =
-                (env, @this, args) => (method.Invoke(@this, new object[] { args }) as IJsValue) ?? JsUndefined.Value;
+                (env, @this, args) =>
+                    {
+                        try
+                        {
+                            return (method.Invoke(@this, new object[] {args}) as IJsValue) ?? JsUndefined.Value;
+                        }
+                        catch (TargetInvocationException e)
+                        {
+                            throw e.InnerException;
+                        }
+                    };
             return new JsHostFunction(Environment, func);
         }
     }

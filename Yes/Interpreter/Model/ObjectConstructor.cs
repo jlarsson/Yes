@@ -87,7 +87,14 @@ namespace Yes.Interpreter.Model
         [JsMember("getPrototypeOf", Configurable = false, Enumerable = true)]
         public IJsValue JsGetPrototypeOf(IJsValue[] args)
         {
-            return Conversion.Cast<IJsObject>(args.FirstOrDefault()).GetPrototype();
+            var obj = args.FirstOrDefault();
+            if (obj == null)
+            {
+                throw new JsReferenceError("Cannot convert parameter to object");
+            }
+            return obj
+                .Cast<IJsObject>("Cannot convert {0} to object", obj)
+                .GetPrototype();
         }
 
         [JsMember("preventExtensions", Configurable = false, Enumerable = true)]

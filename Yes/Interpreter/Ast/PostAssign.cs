@@ -17,7 +17,7 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             var result = Lhs.Evaluate(environment);
-            var lvalue = Lhs.Cast<ILValue>();
+            var lvalue = Lhs.ReferenceCast<ILValue>("Invalid left-hand side expression in postfix operation");
             lvalue.SetValue(environment, Rhs.Evaluate(environment));
             return result;
         }

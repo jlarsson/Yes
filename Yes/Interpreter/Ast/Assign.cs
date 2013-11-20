@@ -16,7 +16,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var lvalue = Lhs.Cast<ILValue>();
+            var lvalue = Lhs.ReferenceCast<ILValue>("Invalid left-hand side in assignment");
             return lvalue.SetValue(environment, Rhs.Evaluate(environment));
         }
     }

@@ -41,6 +41,7 @@ namespace Yes.Runtime.Environment
                 //throw new JsReferenceError(); // TODO: throw if strict only
 
                 // NOTE: node.js allows redeclaration
+                reference.SetValue(value);
                 return reference;
             }
             return _references[name] = new ValueReference(value);

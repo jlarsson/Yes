@@ -16,6 +16,7 @@ namespace Yes
         INumberConstructor NumberConstructor { get; }
         IObjectConstructor ObjectConstructor { get; }
         IStringConstructor StringConstructor { get; }
+        IAst ParseScript(string source);
     }
 
     public static class ContextExtensions

@@ -15,17 +15,8 @@ namespace Yes
         {
             Operators = new Operators();
             Environment = new Environment(this);
-            // NOTE: The order of initialization is important since prototypes (with constructor property) is implicitly created
 
             Classes = new JsClasses(Environment, new ReflectedPropertyDescriptors(Environment));
-/*
-            ObjectConstructor = CreateContructor<ObjectConstructor, JsObject>((e, c, cc) => new ObjectConstructor(e, c, cc));
-            ArrayConstructor = CreateContructor<ArrayConstructor, JsArray>((e, c, cc) => new ArrayConstructor(e, c, cc));
-            BooleanConstructor = CreateContructor<BooleanConstructor, JsBool>((e, c, cc) => new BooleanConstructor(e, c, cc));
-            FunctionConstructor = CreateContructor<FunctionConstructor, JsFunction>((e, c, cc) => new FunctionConstructor(e, c, cc));
-            NumberConstructor = CreateContructor<NumberConstructor, JsNumber>((e, c, cc) => new NumberConstructor(e, c, cc));
-            StringConstructor = CreateContructor<StringConstructor, JsString>((e, c, cc) => new StringConstructor(e, c, cc));
-*/
             Environment.CreateReference("Array", ArrayConstructor = CreateContructor<ArrayConstructor, JsArray>((e, c, cc) => new ArrayConstructor(e, c, cc)));
             Environment.CreateReference("Boolean", BooleanConstructor = CreateContructor<BooleanConstructor, JsBoolean>((e, c, cc) => new BooleanConstructor(e, c, cc)));
             Environment.CreateReference("Function", FunctionConstructor = CreateContructor<FunctionConstructor, JsFunction>((e, c, cc) => new FunctionConstructor(e, c, cc)));
@@ -60,6 +51,11 @@ namespace Yes
             return constructor;
         }
 
+        public IAst ParseScript(string source)
+        {
+            return string.IsNullOrWhiteSpace(source) ? null : new JavascriptParser().Parse(new AstFactory(Operators), source);
+        }
+
         #region IContext Members
 
         public IEnvironment Environment { get; protected set; }
@@ -76,7 +72,7 @@ namespace Yes
 
         public IJsValue Execute(string source)
         {
-            var ast = new JavascriptParser().Parse(new AstFactory(Operators), source);
+            var ast = ParseScript(source);
             return (ast != null) ? ast.Evaluate(Environment) : JsUndefined.Value;
         }
     }

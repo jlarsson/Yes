@@ -24,6 +24,10 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
+            if (Body == null)
+            {
+                return JsUndefined.Value;
+            }
             var applyEnvironment =
                 new Environment(
                     new ThisEnvironment(

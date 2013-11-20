@@ -21,23 +21,15 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             IJsValue self = null;
-            IJsFunction function;
 
             var hasThis = Function as IEvaluateThisAndMember;
-            if (hasThis != null)
-            {
-                function = hasThis.Evaluate(environment, out self) as IJsFunction;
-            }
-            else
-            {
-                function = Function.Evaluate(environment) as IJsFunction;
-            }
+            var function = hasThis != null 
+                ? hasThis.Evaluate(environment, out self)
+                : Function.Evaluate(environment);
 
-            if (function == null)
-            {
-                throw new JsTypeError();
-            }
-            return function.Apply(self, Arguments.Select(a => a.Evaluate(environment)).ToArray());
+            return function
+                .Cast<IJsFunction>("{0} is not a function", function)
+                .Apply(self, Arguments.Select(a => a.Evaluate(environment)).ToArray());
         }
 
         #endregion

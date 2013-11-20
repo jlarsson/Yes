@@ -3,9 +3,10 @@ using Yes.Interpreter.Model;
 
 namespace Yes.Runtime.Prototypes
 {
-    public abstract class AbstractJsPropertyAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Method|AttributeTargets.Property)]
+    public class JsMemberAttribute : Attribute
     {
-        protected AbstractJsPropertyAttribute(string name)
+        public JsMemberAttribute(string name)
         {
             Name = name;
         }
@@ -14,7 +15,6 @@ namespace Yes.Runtime.Prototypes
         public bool Enumerable { get; set; }
         public bool Configurable { get; set; }
         public bool Writable { get; set; }
-        public abstract bool IsPrototypeMember { get; }
         public PropertyDescriptorFlags GetFlags()
         {
             var f = PropertyDescriptorFlags.None;

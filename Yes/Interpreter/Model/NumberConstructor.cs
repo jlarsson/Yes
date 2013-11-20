@@ -1,13 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class NumberConstructor: JsConstructor<JsNumber>, INumberConstructor{
-        public NumberConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetClass<NumberConstructor>())
+    public class NumberConstructor: JsConstructorFunction<JsNumber>, INumberConstructor{
+        public NumberConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
+            : base(environment, @class, constructedClass)
         {
+        }
+
+        public override string ToString()
+        {
+            return "[Function: Number]";
         }
 
         public override IJsValue Construct(IEnumerable<IJsValue> arguments)
@@ -22,7 +28,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new NumberConstructor(environment);
+            return new NumberConstructor(environment, Class, ConstructedClass);
         }
     }
 }

@@ -1,18 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using Yes.Runtime;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 using Yes.Runtime.Error;
 using Yes.Runtime.Prototypes;
-using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsObject : IJsObject
+    public abstract class JsObjectPrototype : IJsObject
     {
         private Dictionary<string, IPropertyDescriptor> _properties;
 
-        public JsObject(IEnvironment environment, IJsClass @class)
+        protected JsObjectPrototype(IEnvironment environment, IJsClass @class)
         {
             Environment = environment;
             Class = @class ?? JsClass.Default;
@@ -24,44 +24,37 @@ namespace Yes.Interpreter.Model
         public IEnvironment Environment { get; private set; }
         public IJsObject Prototype { get; protected set; }
 
-        [JsInstanceMember("prototype", Configurable = false, Enumerable = false)]
-        public IJsValue JsPrototype
-        {
-            get { return Prototype; }
-            set { Prototype = Conversion.Cast<IJsObject>(value, true); }
-        }
-
-        [JsPrototypeMember("hasOwnProperty", Configurable = false, Enumerable = false)]
+        [JsMember("hasOwnProperty", Configurable = false, Enumerable = true)]
         public IJsValue JsHasOwnProperty(IJsValue[] args)
         {
             return Environment.CreateBool(GetOwnProperty(args.Select(a => a.ToString()).FirstOrDefault()) != null);
         }
 
-        [JsPrototypeMember("isPrototypeOf", Configurable = false, Enumerable = false)]
+        [JsMember("isPrototypeOf", Configurable = false, Enumerable = true)]
         public IJsValue JsIsPrototypeOf(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsPrototypeMember("propertyIsEnumerable", Configurable = false, Enumerable = false)]
+        [JsMember("propertyIsEnumerable", Configurable = false, Enumerable = true)]
         public IJsValue JsPropertyIsEnumerable(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsPrototypeMember("toLocaleString", Configurable = false, Enumerable = false)]
+        [JsMember("toLocaleString", Configurable = false, Enumerable = true)]
         public IJsValue JsToLocaleString(IJsValue[] args)
         {
             return JsToString(args);
         }
 
-        [JsPrototypeMember("toString", Configurable = false, Enumerable = false)]
+        [JsMember("toString", Configurable = false, Enumerable = true)]
         public IJsValue JsToString(IJsValue[] args)
         {
             return Environment.CreateString(ToString());
         }
 
-        [JsPrototypeMember("valueOf", Configurable = false, Enumerable = false)]
+        [JsMember("valueOf", Configurable = false, Enumerable = true)]
         public IJsValue JsValueOf(IJsValue[] args)
         {
             return this;
@@ -83,9 +76,9 @@ namespace Yes.Interpreter.Model
                 return pd;
             }
             return Extensible
-                       ? (IReference) new ObjectPropertyDescriptor(
-                           null /* no owner, yet... */, 
-                           name, 
+                       ? (IReference)new ObjectPropertyDescriptor(
+                           null /* no owner, yet... */,
+                           name,
                            JsUndefined.Value,
                            PropertyDescriptorFlags.Configurable | PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable)
                        : new ReadonlyReference();
@@ -223,5 +216,12 @@ namespace Yes.Interpreter.Model
         }
 
         #endregion
+    }
+
+    public class JsObject: JsObjectPrototype
+    {
+        public JsObject(IEnvironment environment, IJsClass @class) : base(environment, @class)
+        {
+        }
     }
 }

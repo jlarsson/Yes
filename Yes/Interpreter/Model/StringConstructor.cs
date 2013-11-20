@@ -1,14 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class StringConstructor : JsConstructor<JsString>, IStringConstructor
+    public class StringConstructor : JsConstructorFunction<JsString>, IStringConstructor
     {
-        public StringConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetClass<StringConstructor>())
+        public StringConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
+            : base(environment, @class, constructedClass)
         {
+        }
+
+        public override string ToString()
+        {
+            return "[Function: String]";
         }
 
         public override IJsValue Construct(IEnumerable<IJsValue> arguments)
@@ -23,7 +29,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new StringConstructor(environment);
+            return new StringConstructor(environment, Class, ConstructedClass);
         }
     }
 }

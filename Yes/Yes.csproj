@@ -43,6 +43,12 @@
     <Compile Include="Context.cs" />
     <Compile Include="ContextSyntax.cs" />
     <Compile Include="IContext.cs" />
+    <Compile Include="Interpreter\Model\JsArrayProtype.cs" />
+    <Compile Include="Interpreter\Model\JsBooleanPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsFunctionPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsNumberPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsStringPrototype.cs" />
+    <Compile Include="Runtime\Classes\IJsClass.cs" />
     <Compile Include="Interpreter\Ast\Array.cs" />
     <Compile Include="Interpreter\Ast\Assign.cs" />
     <Compile Include="Interpreter\Ast\Break.cs" />
@@ -88,7 +94,7 @@
     <Compile Include="Interpreter\Model\IPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\IStringConstructor.cs" />
     <Compile Include="Interpreter\Model\JsArray.cs" />
-    <Compile Include="Interpreter\Model\JsBool.cs" />
+    <Compile Include="Interpreter\Model\JsBoolean.cs" />
     <Compile Include="Interpreter\Model\JsConstructor.cs" />
     <Compile Include="Interpreter\Model\JsFunction.cs" />
     <Compile Include="Interpreter\Model\JsHostFunction.cs" />
@@ -106,7 +112,8 @@
     <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
-    <Compile Include="JsClass.cs" />
+    <Compile Include="Runtime\Classes\IJsClasses.cs" />
+    <Compile Include="Runtime\Classes\JsClass.cs" />
     <Compile Include="Parsing\GetJavascriptLexemeId.cs" />
     <Compile Include="Parsing\IJavascriptParserState.cs" />
     <Compile Include="Parsing\ILexemeMapper.cs" />
@@ -115,6 +122,9 @@
     <Compile Include="Parsing\LexicalFeature.cs" />
     <Compile Include="Runtime\Environment\ReadonlyReference.cs" />
     <Compile Include="Runtime\Error\JsNotImplemented.cs" />
+    <Compile Include="Runtime\Classes\IReflectedPropertyDescriptors.cs" />
+    <Compile Include="Runtime\Classes\JsClasses.cs" />
+    <Compile Include="Runtime\Classes\ReflectedPropertyDescriptors.cs" />
     <Compile Include="Runtime\Operators\IBinaryOperator.cs" />
     <Compile Include="Runtime\Operators\IOperators.cs" />
     <Compile Include="Runtime\Error\JsArgumentError.cs" />
@@ -159,9 +169,7 @@
     <Compile Include="Runtime\Operators\IUnaryOperator.cs" />
     <Compile Include="Runtime\Operators\Operators.cs" />
     <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
-    <Compile Include="Runtime\Prototypes\JsInstanceMember.cs" />
     <Compile Include="Runtime\Prototypes\JsInstancePropertyAttribute.cs" />
-    <Compile Include="Runtime\Prototypes\JsPrototypeMember.cs" />
     <Compile Include="Utility\Conversion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

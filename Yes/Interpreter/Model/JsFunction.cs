@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Ast;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsFunction : JsObject, IJsFunction, IJsConstructor
+    public class JsFunction : JsFunctionPrototype, IJsConstructor
     {
         public JsFunction(IEnvironment environment, IJsClass @class, string name, string[] arguments, IAst body)
             : base(environment, @class)
@@ -21,7 +22,7 @@ namespace Yes.Interpreter.Model
 
         #region IJsFunction Members
 
-        public virtual IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
+        public override IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
         {
             var applyEnvironment =
                 new Environment(
@@ -39,7 +40,7 @@ namespace Yes.Interpreter.Model
 
         #endregion
 
-        public IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public virtual IJsValue Construct(IEnumerable<IJsValue> arguments)
         {
             var self = Environment.CreateObject();
             Apply(self, arguments.ToArray());

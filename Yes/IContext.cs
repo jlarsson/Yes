@@ -6,12 +6,6 @@ using Yes.Runtime.Environment;
 
 namespace Yes
 {
-    public interface IJsClass
-    {
-        IJsObject Prototype { get; }
-        IPropertyDescriptor GetInstanceProperty(string name);
-        IEnumerable<IPropertyDescriptor> GetInstanceProperties();
-    }
     public interface IContext
     {
         IEnvironment Environment { get; }
@@ -22,7 +16,6 @@ namespace Yes
         INumberConstructor NumberConstructor { get; }
         IObjectConstructor ObjectConstructor { get; }
         IStringConstructor StringConstructor { get; }
-        IJsClass GetClass<T>(IJsConstructor constructor = null) where T : IJsObject;
     }
 
     public static class ContextExtensions

@@ -1,14 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class ArrayConstructor: JsConstructor<JsArray>, IArrayConstructor
+    public class ArrayConstructor: JsConstructorFunction<JsArray>, IArrayConstructor
     {
-        public ArrayConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetClass<ArrayConstructor>())
+        public ArrayConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
+            : base(environment, @class, constructedClass)
         {
+        }
+
+        public override string ToString()
+        {
+            return "[Function: Array]";
         }
 
         public override IJsValue Construct(IEnumerable<IJsValue> arguments)
@@ -27,7 +33,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new ArrayConstructor(environment);
+            return new ArrayConstructor(environment, Class, ConstructedClass);
         }
     }
 }

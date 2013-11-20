@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public abstract class JsConstructor<T> : JsObject, IJsConstructor, IJsFunction where T : JsObject
+    public abstract class JsConstructorFunction<T> : JsObject, IJsConstructor, IJsFunction where T : IJsObject
     {
-        protected JsConstructor(IEnvironment environment, IJsClass @class)
+        protected JsConstructorFunction(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class)
         {
-            ConstructedClass = environment.Context.GetClass<T>(this);
+            ConstructedClass = constructedClass;
         }
 
         protected IJsClass ConstructedClass { get; set; }

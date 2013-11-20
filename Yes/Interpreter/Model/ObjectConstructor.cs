@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 using Yes.Runtime.Error;
 using Yes.Runtime.Prototypes;
@@ -7,11 +8,16 @@ using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
-    public class ObjectConstructor : JsConstructor<JsObject>, IObjectConstructor
+    public class ObjectConstructor : JsConstructorFunction<JsObject>, IObjectConstructor
     {
-        public ObjectConstructor(IEnvironment environment)
-            : base(environment, environment.Context.GetClass<ObjectConstructor>())
+        public ObjectConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
+            : base(environment, @class, constructedClass)
         {
+        }
+
+        public override string ToString()
+        {
+            return "[Function: Object]";
         }
 
         #region IObjectConstructor Members
@@ -33,39 +39,39 @@ namespace Yes.Interpreter.Model
 
         #endregion
 
-        [JsInstanceMember("create", Configurable = false)]
+        [JsMember("create", Configurable = false)]
         public IJsValue JsCreate(IJsValue[] args)
         {
             var proto = BindParameters.OfTypeOrNull<IJsObject>(args, 0);
             // TODO: Handle properties, https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/create?redirect=no
-            return new JsObject(Environment, new JsClass(){Prototype = proto});
+            return new JsObject(Environment, new JsClass(new Dictionary<string, IPropertyDescriptor>(), proto));
         }
 
-        [JsInstanceMember("defineProperty", Configurable = false)]
+        [JsMember("defineProperty", Configurable = false, Enumerable = true)]
         public IJsValue JsDefineProperty(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("defineProperties", Configurable = false)]
+        [JsMember("defineProperties", Configurable = false, Enumerable = true)]
         public IJsValue JsDefineProperties(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("getOwnPropertyDescriptor", Configurable = false)]
+        [JsMember("getOwnPropertyDescriptor", Configurable = false, Enumerable = true)]
         public IJsValue JsGetOwnPropertyDescriptor(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("keys", Configurable = false)]
+        [JsMember("keys", Configurable = false, Enumerable = true)]
         public IJsValue Keys(IJsValue[] args)
         {
             return GetOwnPropertyNames(args);
         }
 
-        [JsInstanceMember("getOwnPropertyNames", Configurable = false)]
+        [JsMember("getOwnPropertyNames", Configurable = false, Enumerable = true)]
         public IJsValue GetOwnPropertyNames(IJsValue[] args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
@@ -78,49 +84,49 @@ namespace Yes.Interpreter.Model
                 .Select(n => Environment.CreateString(n)));
         }
 
-        [JsInstanceMember("getPrototypeOf", Configurable = false)]
+        [JsMember("getPrototypeOf", Configurable = false, Enumerable = true)]
         public IJsValue JsGetPrototypeOf(IJsValue[] args)
         {
-            throw new JsNotImplemented();
+            return Conversion.Cast<IJsObject>(args.FirstOrDefault()).GetPrototype();
         }
 
-        [JsInstanceMember("preventExtensions", Configurable = false)]
+        [JsMember("preventExtensions", Configurable = false, Enumerable = true)]
         public IJsValue JsPreventExtensions(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("isExtensible", Configurable = false)]
+        [JsMember("isExtensible", Configurable = false, Enumerable = true)]
         public IJsValue JsIsExtensible(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("seal", Configurable = false)]
+        [JsMember("seal", Configurable = false, Enumerable = true)]
         public IJsValue JsSeal(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("is", Configurable = false)]
+        [JsMember("is", Configurable = false, Enumerable = true)]
         public IJsValue JsIs(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("isSealed", Configurable = false)]
+        [JsMember("isSealed", Configurable = false, Enumerable = true)]
         public IJsValue JsIsSealed(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("freeze", Configurable = false)]
+        [JsMember("freeze", Configurable = false, Enumerable = true)]
         public IJsValue JsFreeze(IJsValue[] args)
         {
             throw new JsNotImplemented();
         }
 
-        [JsInstanceMember("isFrozen", Configurable = false)]
+        [JsMember("isFrozen", Configurable = false, Enumerable = true)]
         public IJsValue JsIsFrozen(IJsValue[] args)
         {
             throw new JsNotImplemented();
@@ -128,7 +134,7 @@ namespace Yes.Interpreter.Model
 
         public override IJsValue CloneTo(IEnvironment environment)
         {
-            return new ObjectConstructor(environment);
+            return new ObjectConstructor(environment, Class, ConstructedClass);
         }
     }
 }

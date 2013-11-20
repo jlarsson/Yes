@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Yes.Parsing;
-using Yes.Runtime;
 using Yes.Runtime.Operators;
-using Yes.Utility;
 
 namespace Yes.Interpreter.Ast
 {
@@ -101,6 +99,11 @@ namespace Yes.Interpreter.Ast
         public IAst Assign(IAst lhs, IAst rhs)
         {
             return new Assign(lhs, rhs);
+        }
+
+        public IAst PostAssign(IAst lhs, IAst rhs)
+        {
+            return new PostAssign(lhs, rhs);
         }
 
         public IAst Delete(IAst ast)

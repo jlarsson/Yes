@@ -5,7 +5,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class StringConstructor : JsConstructorFunction<JsString>, IStringConstructor
+    public class StringConstructor : JsConstructorFunction, IStringConstructor
     {
         public StringConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class, constructedClass)

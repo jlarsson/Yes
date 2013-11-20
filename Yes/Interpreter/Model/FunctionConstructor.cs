@@ -6,7 +6,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class FunctionConstructor : JsConstructorFunction<JsFunction>, IFunctionConstructor
+    public class FunctionConstructor : JsConstructorFunction, IFunctionConstructor
     {
         public FunctionConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class, constructedClass)

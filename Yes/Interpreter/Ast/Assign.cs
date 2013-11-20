@@ -16,7 +16,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var lvalue = Lhs as ILValue;
+            var lvalue = Lhs.Cast<ILValue>();
             return lvalue.SetValue(environment, Rhs.Evaluate(environment));
         }
     }

@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.InteropServices;
-using Yes.Runtime.Environment;
 using Yes.Utility;
 
 namespace Yes.Interpreter.Model
@@ -76,17 +74,17 @@ namespace Yes.Interpreter.Model
 
         private class MethodTable<T>
         {
-            public T Undefined { get; set; }
-            public T Null { get; set; }
-            public T Bool { get; set; }
-             public T Int { get; set; }
-            public T Double { get; set; }
-            public T String { get; set; }
-            public T Object { get; set; }
+            public T Undefined { private get; set; }
+            public T Null { private get; set; }
+            public T Bool { private get; set; }
+             public T Int { private get; set; }
+            public T Double { private get; set; }
+            public T String { private get; set; }
+            public T Object { private get; set; }
 
             public T[] ToArray()
             {
-                return new T[]{Undefined,Null,Bool,Double,Int,String,Object};
+                return new[]{Undefined,Null,Bool,Double,Int,String,Object};
             }
         }
 
@@ -331,7 +329,7 @@ namespace Yes.Interpreter.Model
             }
         }
          
-        private static IConversions[] _toObject
+        private static readonly IConversions[] _conversions
             = new MethodTable<IConversions>
                   {
                       Undefined = new UndefinedConversion(),

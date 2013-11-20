@@ -38,9 +38,12 @@ namespace Yes.Runtime.Environment
             IReference reference;
             if (_references.TryGetValue(name, out reference))
             {
-                throw new JsReferenceError(); // TODO: throw if strict only
+                //throw new JsReferenceError(); // TODO: throw if strict only
+
+                // NOTE: node.js allows redeclaration
+                return reference;
             }
-            return _references[name] = reference = new ValueReference(value);
+            return _references[name] = new ValueReference(value);
         }
 
         public IReference GetReference(string name)

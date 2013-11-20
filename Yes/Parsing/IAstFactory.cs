@@ -17,6 +17,7 @@ namespace Yes.Parsing
         TAst Apply(TAst function, IEnumerable<TAst> arguments);
         TAst Member(TAst instance, TAst name);
         TAst Assign(TAst lhs, TAst rhs);
+        TAst PostAssign(TAst lhs, TAst rhs);
         TAst Delete(TAst ast);
         TAst UnaryOperation(string @operator, TAst value); 
         TAst BinaryOperation(string @operator, TAst lhs, TAst rhs);

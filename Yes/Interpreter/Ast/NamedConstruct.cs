@@ -17,7 +17,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var ctor = environment.GetReference(Constructor).GetValue() as IJsConstructor;
+            var ctor = environment.GetReference(Constructor).GetValue().Cast<IJsConstructor>();
             return ctor.Construct(Arguments.Select(a => a.Evaluate(environment)).ToArray());
         }
     }

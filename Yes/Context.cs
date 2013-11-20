@@ -37,7 +37,7 @@ namespace Yes
         public IJsClasses Classes { get; set; }
         public IOperators Operators { get; set; }
 
-        TConstructor CreateContructor<TConstructor, TConstructed>(Func<IEnvironment, IJsClass, IJsClass, TConstructor> factory) where TConstructor: JsConstructorFunction<TConstructed> where TConstructed : IJsObject
+        TConstructor CreateContructor<TConstructor, TConstructed>(Func<IEnvironment, IJsClass, IJsClass, TConstructor> factory) where TConstructor: JsConstructorFunction where TConstructed : IJsObject
         {
             var constructorClass = Classes.GetClass<TConstructor>();
             var constructedClass = Classes.GetClass<TConstructed>();

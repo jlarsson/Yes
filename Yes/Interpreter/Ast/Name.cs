@@ -1,11 +1,10 @@
 using Yes.Interpreter.Model;
 using Yes.Runtime;
 using Yes.Runtime.Environment;
-using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Ast
 {
-    public class Name : IAst, IAstWithName, IPropertyName, ILValue
+    public class Name : IAstWithName, IPropertyName, ILValue
     {
         public Name(string name)
         {

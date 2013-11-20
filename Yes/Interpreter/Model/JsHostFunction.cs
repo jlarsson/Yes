@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsHostFunction : JsFunctionPrototype, IJsFunction
+    public class JsHostFunction : JsFunctionPrototype
     {
         public JsHostFunction(IEnvironment environment, Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func)
             : base(environment, null)

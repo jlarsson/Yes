@@ -1,4 +1,3 @@
-using System;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 
@@ -15,7 +14,7 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var lvalue = Member as ILValue;
+            var lvalue = Member.Cast<ILValue>();
             return lvalue.Delete(environment);
         }
     }

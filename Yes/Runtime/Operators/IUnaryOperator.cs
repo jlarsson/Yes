@@ -1,4 +1,3 @@
-using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 

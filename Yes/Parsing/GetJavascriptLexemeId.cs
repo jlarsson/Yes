@@ -4,8 +4,8 @@ namespace Yes.Parsing
 {
     public class JavascriptLexemeMapper: ILexemeMapper
     {
-        private static readonly HashSet<string> Keywords = new HashSet<string>()
-                                                {
+        private static readonly HashSet<string> Keywords = new HashSet<string>
+                                                               {
                                                     "return",
                                                     "var",
                                                     "if",

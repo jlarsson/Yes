@@ -139,10 +139,9 @@ namespace Yes.Interpreter.Model
         public IPropertyDescriptor GetProperty(string name)
         {
             IJsObject proto = this;
-            IPropertyDescriptor pd = null;
             while (proto != null)
             {
-                pd = proto.GetOwnProperty(name);
+                var pd = proto.GetOwnProperty(name);
                 if (pd != null)
                 {
                     return pd;

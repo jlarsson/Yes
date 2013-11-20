@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
-    public class LiteralName : IAst, IAstWithName, IPropertyName
+    public class LiteralName : IAstWithName, IPropertyName
     {
         public string Name { get; set; }
 

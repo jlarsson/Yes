@@ -50,9 +50,9 @@ namespace Yes.Parsing
         {
             private class Node
             {
-                public TChar Char { get; set; }
+                public TChar Char { private get; set; }
                 public TValue Value { get; set; }
-                public Dictionary<TChar, Node> Children { get; protected set; }
+                public Dictionary<TChar, Node> Children { get; private set; }
 
                 public Node()
                 {

@@ -5,7 +5,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class ArrayConstructor: JsConstructorFunction<JsArray>, IArrayConstructor
+    public class ArrayConstructor: JsConstructorFunction, IArrayConstructor
     {
         public ArrayConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class, constructedClass)

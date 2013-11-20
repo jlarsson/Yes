@@ -8,7 +8,7 @@ using Yes.Utility;
 
 namespace Yes.Interpreter.Model
 {
-    public class ObjectConstructor : JsConstructorFunction<JsObject>, IObjectConstructor
+    public class ObjectConstructor : JsConstructorFunction, IObjectConstructor
     {
         public ObjectConstructor(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class, constructedClass)

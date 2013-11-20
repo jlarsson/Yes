@@ -40,7 +40,7 @@ namespace Yes.Interpreter.Model
             if (!ReferenceEquals(self, Owner))
             {
                 // We are setting an inherite dproperty in a subclassed instance
-                var @this = (self as IJsObject);
+                var @this = self.Cast<IJsObject>();
 
                 // Is the property present in subclassed instance?
                 var pd = @this.GetOwnProperty(Name);

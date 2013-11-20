@@ -3,7 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsNumber : JsNumberPrototype, IJsNumber
+    public class JsNumber : JsNumberPrototype
     {
         private readonly double _value;
         public JsNumber(IEnvironment environment, IJsClass @class, double value)

@@ -4,7 +4,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Model
 {
-    public abstract class JsConstructorFunction<T> : JsObject, IJsConstructor, IJsFunction where T : IJsObject
+    public abstract class JsConstructorFunction : JsObject, IJsConstructor, IJsFunction
     {
         protected JsConstructorFunction(IEnvironment environment, IJsClass @class, IJsClass constructedClass)
             : base(environment, @class)

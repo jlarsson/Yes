@@ -4,7 +4,7 @@ using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
-    public class JsString : JsStringPrototype, IJsString
+    public class JsString : JsStringPrototype
     {
         private readonly string _value;
 

@@ -43,6 +43,8 @@
     <Compile Include="Context.cs" />
     <Compile Include="ContextSyntax.cs" />
     <Compile Include="IContext.cs" />
+    <Compile Include="Interpreter\Ast\AstExtensions.cs" />
+    <Compile Include="Interpreter\Ast\PostAssign.cs" />
     <Compile Include="Interpreter\Model\JsArrayProtype.cs" />
     <Compile Include="Interpreter\Model\JsBooleanPrototype.cs" />
     <Compile Include="Interpreter\Model\JsFunctionPrototype.cs" />

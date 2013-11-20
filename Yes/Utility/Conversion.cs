@@ -243,7 +243,7 @@ namespace Yes.Utility
         public static double ToNumber(string value)
         {
             double result;
-            return double.TryParse(value, NumberStyles.Number, Conversion.DoubleFormat, out result)
+            return double.TryParse(value, NumberStyles.Number, DoubleFormat, out result)
                        ? result
                        : double.NaN;
 

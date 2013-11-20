@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
@@ -23,7 +22,7 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             // TODO: Throw on cast failure
-            var inspected = Inspected.Evaluate(environment) as IJsObject;
+            var inspected = Inspected.Evaluate(environment).Cast<IJsObject>();
 
             var propertyNames = (inspected.GetProperties()
                 .Where(pd => pd.Enumerable)

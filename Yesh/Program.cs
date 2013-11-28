@@ -6,6 +6,15 @@ namespace Yesh
 {
     class Program
     {
+        const string InitScript = @"
+var test = {};
+test.run = function (){
+    var m = 100;
+    for (var i = 1; i < 1000000; ++i){
+        m /= i;
+    }
+};
+";
         static void Main(string[] _)
         {
             
@@ -22,7 +31,7 @@ namespace Yesh
 
 
             Console.Out.WriteLine("Yesh - Yes Javascript Shell");
-
+            context.Execute(InitScript);
             while(true)
             {
                 Console.Out.Write(":");

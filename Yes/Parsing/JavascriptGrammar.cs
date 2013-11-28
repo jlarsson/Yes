@@ -74,10 +74,10 @@ namespace Yes.Parsing
             Prefix(70, "delete", (state, f, v) => f.Delete(v));
             Prefix(70, "void", (state, f, v) => f.UnaryOperation("void", v));
 
-            Prefix(80, "++", (state, f, v) => f.PreAssign(v, f.BinaryOperation("+", v, f.Number(1))));
-            Prefix(80, "--", (state, f, v) => f.PreAssign(v, f.BinaryOperation("-", v, f.Number(1))));
-            Postfix(80, "++", (state, f, v) => f.PostAssign(v, f.BinaryOperation("+", v, f.Number(1))));
-            Postfix(80, "--", (state, f, v) => f.PostAssign(v, f.BinaryOperation("-", v, f.Number(1))));
+            Prefix(75, "++", (state, f, v) => f.PreAssign(v, f.BinaryOperation("+", v, f.Number(1))));
+            Prefix(75, "--", (state, f, v) => f.PreAssign(v, f.BinaryOperation("-", v, f.Number(1))));
+            Postfix(75, "++", (state, f, v) => f.PostAssign(v, f.BinaryOperation("+", v, f.Number(1))));
+            Postfix(75, "--", (state, f, v) => f.PostAssign(v, f.BinaryOperation("-", v, f.Number(1))));
 
 
             // Infix (".",80) - member access
@@ -249,8 +249,6 @@ namespace Yes.Parsing
                                        return f.ForIn(binding, inspected, b, false);
 
                                    }
-
-                                   // Todo: handle 'for var m in x'
 
                                    var initial = default(TAst);
                                    if (p.CanAdvance("var"))

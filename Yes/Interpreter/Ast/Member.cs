@@ -1,14 +1,26 @@
+using System;
 using Yes.Interpreter.Model;
+using Yes.Runtime;
 using Yes.Runtime.Environment;
 
 namespace Yes.Interpreter.Ast
 {
     public class Member : IAst, ILValue, IEvaluateThisAndMember
     {
+        private readonly Func<IEnvironment, IJsValue, IReference> _getMemberReference;
         public Member(IAst instance, IAst name)
         {
             Instance = instance;
             MemberName = name;
+            if (name is IAstWithName)
+            {
+                var literalName = (name as IAstWithName).Name;
+                _getMemberReference = (env, obj) => obj.GetReference(literalName);
+            }
+            else
+            {
+                _getMemberReference = (env, obj) => obj.GetReference(name.Evaluate(env));
+            }
         }
 
         public IAst Instance { get; protected set; }
@@ -19,7 +31,7 @@ namespace Yes.Interpreter.Ast
         public IJsValue Evaluate(IEnvironment environment)
         {
             var obj = Instance.Evaluate(environment);
-            return obj.GetReference(MemberName.Evaluate(environment)).GetValue(obj);
+            return _getMemberReference(environment,obj).GetValue(obj);
         }
 
         #endregion
@@ -27,7 +39,7 @@ namespace Yes.Interpreter.Ast
         public IJsValue SetValue(IEnvironment environment, IJsValue value)
         {
             var obj = Instance.Evaluate(environment);
-            return obj.GetReference(MemberName.Evaluate(environment)).SetValue(obj, value);
+            return _getMemberReference(environment, obj).SetValue(obj, value);
         }
 
         public IJsValue Delete(IEnvironment environment)
@@ -42,7 +54,7 @@ namespace Yes.Interpreter.Ast
         {
             var obj = Instance.Evaluate(environment);
             @this = obj;
-            return obj.GetReference(MemberName.Evaluate(environment)).GetValue(obj);
+            return _getMemberReference(environment, obj).GetValue(obj);
         }
     }
 }

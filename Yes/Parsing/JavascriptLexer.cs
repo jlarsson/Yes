@@ -113,7 +113,6 @@ namespace Yes.Parsing
                                                                  "/", "/=",
                                                                  ","
                                                              };
-
             private static readonly Trie<char, string> OperatorTrie = new Trie<char, string>();
 
             private static readonly Func<Runner, char, Lexeme>[] PreLookup = new Func<Runner, char, Lexeme>[127];
@@ -136,6 +135,7 @@ namespace Yes.Parsing
             private int _column;
             private int _line;
             private int _pos;
+            private Dictionary<string, string> _nameTable = new Dictionary<string, string>();
 
             static Runner()
             {
@@ -301,10 +301,16 @@ namespace Yes.Parsing
 
             private Lexeme CreateLexeme(Func<string, string> getId, string value, int length)
             {
+                // We intern the value in a string table in the hope that future strng comparisons will hit on reference comparisons
+                string internedValue;
+                if (!_nameTable.TryGetValue(value,out internedValue))
+                {
+                    internedValue = _nameTable[value] = value;
+                }
                 var l = new Lexeme
                             {
                                 Id = getId(value),
-                                Text = value,
+                                Text = internedValue,
                                 Source = _source,
                                 Position = _pos,
                                 Length = length,

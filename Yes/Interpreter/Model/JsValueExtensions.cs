@@ -9,7 +9,7 @@ namespace Yes.Interpreter.Model
             var t = value as T;
             if (t == null)
             {
-                throw new JsTypeError();
+                throw new JsTypeException();
             }
             return t;
         }
@@ -19,7 +19,7 @@ namespace Yes.Interpreter.Model
             var t = value as T;
             if (t == null)
             {
-                throw new JsTypeError(format, arg0);
+                throw new JsTypeException(format, arg0);
             }
             return t;
         }

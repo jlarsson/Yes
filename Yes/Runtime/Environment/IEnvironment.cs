@@ -40,5 +40,37 @@ namespace Yes.Runtime.Environment
         {
             return environment.Context.CreateString(value);
         }
+        public static IJsValue CreateError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.ErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateArgumentError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.ErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateEvalError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.EvalErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateRangeError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.RangeErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateReferenceError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.ReferenceErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateSyntaxError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.SyntaxErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateTypeError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.TypeErrorConstructor.Construct(message, fileName, lineNumber);
+        }
+        public static IJsValue CreateUriError(this IEnvironment environment, string message, string fileName = "", int lineNumber = 0)
+        {
+            return environment.Context.UriErrorConstructor.Construct(message, fileName, lineNumber);
+        }
     }
 }

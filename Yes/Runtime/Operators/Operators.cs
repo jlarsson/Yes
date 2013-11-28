@@ -42,7 +42,7 @@ namespace Yes.Runtime.Operators
             IUnaryOperator @operator;
             return UnaryOperators.TryGetValue(symbol, out @operator)
                        ? @operator
-                       : new UnaryOperator(symbol, delegate { throw new JsSyntaxError(); });
+                       : new UnaryOperator(symbol, delegate { throw new JsSyntaxException(); });
         }
 
         public IBinaryOperator GetBinaryOperator(string symbol)
@@ -50,7 +50,7 @@ namespace Yes.Runtime.Operators
             IBinaryOperator @operator;
             return BinaryOperators.TryGetValue(symbol, out @operator)
                        ? @operator
-                       : new BinaryOperator(symbol, delegate { throw new JsSyntaxError(); });
+                       : new BinaryOperator(symbol, delegate { throw new JsSyntaxException(); });
         }
 
         #endregion

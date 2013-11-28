@@ -3,11 +3,11 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Runtime.Error
 {
-    class JsNotImplemented: JsException
+    public class JsUriException : JsException
     {
         public override IJsValue ToJsValue(IEnvironment environment)
         {
-            return environment.CreateError(Message);
+            return environment.CreateUriError(Message);
         }
     }
 }

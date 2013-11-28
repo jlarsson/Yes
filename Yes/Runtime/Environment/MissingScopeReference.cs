@@ -19,7 +19,7 @@ namespace Yes.Runtime.Environment
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
         {
-            throw new JsReferenceError("{0} is not defined", Name);
+            throw new JsReferenceException("{0} is not defined", Name);
         }
     }
 }

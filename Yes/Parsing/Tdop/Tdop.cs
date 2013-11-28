@@ -96,7 +96,7 @@ namespace Yes.Parsing.Tdop
             }
             if (Token.Lexeme.Id != id)
             {
-                throw new JsSyntaxError();
+                throw new JsSyntaxException();
             }
             Advance();
         }

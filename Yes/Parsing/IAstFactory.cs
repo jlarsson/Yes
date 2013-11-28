@@ -3,6 +3,18 @@ using System.Collections.Generic;
 
 namespace Yes.Parsing
 {
+    public class CatchParameters<TAst>
+    {
+        public TAst BindingName { get; set; }
+        public TAst CatchStatement { get; set; }
+    }
+    public class TryCatchFinallyParameters<TAst>
+    {
+        public TAst TryStatement { get; set; }
+        public CatchParameters<TAst> CatchParameters { get; set; }
+        public TAst FinallyStatement { get; set; }
+        
+    }
     public interface IAstFactory<TAst>
     {
         TAst Name(string value);
@@ -34,5 +46,7 @@ namespace Yes.Parsing
         TAst For(TAst initial, TAst condition, TAst loop, TAst block);
         TAst ForIn(TAst binding, TAst inspected, TAst block, bool declareBinding);
         TAst Construct(TAst constructor, IEnumerable<TAst> arguments);
+        TAst Throw(TAst expression);
+        TAst TryCatchFinally(TryCatchFinallyParameters<TAst> p);
     }
 }

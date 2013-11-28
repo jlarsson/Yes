@@ -19,7 +19,12 @@ namespace Yes.Parsing
                                                     "in",
                                                     "delete",
                                                     "void",
-                                                    "instanceof"
+                                                    "instanceof",
+                                                    "throw",
+                                                    "try",
+                                                    //"catch",
+                                                    //"throw"
+
                                                 };
         public string CommentId(string text)
         {

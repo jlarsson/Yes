@@ -11,20 +11,6 @@ namespace Yes.Parsing
 {
     public class JavascriptLexer
     {
-        #region LexemeType enum
-
-        public enum LexemeType
-        {
-            Comment,
-            Operator,
-            Error,
-            Number,
-            Name,
-            String
-        }
-
-        #endregion
-
         public IEnumerable<Lexeme> Lex(string source, ILexemeMapper lexemeMapper = null)
         {
             return new Runner(source, lexemeMapper ?? new JavascriptLexemeMapper()).Lex().Where(l => l != null);

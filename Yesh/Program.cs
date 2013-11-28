@@ -11,7 +11,7 @@ var test = {};
 test.run = function (){
     var m = 100;
     for (var i = 1; i < 1000000; ++i){
-        m /= i;
+        m = m / i;
     }
 };
 ";
@@ -31,7 +31,7 @@ test.run = function (){
 
 
             Console.Out.WriteLine("Yesh - Yes Javascript Shell");
-            context.Execute(InitScript);
+            //context.Execute(InitScript);
             while(true)
             {
                 Console.Out.Write(":");

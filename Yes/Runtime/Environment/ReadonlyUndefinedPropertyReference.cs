@@ -19,7 +19,7 @@ namespace Yes.Runtime.Environment
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
         {
-            throw new JsReferenceError("Cannot set property {0}", Name);
+            throw new JsReferenceException("Cannot set property {0}", Name);
         }
     }
 }

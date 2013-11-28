@@ -23,6 +23,14 @@ namespace Yes
             Environment.CreateReference("Number", NumberConstructor = CreateContructor<NumberConstructor, JsNumber>((e, c, cc) => new NumberConstructor(e, c, cc)));
             Environment.CreateReference("Object", ObjectConstructor = CreateContructor<ObjectConstructor, JsObject>((e, c, cc) => new ObjectConstructor(e, c, cc)));
             Environment.CreateReference("String", StringConstructor = CreateContructor<StringConstructor, JsString>((e, c, cc) => new StringConstructor(e, c, cc)));
+
+            Environment.CreateReference("Error", ErrorConstructor = CreateContructor<ErrorConstructor, JsError>((e, c, cc) => new ErrorConstructor(e, c, cc)));
+            Environment.CreateReference("EvalError", EvalErrorConstructor = CreateContructor<EvalErrorConstructor, JsEvalError>((e, c, cc) => new EvalErrorConstructor(e, c, cc)));
+            Environment.CreateReference("RangeError", RangeErrorConstructor = CreateContructor<RangeErrorConstructor, JsRangeError>((e, c, cc) => new RangeErrorConstructor(e, c, cc)));
+            Environment.CreateReference("ReferenceError", ReferenceErrorConstructor = CreateContructor<ReferenceErrorConstructor, JsReferenceError>((e, c, cc) => new ReferenceErrorConstructor(e, c, cc)));
+            Environment.CreateReference("SyntaxError", SyntaxErrorConstructor = CreateContructor<SyntaxErrorConstructor, JsSyntaxError>((e, c, cc) => new SyntaxErrorConstructor(e, c, cc)));
+            Environment.CreateReference("TypeError", TypeErrorConstructor = CreateContructor<TypeErrorConstructor, JsTypeError>((e, c, cc) => new TypeErrorConstructor(e, c, cc)));
+            Environment.CreateReference("URIError", UriErrorConstructor = CreateContructor<UriErrorConstructor, JsUriError>((e, c, cc) => new UriErrorConstructor(e, c, cc)));
         }
 
         public IJsClasses Classes { get; set; }
@@ -67,6 +75,13 @@ namespace Yes
         public INumberConstructor NumberConstructor { get; private set; }
         public IObjectConstructor ObjectConstructor { get; private set; }
         public IStringConstructor StringConstructor { get; private set; }
+        public IErrorConstructor ErrorConstructor { get; set; }
+        public IErrorConstructor EvalErrorConstructor { get; set; }
+        public IErrorConstructor RangeErrorConstructor { get; set; }
+        public IErrorConstructor ReferenceErrorConstructor { get; set; }
+        public IErrorConstructor SyntaxErrorConstructor { get; set; }
+        public IErrorConstructor TypeErrorConstructor { get; set; }
+        public IErrorConstructor UriErrorConstructor { get; set; }
 
         #endregion
 

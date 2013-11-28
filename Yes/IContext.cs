@@ -16,6 +16,13 @@ namespace Yes
         INumberConstructor NumberConstructor { get; }
         IObjectConstructor ObjectConstructor { get; }
         IStringConstructor StringConstructor { get; }
+        IErrorConstructor ErrorConstructor { get; }
+        IErrorConstructor EvalErrorConstructor { get; }
+        IErrorConstructor RangeErrorConstructor { get; }
+        IErrorConstructor ReferenceErrorConstructor { get; }
+        IErrorConstructor SyntaxErrorConstructor { get; }
+        IErrorConstructor TypeErrorConstructor { get; }
+        IErrorConstructor UriErrorConstructor { get; }
         IAst ParseScript(string source);
     }
 

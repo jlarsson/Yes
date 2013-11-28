@@ -181,7 +181,7 @@ namespace Yes.Interpreter.Model
                 _properties.Remove(name);
                 return true;
             }
-            throw new JsTypeError();
+            throw new JsTypeException();
         }
 
         public IEnumerable<IPropertyDescriptor> GetOwnProperties()
@@ -194,12 +194,12 @@ namespace Yes.Interpreter.Model
         {
             if (!Extensible)
             {
-                throw new JsTypeError();
+                throw new JsTypeException();
             }
             var existing = GetOwnProperty(descriptor.Name);
             if ((existing != null) && !existing.Configurable)
             {
-                throw new JsTypeError();
+                throw new JsTypeException();
             }
             if (_properties == null)
             {

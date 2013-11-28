@@ -62,7 +62,7 @@ namespace Yes.Interpreter.Model
             {
                 if ((index < 0) || (index >= _array.Count))
                 {
-                    throw new JsRangeError();
+                    throw new JsRangeException();
                 }
                 return _array[index];
             }

@@ -3,8 +3,7 @@ using Yes.Runtime.Environment;
 
 namespace Yes.Runtime.Error
 {
-    class JsNotImplemented: JsException
-    {
+    public class JsArgumentException: JsException{
         public override IJsValue ToJsValue(IEnvironment environment)
         {
             return environment.CreateError(Message);

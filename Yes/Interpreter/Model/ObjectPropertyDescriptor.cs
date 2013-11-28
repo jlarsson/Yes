@@ -35,7 +35,7 @@ namespace Yes.Interpreter.Model
         {
             if (!Writable)
             {
-                throw new JsReferenceError("Property {0} is not writable", Name);
+                throw new JsReferenceException("Property {0} is not writable", Name);
             }
             if (!ReferenceEquals(self, Owner))
             {

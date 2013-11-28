@@ -9,7 +9,7 @@ namespace Yes.Interpreter.Ast
             var t = ast as T;
             if (t == null)
             {
-                throw new JsReferenceError();
+                throw new JsReferenceException();
             }
             return t;
         }
@@ -19,7 +19,7 @@ namespace Yes.Interpreter.Ast
             var t = ast as T;
             if (t == null)
             {
-                throw new JsReferenceError(message);
+                throw new JsReferenceException(message);
             }
             return t;
         }

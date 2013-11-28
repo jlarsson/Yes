@@ -59,7 +59,7 @@ namespace Yes.Runtime.Environment
                 }
                 env = env.Parent;
             }
-            throw new JsReferenceError("{0} is not defined", name);
+            throw new JsReferenceException("{0} is not defined", name);
             //return new MissingScopeReference(name);
         }
 

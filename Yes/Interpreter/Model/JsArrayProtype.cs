@@ -43,12 +43,12 @@ namespace Yes.Interpreter.Model
                 var index = value.ToArrayIndex();
                 if (!index.HasValue)
                 {
-                    throw new JsTypeError();
+                    throw new JsTypeException();
                 }
                 var length = index.Value;
                 if (length < 0)
                 {
-                    throw new JsArgumentError();
+                    throw new JsArgumentException();
                 }
                 Length = length;
             }

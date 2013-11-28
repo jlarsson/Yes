@@ -45,7 +45,7 @@ namespace Yes.Runtime.Environment
             {
                 return _reference ??
                        (_reference =
-                        new LambdaReference("this", _ => This, delegate { throw new JsReferenceError(); }));
+                        new LambdaReference("this", _ => This, delegate { throw new JsReferenceException(); }));
             }
             return null;
         }

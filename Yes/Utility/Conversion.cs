@@ -22,7 +22,7 @@ namespace Yes.Utility
             {
                 return null;
             }
-            throw new JsTypeError();
+            throw new JsTypeException();
         }
     }
 

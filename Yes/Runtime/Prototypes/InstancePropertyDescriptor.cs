@@ -20,7 +20,7 @@ namespace Yes.Runtime.Prototypes
         {
             if (_getter == null)
             {
-                throw new JsError();
+                throw new JsReferenceException();
             }
             return (_getter.Invoke(self, new object[0]) as IJsValue) ?? JsUndefined.Value;
         }
@@ -29,7 +29,7 @@ namespace Yes.Runtime.Prototypes
         {
             if (_setter == null)
             {
-                throw new JsError();
+                throw new JsReferenceException();
             }
             return (_setter.Invoke(self, new object[]{value}) as IJsValue) ?? JsUndefined.Value;
         }

@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Yes.Interpreter.Model;
 using Yes.Parsing;
+using Yes.Runtime.Environment;
+using Yes.Runtime.Error;
 using Yes.Runtime.Operators;
+using Environment = Yes.Runtime.Environment.Environment;
 
 namespace Yes.Interpreter.Ast
 {
@@ -195,6 +199,61 @@ namespace Yes.Interpreter.Ast
             return new Construct(constructor, arguments.ToArray());
         }
 
+        public IAst Throw(IAst expression)
+        {
+            return new Throw(expression);
+        }
+
+        public IAst TryCatchFinally(TryCatchFinallyParameters<IAst> p)
+        {
+            return new TryCatchFinally(p);
+        }
+
         #endregion
+    }
+
+    public class TryCatchFinally : IAst
+    {
+        private readonly TryCatchFinallyParameters<IAst> _tcf;
+
+        public TryCatchFinally(TryCatchFinallyParameters<IAst> tcf)
+        {
+            _tcf = tcf;
+        }
+
+        public IJsValue Evaluate(IEnvironment environment)
+        {
+            try
+            {
+                _tcf.TryStatement.Evaluate(environment);
+            }
+            catch (JsException e)
+            {
+                if (_tcf.CatchParameters == null)
+                {
+                    throw;
+                }
+                return EvaluateCatch(environment, _tcf.CatchParameters.BindingName, _tcf.CatchParameters.CatchStatement, e.ToJsValue(environment));
+            }
+            finally
+            {
+                if (_tcf.FinallyStatement != null)
+                {
+                    _tcf.FinallyStatement.Evaluate(environment);
+                }
+            }
+            return JsUndefined.Value;
+        }
+
+        private IJsValue EvaluateCatch(IEnvironment environment, IAst bindingName, IAst catchStatement, IJsValue value)
+        {
+            if (bindingName is IAstWithName)
+            {
+                environment = new Environment(environment);
+                environment.CreateReference((bindingName as IAstWithName).Name, value);
+            }
+            catchStatement.Evaluate(environment);
+            return environment.ControlFlow.ReturnValue ?? JsUndefined.Value;
+        }
     }
 }

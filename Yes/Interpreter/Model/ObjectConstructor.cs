@@ -90,7 +90,7 @@ namespace Yes.Interpreter.Model
             var obj = args.FirstOrDefault();
             if (obj == null)
             {
-                throw new JsReferenceError("Cannot convert parameter to object");
+                throw new JsReferenceException("Cannot convert parameter to object");
             }
             return obj
                 .Cast<IJsObject>("Cannot convert {0} to object", obj)

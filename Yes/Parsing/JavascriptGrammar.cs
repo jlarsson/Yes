@@ -173,7 +173,7 @@ namespace Yes.Parsing
                          });
 
             Std("(comment)", (state, p, f) => null);
-            Std("(error)", (state, p, f) => { throw new JsSyntaxError(); });
+            Std("(error)", (state, p, f) => { throw new JsSyntaxException(); });
 
             Std("var", (state, p, f) =>
                            {
@@ -299,7 +299,7 @@ namespace Yes.Parsing
                              {
                                  if (!state.Scope.IsAllowed(LexicalFeature.Break))
                                  {
-                                     throw new JsSyntaxError();
+                                     throw new JsSyntaxException();
                                  }
                                  AdvanceOptionalSemiColon(p);
                                  return f.Break();
@@ -308,12 +308,46 @@ namespace Yes.Parsing
                                 {
                                     if (!state.Scope.IsAllowed(LexicalFeature.Continue))
                                     {
-                                        throw new JsSyntaxError();
+                                        throw new JsSyntaxException();
                                     }
                                     AdvanceOptionalSemiColon(p);
                                     return f.Continue();
                                 });
 
+            Std("throw", (state, p, f) =>
+            {
+                var expression = p.Expression(state, 0);
+                AdvanceOptionalSemiColon(p);
+
+                return f.Throw(expression);
+
+            });
+
+            Std("try", (state, p, f) =>
+                           {
+                               var tcf = new TryCatchFinallyParameters<TAst>();
+                               tcf.TryStatement = Block(state, p);
+
+                               if (p.TryAdvance("catch"))
+                               {
+                                   var c = new CatchParameters<TAst>();
+                                   if (p.TryAdvance("("))
+                                   {
+                                       if (p.CanAdvance("(name)"))
+                                       {
+                                           c.BindingName = ParseName(p);
+                                       }
+                                       p.Advance(")");
+                                   }
+                                   c.CatchStatement = Block(state, p);
+                                   tcf.CatchParameters = c;
+                               }
+                               if (p.TryAdvance("finally"))
+                               {
+                                   tcf.FinallyStatement = Block(state, p);
+                               }
+                               return f.TryCatchFinally(tcf);
+                           });
 
             Prefix("{", (state, p, l) =>
                             {
@@ -354,10 +388,9 @@ namespace Yes.Parsing
                                 return p.Factory.Array(members);
                             });
 
-
             // Error production
             // We end up here with scrips such as '{}.x;', since parser takes a block but user typed an object literal
-            Nud(".", (state, p, l) => { throw new JsSyntaxError(); });
+            Nud(".", (state, p, l) => { throw new JsSyntaxException(); });
         }
 
         private Rule Assignment(int bp, string id, Func<IJavascriptParserState, IAstFactory<TAst>, TAst, TAst, TAst> reduce)

@@ -29,14 +29,15 @@ namespace Yes.Interpreter.Model
             }
             var applyEnvironment =
                 new Environment(
-                    new ThisEnvironment(
-                        new BoundArgumentsEnvironment(
-                            Environment,
-                            Arguments,
-                            arguments
-                            ),
-                        @this
-                        ));
+                    new BoundArgumentsEnvironment(
+                        new FunctionEnvironment(Environment,
+                                                this,
+                                                @this,
+                                                arguments),
+                        Arguments,
+                        arguments
+                        )
+                    );
 
             return Body.Evaluate(applyEnvironment);
         }

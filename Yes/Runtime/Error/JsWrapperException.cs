@@ -1,4 +1,3 @@
-using System;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 
@@ -15,7 +14,7 @@ namespace Yes.Runtime.Error
 
         public override IJsValue ToJsValue(IEnvironment environment)
         {
-            return Value;
+            return (Value is IJsError) ? Value : environment.CreateError(Value.ToString());
         }
     }
 }

@@ -1,21 +1,26 @@
 using System;
+using System.Collections.Generic;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Error;
 
 namespace Yes.Runtime.Environment
 {
-    public class ThisEnvironment : IEnvironment
+    public class FunctionEnvironment : IEnvironment, IFunctionEnvironment
     {
-        private IReference _reference;
+        private IReference _thisReference;
+        private IReference _argumentsReference;
 
-        public ThisEnvironment(IEnvironment parent, IJsValue @this)
+        public FunctionEnvironment(IEnvironment parent, IJsFunction function, IJsValue @this, IList<IJsValue> arguments)
         {
             if (parent == null) throw new ArgumentNullException("parent");
             Parent = parent;
+            Function = function;
             This = @this;
+            Arguments = arguments;
         }
 
         public IJsValue This { get; protected set; }
+        public IList<IJsValue> Arguments { get; set; }
 
         public IContext Context
         {
@@ -43,11 +48,22 @@ namespace Yes.Runtime.Environment
         {
             if (string.Equals("this", name))
             {
-                return _reference ??
-                       (_reference =
+                return _thisReference ??
+                       (_thisReference =
                         new LambdaReference("this", _ => This, delegate { throw new JsReferenceException(); }));
+            }
+            if (string.Equals("arguments", name))
+            {
+                return _argumentsReference ?? (_argumentsReference = new ValueReference(CreateArgumentsObject()));
             }
             return null;
         }
+
+        private IJsValue CreateArgumentsObject()
+        {
+            return Context.ArgumentsConstructor.Construct(Parent, Arguments);
+        }
+
+        public IJsFunction Function { get; protected set; }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using Yes;
 using Yes.Interpreter.Model;
+using Yes.Runtime.Error;
 
 namespace Yesh
 {
-    class Program
+    internal class Program
     {
-        const string InitScript = @"
+        private const string InitScript =
+            @"
 var test = {};
 test.run = function (){
     var m = 100;
@@ -15,24 +17,24 @@ test.run = function (){
     }
 };
 ";
-        static void Main(string[] _)
+
+        private static void Main(string[] _)
         {
-            
             var context = new Context();
 
             var console = context.CreateObject();
             console.GetReference("log").SetValue(console, context.CreateHostFunction((scope, self, args) =>
-                                                                                {
-                                                                                    Console.Out.WriteLine(
-                                                                                        string.Join<IJsValue>("", args));
-                                                                                    return JsUndefined.Value;
-                                                                                }));
+                                                                                         {
+                                                                                             Console.Out.WriteLine(
+                                                                                                 string.Join("", args));
+                                                                                             return JsUndefined.Value;
+                                                                                         }));
             context.Environment.CreateReference("console", console);
 
 
             Console.Out.WriteLine("Yesh - Yes Javascript Shell");
             //context.Execute(InitScript);
-            while(true)
+            while (true)
             {
                 Console.Out.Write(":");
                 Console.Out.Flush();
@@ -55,9 +57,16 @@ test.run = function (){
                     var elapsed = DateTime.Now - start;
                     Console.Out.WriteLine("[{0}] {1}", elapsed, result);
                 }
-                catch(Exception e)
+                catch (JsException e)
                 {
-                    Console.Out.WriteLine("{0}: {1}",e.GetType().Name, e.Message);
+                    var javascriptException = e.ToJsValue(context.Environment);
+                    Console.Out.WriteLine("[{0}] {1}",
+                                          javascriptException.GetReference("name").GetValue(javascriptException),
+                                          javascriptException.GetReference("message").GetValue(javascriptException));
+                }
+                catch (Exception e)
+                {
+                    Console.Out.WriteLine("{0}: {1}", e.GetType().Name, e.Message);
                 }
             }
         }

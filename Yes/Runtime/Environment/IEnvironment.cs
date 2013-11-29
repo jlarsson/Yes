@@ -5,6 +5,11 @@ using Yes.Interpreter.Model;
 
 namespace Yes.Runtime.Environment
 {
+    public interface IFunctionEnvironment: IEnvironment
+    {
+        IJsFunction Function { get; }
+    }
+
     public interface IEnvironment
     {
         IContext Context { get; }

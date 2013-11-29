@@ -23,6 +23,7 @@ namespace Yes
         IErrorConstructor SyntaxErrorConstructor { get; }
         IErrorConstructor TypeErrorConstructor { get; }
         IErrorConstructor UriErrorConstructor { get; }
+        IArgumentsConstructor ArgumentsConstructor { get; }
         IAst ParseScript(string source);
     }
 

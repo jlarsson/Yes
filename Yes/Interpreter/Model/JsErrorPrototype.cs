@@ -4,7 +4,7 @@ using Yes.Runtime.Prototypes;
 
 namespace Yes.Interpreter.Model
 {
-    public abstract class JsErrorPrototype: JsObjectPrototype{
+    public abstract class JsErrorPrototype: JsObjectPrototype, IJsError{
         protected JsErrorPrototype(IEnvironment environment, IJsClass @class) : base(environment, @class)
         {
         }

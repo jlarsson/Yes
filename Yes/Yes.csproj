@@ -52,7 +52,13 @@
     <Compile Include="Interpreter\Model\AbstractErrorConstructor.cs" />
     <Compile Include="Interpreter\Model\ErrorConstructor.cs" />
     <Compile Include="Interpreter\Model\EvalErrorConstructor.cs" />
+    <Compile Include="Interpreter\Model\IArgumentsConstructor.cs" />
     <Compile Include="Interpreter\Model\IErrorConstructor.cs" />
+    <Compile Include="Interpreter\Model\IJsArguments.cs" />
+    <Compile Include="Interpreter\Model\IJsError.cs" />
+    <Compile Include="Interpreter\Model\JsArguments.cs" />
+    <Compile Include="Interpreter\Model\JsArgumentsConstructor.cs" />
+    <Compile Include="Interpreter\Model\JsArgumentsPrototype.cs" />
     <Compile Include="Interpreter\Model\JsArrayProtype.cs" />
     <Compile Include="Interpreter\Model\JsBooleanPrototype.cs" />
     <Compile Include="Interpreter\Model\JsConstructorExtensions.cs" />
@@ -155,7 +161,9 @@
     <Compile Include="Parsing\ILexicalScope.cs" />
     <Compile Include="Parsing\JavascriptParserState.cs" />
     <Compile Include="Parsing\LexicalFeature.cs" />
+    <Compile Include="Runtime\Environment\ObjectEnvironment.cs" />
     <Compile Include="Runtime\Environment\ReadonlyUndefinedPropertyReference.cs" />
+    <Compile Include="Runtime\Environment\ReadonlyValueReference.cs" />
     <Compile Include="Runtime\Error\JsNotImplemented.cs" />
     <Compile Include="Runtime\Classes\IReflectedPropertyDescriptors.cs" />
     <Compile Include="Runtime\Classes\JsClasses.cs" />

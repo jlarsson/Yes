@@ -18,7 +18,7 @@ namespace Yes.Interpreter.Model
         public override IReference GetReference(IJsValue name)
         {
             var index = name.ToArrayIndex();
-            if (index.HasValue && (index > 0))
+            if (index.HasValue && (index >= 0))
             {
                 return GetElementReference(index.Value);
             }

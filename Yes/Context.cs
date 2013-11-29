@@ -31,6 +31,8 @@ namespace Yes
             Environment.CreateReference("SyntaxError", SyntaxErrorConstructor = CreateContructor<SyntaxErrorConstructor, JsSyntaxError>((e, c, cc) => new SyntaxErrorConstructor(e, c, cc)));
             Environment.CreateReference("TypeError", TypeErrorConstructor = CreateContructor<TypeErrorConstructor, JsTypeError>((e, c, cc) => new TypeErrorConstructor(e, c, cc)));
             Environment.CreateReference("URIError", UriErrorConstructor = CreateContructor<UriErrorConstructor, JsUriError>((e, c, cc) => new UriErrorConstructor(e, c, cc)));
+
+            ArgumentsConstructor = CreateContructor<JsArgumentsConstructor, JsArguments>((e, c, cc) => new JsArgumentsConstructor(e, c, cc));
         }
 
         public IJsClasses Classes { get; set; }
@@ -82,7 +84,7 @@ namespace Yes
         public IErrorConstructor SyntaxErrorConstructor { get; set; }
         public IErrorConstructor TypeErrorConstructor { get; set; }
         public IErrorConstructor UriErrorConstructor { get; set; }
-
+        public IArgumentsConstructor ArgumentsConstructor { get; set; }
         #endregion
 
         public IJsValue Execute(string source)

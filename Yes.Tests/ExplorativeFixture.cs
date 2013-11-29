@@ -83,9 +83,9 @@ namespace Yes.Tests
 
             context.AddPrintFunction();
 
-            context.Execute("function fac(n) { if(n < 2) { return n; } else { { return n*fac(n-1); } }}");
+            context.Execute("var fac = (function rec(n) { return (n < 2) ? n : n*rec(n-1); })");
 
-            var v = (context.Environment.GetReference("fac").GetValue() as IJsFunction).Apply(null, context.Environment.CreateNumber(6));
+            var v = context.Environment.GetReference("fac").GetValue().Cast<IJsFunction>().Apply(null, context.Environment.CreateNumber(6));
 
             Console.Out.WriteLine(v);
         }

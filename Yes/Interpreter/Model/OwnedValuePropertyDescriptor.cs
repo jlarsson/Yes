@@ -2,9 +2,9 @@ using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Model
 {
-    public class ObjectPropertyDescriptor: IPropertyDescriptor
+    public class OwnedValuePropertyDescriptor: IPropertyDescriptor
     {
-        public ObjectPropertyDescriptor(IJsObject owner, string name)
+        public OwnedValuePropertyDescriptor(IJsObject owner, string name)
             : this(
                 owner, name, JsUndefined.Value,
                 PropertyDescriptorFlags.Enumerable | PropertyDescriptorFlags.Writable |
@@ -12,7 +12,7 @@ namespace Yes.Interpreter.Model
         {
         }
 
-        public ObjectPropertyDescriptor(IJsObject owner, string name, IJsValue value, PropertyDescriptorFlags flags)
+        public OwnedValuePropertyDescriptor(IJsObject owner, string name, IJsValue value, PropertyDescriptorFlags flags)
         {
             Owner = owner;
             Name = name;
@@ -50,7 +50,7 @@ namespace Yes.Interpreter.Model
                 }
 
                 // If not, create it and return
-                @this.DefineOwnProperty(new ObjectPropertyDescriptor(@this, Name, value, Flags));
+                @this.DefineOwnProperty(new OwnedValuePropertyDescriptor(@this, Name, value, Flags));
                 return value;
             }
 

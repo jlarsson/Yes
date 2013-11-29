@@ -92,7 +92,7 @@ namespace Yes.Runtime.Classes
                     from a in methodAttributes.OfType<JsMemberAttribute>()
                     let function = methodHelper.CreateFunction(Environment, method)
                     let hostFunction = new JsHostFunction(Environment,(env,@this,args) => function(@this,args))
-                    select new ObjectPropertyDescriptor(null, a.Name,
+                    select new OwnedValuePropertyDescriptor(null, a.Name,
                                                         hostFunction,
                                                         a.GetFlags())
                     );

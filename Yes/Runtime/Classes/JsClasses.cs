@@ -45,7 +45,7 @@ namespace Yes.Runtime.Classes
                                                                                                         kv => kv.Value);
                 if (prototype != null)
                 {
-                    propertyDescriptors["prototype"] = new ObjectPropertyDescriptor(null, "prototype",prototype,PropertyDescriptorFlags.Writable);
+                    propertyDescriptors["prototype"] = new OwnedValuePropertyDescriptor(null, "prototype",prototype,PropertyDescriptorFlags.Writable);
                 }
                 propertyDescriptors["__impl__"] = new AccessorPropertyDescriptor("__impl__",
                                                                                  self => Environment.CreateString(type.Name),

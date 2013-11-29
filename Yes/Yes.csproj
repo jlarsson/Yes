@@ -45,6 +45,7 @@
     <Compile Include="IContext.cs" />
     <Compile Include="Interpreter\Ast\AstExtensions.cs" />
     <Compile Include="Interpreter\Ast\IndexedMember.cs" />
+    <Compile Include="Interpreter\Ast\MemberBase.cs" />
     <Compile Include="Interpreter\Ast\PostAssign.cs" />
     <Compile Include="Interpreter\Ast\PreAssign.cs" />
     <Compile Include="Interpreter\Ast\Throw.cs" />
@@ -80,6 +81,8 @@
     <Compile Include="Interpreter\Model\SyntaxErrorConstructor.cs" />
     <Compile Include="Interpreter\Model\TypeErrorConstructor.cs" />
     <Compile Include="Interpreter\Model\UriErrorConstructor.cs" />
+    <Compile Include="Parsing\CatchParameters.cs" />
+    <Compile Include="Parsing\TryCatchFinallyParameters.cs" />
     <Compile Include="Runtime\Classes\IJsClass.cs" />
     <Compile Include="Interpreter\Ast\Array.cs" />
     <Compile Include="Interpreter\Ast\Assign.cs" />
@@ -141,7 +144,7 @@
     <Compile Include="Interpreter\Model\LambdaReference.cs" />
     <Compile Include="Interpreter\Model\NumberConstructor.cs" />
     <Compile Include="Interpreter\Model\ObjectConstructor.cs" />
-    <Compile Include="Interpreter\Model\ObjectPropertyDescriptor.cs" />
+    <Compile Include="Interpreter\Model\OwnedValuePropertyDescriptor.cs" />
     <Compile Include="Interpreter\Model\PropertyDescriptorFlags.cs" />
     <Compile Include="Interpreter\Model\StringConstructor.cs" />
     <Compile Include="Runtime\Classes\IJsClasses.cs" />
@@ -201,7 +204,6 @@
     <Compile Include="Runtime\Error\JsUriException.cs" />
     <Compile Include="Runtime\Operators\IUnaryOperator.cs" />
     <Compile Include="Runtime\Operators\Operators.cs" />
-    <Compile Include="Runtime\Prototypes\InstancePropertyDescriptor.cs" />
     <Compile Include="Runtime\Prototypes\JsInstancePropertyAttribute.cs" />
     <Compile Include="Utility\Conversion.cs" />
   </ItemGroup>

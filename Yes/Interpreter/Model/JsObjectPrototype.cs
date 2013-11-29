@@ -76,7 +76,7 @@ namespace Yes.Interpreter.Model
                 return pd;
             }
             return Extensible
-                       ? (IReference)new ObjectPropertyDescriptor(
+                       ? (IReference)new OwnedValuePropertyDescriptor(
                                          null /* no owner, yet... */,
                                          name,
                                          JsUndefined.Value,

@@ -48,7 +48,7 @@ namespace Yes
                 if (constructedPrototype.GetOwnProperty("constructor") == null)
                 {
                     constructedPrototype.DefineOwnProperty(
-                        new ObjectPropertyDescriptor(
+                        new OwnedValuePropertyDescriptor(
                             constructedPrototype,
                             "constructor", 
                             constructor,

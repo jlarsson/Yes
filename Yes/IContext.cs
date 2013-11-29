@@ -28,7 +28,7 @@ namespace Yes
 
     public static class ContextExtensions
     {
-        public static IJsArray CreateArray(this IContext context, IEnumerable<IJsValue> arguments)
+        public static IJsArray CreateArray(this IContext context, IList<IJsValue> arguments)
         {
             return context.ArrayConstructor.Construct(arguments) as IJsArray;
         }
@@ -38,7 +38,7 @@ namespace Yes
             return context.BooleanConstructor.Construct(value);
         }
 
-        public static IJsFunction CreateFunction(this IContext context, string name, string[] argumentNames, IAst body)
+        public static IJsFunction CreateFunction(this IContext context, string name, IList<string> argumentNames, IAst body)
         {
             return context.FunctionConstructor.Construct(context.Environment, name, argumentNames, body);
         }
@@ -59,7 +59,7 @@ namespace Yes
         }
 
         public static IJsFunction CreateHostFunction(this IContext context,
-                                                     Func<IEnvironment, IJsValue, IJsValue[], IJsValue> function)
+                                                     Func<IEnvironment, IJsValue, IList<IJsValue>, IJsValue> function)
         {
             return new JsHostFunction(context.Environment, function);
         }

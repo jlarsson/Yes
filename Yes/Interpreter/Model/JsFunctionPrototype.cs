@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
@@ -8,6 +9,6 @@ namespace Yes.Interpreter.Model
         {
         }
 
-        public abstract IJsValue Apply(IJsValue @this, params IJsValue[] arguments);
+        public abstract IJsValue Apply(IJsValue @this, IList<IJsValue> arguments);
     }
 }

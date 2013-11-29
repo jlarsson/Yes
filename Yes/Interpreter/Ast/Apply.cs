@@ -1,20 +1,20 @@
+using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
-using Yes.Runtime.Error;
 
 namespace Yes.Interpreter.Ast
 {
     public class Apply : IAst
     {
-        public Apply(IAst function, IAst[] arguments)
+        public Apply(IAst function, IList<IAst> arguments)
         {
             Function = function;
             Arguments = arguments;
         }
 
         public IAst Function { get; set; }
-        public IAst[] Arguments { get; set; }
+        public IList<IAst> Arguments { get; set; }
 
         #region IAst Members
 
@@ -29,7 +29,7 @@ namespace Yes.Interpreter.Ast
 
             return function
                 .Cast<IJsFunction>("{0} is not a function", function)
-                .Apply(self, Arguments.Select(a => a.Evaluate(environment)).ToArray());
+                .Apply(self, Arguments.Select(a => a.Evaluate(environment)));
         }
 
         #endregion

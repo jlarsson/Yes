@@ -16,7 +16,7 @@ namespace Yes.Interpreter.Model
             return "[Function: Number]";
         }
 
-        public override IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public override IJsValue Construct(IList<IJsValue> arguments)
         {
             return Construct(arguments.Select(a => a.ToNumber()).FirstOrDefault());
         }

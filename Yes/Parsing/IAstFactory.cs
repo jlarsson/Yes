@@ -3,18 +3,6 @@ using System.Collections.Generic;
 
 namespace Yes.Parsing
 {
-    public class CatchParameters<TAst>
-    {
-        public TAst BindingName { get; set; }
-        public TAst CatchStatement { get; set; }
-    }
-    public class TryCatchFinallyParameters<TAst>
-    {
-        public TAst TryStatement { get; set; }
-        public CatchParameters<TAst> CatchParameters { get; set; }
-        public TAst FinallyStatement { get; set; }
-        
-    }
     public interface IAstFactory<TAst>
     {
         TAst Name(string value);
@@ -23,11 +11,12 @@ namespace Yes.Parsing
         TAst Bool(bool value);
         TAst Number(double value);
         TAst String(string value);
-        TAst Function(TAst name, IEnumerable<TAst> arguments, TAst statements);
-        TAst Object(IEnumerable<Tuple<TAst, TAst>> members);
-        TAst Array(IEnumerable<TAst> members);
-        TAst Apply(TAst function, IEnumerable<TAst> arguments);
+        TAst Function(TAst name, IList<TAst> arguments, TAst statements);
+        TAst Object(IList<Tuple<TAst, TAst>> members);
+        TAst Array(IList<TAst> members);
+        TAst Apply(TAst function, IList<TAst> arguments);
         TAst Member(TAst instance, TAst name);
+        TAst IndexedMember(TAst instance, TAst name);
         TAst Assign(TAst lhs, TAst rhs);
         TAst PreAssign(TAst lhs, TAst rhs);
         TAst PostAssign(TAst lhs, TAst rhs);
@@ -35,8 +24,8 @@ namespace Yes.Parsing
         TAst UnaryOperation(string @operator, TAst value); 
         TAst BinaryOperation(string @operator, TAst lhs, TAst rhs);
         TAst Conditional(TAst test, TAst trueValue, TAst falseValue);
-        TAst Block(IEnumerable<TAst> statements);
-        TAst Seq(IEnumerable<TAst> statements);
+        TAst Block(IList<TAst> statements);
+        TAst Seq(IList<TAst> statements);
         TAst Var(TAst name, TAst value);
         TAst Return(TAst value);
         TAst Break();
@@ -45,7 +34,7 @@ namespace Yes.Parsing
         TAst While(TAst condition, TAst statements);
         TAst For(TAst initial, TAst condition, TAst loop, TAst block);
         TAst ForIn(TAst binding, TAst inspected, TAst block, bool declareBinding);
-        TAst Construct(TAst constructor, IEnumerable<TAst> arguments);
+        TAst Construct(TAst constructor, IList<TAst> arguments);
         TAst Throw(TAst expression);
         TAst TryCatchFinally(TryCatchFinallyParameters<TAst> p);
     }

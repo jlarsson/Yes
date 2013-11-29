@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
 
@@ -21,7 +22,7 @@ namespace Yes
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Action<IJsValue[]> action)
+        public static void SetHostFunction(this IContext context, string name, Action<IList<IJsValue>> action)
         {
             SetHostFunction(context, name, (scope, self, args) =>
                                                {
@@ -30,7 +31,7 @@ namespace Yes
                                                });
         }
 
-        public static void SetHostFunction(this IContext context, string name, Action<IEnvironment, IJsValue[]> action)
+        public static void SetHostFunction(this IContext context, string name, Action<IEnvironment, IList<IJsValue>> action)
         {
             SetHostFunction(context, name, (env, self, args) =>
                                                {
@@ -45,13 +46,13 @@ namespace Yes
         }
 
         public static void SetHostFunction(this IContext context, string name,
-                                           Func<IEnvironment, IJsValue, IJsValue[], IJsValue> function)
+                                           Func<IEnvironment, IJsValue, IList<IJsValue>, IJsValue> function)
         {
             context.Environment.CreateReference(name, context.CreateHostFunction(function));
         }
     
         public static void SetHostFunction(this IContext context, string name,
-                                           Action<IEnvironment, IJsValue, IJsValue[]> action)
+                                           Action<IEnvironment, IJsValue, IList<IJsValue>> action)
         {
             context.Environment.CreateReference(name, context.CreateHostFunction((scope, self, args) =>
                                                                                  {

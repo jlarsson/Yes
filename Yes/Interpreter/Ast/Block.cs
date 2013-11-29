@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Environment;
@@ -6,12 +7,12 @@ namespace Yes.Interpreter.Ast
 {
     public class Block : IAst, IAstModifiesEnvironment
     {
-        public Block(IAst[] statements)
+        public Block(IList<IAst> statements)
         {
             Statements = statements;
         }
 
-        public IAst[] Statements { get; set; }
+        public IList<IAst> Statements { get; set; }
 
         #region IAst Members
 

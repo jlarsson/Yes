@@ -4,6 +4,6 @@ namespace Yes.Interpreter.Model
 {
     public interface IJsConstructor: IJsValue
     {
-        IJsValue Construct(IEnumerable<IJsValue> arguments);
+        IJsValue Construct(IList<IJsValue> arguments);
     }
 }

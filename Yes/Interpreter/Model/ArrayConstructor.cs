@@ -17,18 +17,17 @@ namespace Yes.Interpreter.Model
             return "[Function: Array]";
         }
 
-        public override IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public override IJsValue Construct(IList<IJsValue> arguments)
         {
-            var a = arguments.ToList();
-            if (a.Count == 1)
+            if (arguments.Count == 1)
             {
-                var length = a[0].ToArrayIndex();
+                var length = arguments[0].ToArrayIndex();
                 if (length.HasValue && (length >= 0))
                 {
                     return new JsArray(Environment,ConstructedClass,length.Value);
                 }
             }
-            return new JsArray(Environment, ConstructedClass, a);
+            return new JsArray(Environment, ConstructedClass, arguments);
         }
 
         public override IJsValue CloneTo(IEnvironment environment)

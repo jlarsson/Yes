@@ -3,10 +3,10 @@ using System;
 namespace Yes.Interpreter.Model
 {
     public class AccessorPropertyDescriptor: IPropertyDescriptor{
-        private readonly Func<IJsValue> _getter;
-        private readonly Func<IJsValue, IJsValue> _setter;
+        private readonly Func<IJsValue, IJsValue> _getter;
+        private readonly Func<IJsValue, IJsValue, IJsValue> _setter;
 
-        public AccessorPropertyDescriptor(string name, Func<IJsValue> getter, Func<IJsValue,IJsValue> setter)
+        public AccessorPropertyDescriptor(string name, Func<IJsValue, IJsValue> getter, Func<IJsValue, IJsValue, IJsValue> setter)
         {
             Name = name;
             _getter = getter;
@@ -15,12 +15,12 @@ namespace Yes.Interpreter.Model
 
         public IJsValue GetValue(IJsValue self)
         {
-            return _getter();
+            return _getter(self);
         }
 
         public IJsValue SetValue(IJsValue self, IJsValue value)
         {
-            return _setter(value);
+            return _setter(self, value);
         }
 
         public string Name { get; private set; }

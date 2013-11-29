@@ -25,37 +25,37 @@ namespace Yes.Interpreter.Model
         public IJsObject Prototype { get; protected set; }
 
         [JsMember("hasOwnProperty", Configurable = false, Enumerable = true)]
-        public IJsValue JsHasOwnProperty(IJsValue[] args)
+        public IJsValue JsHasOwnProperty(IList<IJsValue> args)
         {
             return Environment.CreateBool(GetOwnProperty(args.Select(a => a.ToString()).FirstOrDefault()) != null);
         }
 
         [JsMember("isPrototypeOf", Configurable = false, Enumerable = true)]
-        public IJsValue JsIsPrototypeOf(IJsValue[] args)
+        public IJsValue JsIsPrototypeOf(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("propertyIsEnumerable", Configurable = false, Enumerable = true)]
-        public IJsValue JsPropertyIsEnumerable(IJsValue[] args)
+        public IJsValue JsPropertyIsEnumerable(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("toLocaleString", Configurable = false, Enumerable = true)]
-        public IJsValue JsToLocaleString(IJsValue[] args)
+        public IJsValue JsToLocaleString(IList<IJsValue> args)
         {
             return JsToString(args);
         }
 
         [JsMember("toString", Configurable = false, Enumerable = true)]
-        public IJsValue JsToString(IJsValue[] args)
+        public IJsValue JsToString(IList<IJsValue> args)
         {
             return Environment.CreateString(ToString());
         }
 
         [JsMember("valueOf", Configurable = false, Enumerable = true)]
-        public IJsValue JsValueOf(IJsValue[] args)
+        public IJsValue JsValueOf(IList<IJsValue> args)
         {
             return this;
         }

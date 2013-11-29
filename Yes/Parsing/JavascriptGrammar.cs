@@ -107,7 +107,7 @@ namespace Yes.Parsing
                              {
                                  var argument = p.Expression(state, 0);
                                  p.Advance("]");
-                                 return p.Factory.Member(left, argument);
+                                 return p.Factory.IndexedMember(left, argument);
                              });
 
             // Handle E => (E)

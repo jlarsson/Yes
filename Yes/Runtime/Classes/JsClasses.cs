@@ -48,7 +48,7 @@ namespace Yes.Runtime.Classes
                     propertyDescriptors["prototype"] = new ObjectPropertyDescriptor(null, "prototype",prototype,PropertyDescriptorFlags.Writable);
                 }
                 propertyDescriptors["__impl__"] = new AccessorPropertyDescriptor("__impl__",
-                                                                                 () => Environment.CreateString(type.Name),
+                                                                                 self => Environment.CreateString(type.Name),
                                                                                  null);
 
                 @class = new JsClass(propertyDescriptors, prototype);

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Yes.Runtime.Classes;
 using Yes.Runtime.Environment;
 
@@ -12,12 +11,11 @@ namespace Yes.Interpreter.Model
         {
         }
 
-        public override IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public override IJsValue Construct(IList<IJsValue> arguments)
         {
-            var args = arguments.ToList();
-            var message = args.Count > 0 ? args[0].ToString() : "";
-            var fileName = args.Count > 1 ? args[1].ToString() : "";
-            var lineNumber = args.Count > 2 ? args[2].ToInteger() : 0;
+            var message = arguments.Count > 0 ? arguments[0].ToString() : "";
+            var fileName = arguments.Count > 1 ? arguments[1].ToString() : "";
+            var lineNumber = arguments.Count > 2 ? arguments[2].ToInteger() : 0;
             return Construct(message, fileName, lineNumber);
         }
 

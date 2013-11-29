@@ -19,22 +19,20 @@ namespace Yes.Interpreter.Model
             return "[Function: Function]";
         }
 
-        public override IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public override IJsValue Construct(IList<IJsValue> arguments)
         {
-            var l = arguments.Select(a => a.ToString()).ToList();
-            
-            if (l.Count == 0)
+            if (arguments.Count == 0)
             {
                 return Construct(Environment, "", new string[0], null);
             }
 
-            var script = l[l.Count - 1];
-            var names = l.Take(l.Count - 1).ToArray();
+            var script = arguments[arguments.Count - 1].ToString();
+            var names = arguments.Take(arguments.Count - 1).Select(a => a.ToString()).ToArray();
             var body = Environment.Context.ParseScript(script);
             return Construct(Environment, "", names, body);
         }
 
-        public IJsFunction Construct(IEnvironment environment, string name, string[] argumentNames, IAst body)
+        public IJsFunction Construct(IEnvironment environment, string name, IList<string> argumentNames, IAst body)
         {
             return new JsFunction(environment, null, name, argumentNames, body);
         }

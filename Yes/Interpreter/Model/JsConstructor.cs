@@ -16,13 +16,13 @@ namespace Yes.Interpreter.Model
 
         #region IJsConstructor Members
 
-        public abstract IJsValue Construct(IEnumerable<IJsValue> arguments);
+        public abstract IJsValue Construct(IList<IJsValue> arguments);
 
         #endregion
 
         #region IJsFunction Members
 
-        public IJsValue Apply(IJsValue @this, params IJsValue[] arguments)
+        public IJsValue Apply(IJsValue @this, IList<IJsValue> arguments)
         {
             return Construct(arguments);
         }

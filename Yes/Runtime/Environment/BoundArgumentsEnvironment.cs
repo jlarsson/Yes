@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Yes.Interpreter.Model;
 
 namespace Yes.Runtime.Environment
@@ -7,13 +8,16 @@ namespace Yes.Runtime.Environment
     {
         private IReference[] _references;
 
-        public BoundArgumentsEnvironment(IEnvironment parent, string[] names, IJsValue[] values)
+        public BoundArgumentsEnvironment(IEnvironment parent, IList<string> declaredArgumentNames, IList<IJsValue> actualArgumentValues)
         {
             if (parent == null) throw new ArgumentNullException("parent");
             Parent = parent;
-            Names = names;
-            Values = values;
+            DeclaredNames = declaredArgumentNames;
+            ActualValues = actualArgumentValues;
         }
+
+        public IList<IJsValue> ActualValues { get; protected set; }
+        public IList<string> DeclaredNames { get; protected set; }
 
         public IContext Context
         {
@@ -27,9 +31,6 @@ namespace Yes.Runtime.Environment
             get { return Parent.ControlFlow; }
         }
 
-        public string[] Names { get; set; }
-        public IJsValue[] Values { get; set; }
-
         public IReference CreateReference(string name, IJsValue value)
         {
             return Parent.CreateReference(name, value);
@@ -42,18 +43,18 @@ namespace Yes.Runtime.Environment
 
         public IReference GetOwnReference(string name)
         {
-            var index = Array.IndexOf(Names, name);
+            var index = DeclaredNames.IndexOf(name);
             if (index < 0)
             {
                 return null;
             }
             if (_references == null)
             {
-                _references = new IReference[Names.Length];
+                _references = new IReference[DeclaredNames.Count];
             }
             return _references[index] ??
                    (_references[index] =
-                    new ValueReference((index < Values.Length ? Values[index] : null) ?? JsUndefined.Value));
+                    new ValueReference((index < ActualValues.Count ? ActualValues[index] : null) ?? JsUndefined.Value));
         }
     }
 }

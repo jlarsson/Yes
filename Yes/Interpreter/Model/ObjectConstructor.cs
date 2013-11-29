@@ -22,7 +22,7 @@ namespace Yes.Interpreter.Model
 
         #region IObjectConstructor Members
 
-        public override IJsValue Construct(IEnumerable<IJsValue> arguments)
+        public override IJsValue Construct(IList<IJsValue> arguments)
         {
             var value = arguments.FirstOrDefault();
             if (value is IJsObject)
@@ -40,7 +40,7 @@ namespace Yes.Interpreter.Model
         #endregion
 
         [JsMember("create", Configurable = false)]
-        public IJsValue JsCreate(IJsValue[] args)
+        public IJsValue JsCreate(IList<IJsValue> args)
         {
             var proto = BindParameters.OfTypeOrNull<IJsObject>(args, 0);
             // TODO: Handle properties, https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Object/create?redirect=no
@@ -48,31 +48,31 @@ namespace Yes.Interpreter.Model
         }
 
         [JsMember("defineProperty", Configurable = false, Enumerable = true)]
-        public IJsValue JsDefineProperty(IJsValue[] args)
+        public IJsValue JsDefineProperty(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("defineProperties", Configurable = false, Enumerable = true)]
-        public IJsValue JsDefineProperties(IJsValue[] args)
+        public IJsValue JsDefineProperties(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("getOwnPropertyDescriptor", Configurable = false, Enumerable = true)]
-        public IJsValue JsGetOwnPropertyDescriptor(IJsValue[] args)
+        public IJsValue JsGetOwnPropertyDescriptor(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("keys", Configurable = false, Enumerable = true)]
-        public IJsValue Keys(IJsValue[] args)
+        public IJsValue Keys(IList<IJsValue> args)
         {
             return GetOwnPropertyNames(args);
         }
 
         [JsMember("getOwnPropertyNames", Configurable = false, Enumerable = true)]
-        public IJsValue GetOwnPropertyNames(IJsValue[] args)
+        public IJsValue GetOwnPropertyNames(IList<IJsValue> args)
         {
             var obj = args.Select(a => a as IJsObject).FirstOrDefault();
 
@@ -85,7 +85,7 @@ namespace Yes.Interpreter.Model
         }
 
         [JsMember("getPrototypeOf", Configurable = false, Enumerable = true)]
-        public IJsValue JsGetPrototypeOf(IJsValue[] args)
+        public IJsValue JsGetPrototypeOf(IList<IJsValue> args)
         {
             var obj = args.FirstOrDefault();
             if (obj == null)
@@ -98,43 +98,43 @@ namespace Yes.Interpreter.Model
         }
 
         [JsMember("preventExtensions", Configurable = false, Enumerable = true)]
-        public IJsValue JsPreventExtensions(IJsValue[] args)
+        public IJsValue JsPreventExtensions(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("isExtensible", Configurable = false, Enumerable = true)]
-        public IJsValue JsIsExtensible(IJsValue[] args)
+        public IJsValue JsIsExtensible(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("seal", Configurable = false, Enumerable = true)]
-        public IJsValue JsSeal(IJsValue[] args)
+        public IJsValue JsSeal(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("is", Configurable = false, Enumerable = true)]
-        public IJsValue JsIs(IJsValue[] args)
+        public IJsValue JsIs(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("isSealed", Configurable = false, Enumerable = true)]
-        public IJsValue JsIsSealed(IJsValue[] args)
+        public IJsValue JsIsSealed(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("freeze", Configurable = false, Enumerable = true)]
-        public IJsValue JsFreeze(IJsValue[] args)
+        public IJsValue JsFreeze(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }
 
         [JsMember("isFrozen", Configurable = false, Enumerable = true)]
-        public IJsValue JsIsFrozen(IJsValue[] args)
+        public IJsValue JsIsFrozen(IList<IJsValue> args)
         {
             throw new JsNotImplemented();
         }

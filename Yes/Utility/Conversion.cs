@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Yes.Interpreter.Model;
 using Yes.Runtime.Error;
@@ -7,9 +8,9 @@ namespace Yes.Utility
 {
     public static class BindParameters
     {
-        public static T OfTypeOrNull<T>(IJsValue[] args, int index) where T : class, IJsValue
+        public static T OfTypeOrNull<T>(IList<IJsValue> args, int index) where T : class, IJsValue
         {
-            if (index >= args.Length)
+            if (index >= args.Count)
             {
                 return null;
             }

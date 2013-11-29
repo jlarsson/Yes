@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Yes.Interpreter.Ast;
 using Yes.Interpreter.Model;
 
@@ -16,15 +17,19 @@ namespace Yes.Runtime.Environment
 
     public static class EnvironmentExtensions
     {
-        public static IJsArray CreateArray(this IEnvironment environment, IEnumerable<IJsValue> arguments)
+        public static IJsArray CreateArray(this IEnvironment environment, IList<IJsValue> arguments)
         {
             return environment.Context.CreateArray(arguments);
+        }
+        public static IJsArray CreateArray(this IEnvironment environment, IEnumerable<IJsValue> arguments)
+        {
+            return environment.Context.CreateArray(arguments.ToList());
         }
         public static IJsBool CreateBool(this IEnvironment environment, bool value)
         {
             return environment.Context.CreateBool(value);
         }
-        public static IJsFunction CreateFunction(this IEnvironment environment, string name, string[] argumentNames, IAst body)
+        public static IJsFunction CreateFunction(this IEnvironment environment, string name, IList<string> argumentNames, IAst body)
         {
             return environment.Context.CreateFunction(name, argumentNames, body);
         }

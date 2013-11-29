@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Yes.Runtime;
 using Yes.Runtime.Classes;
@@ -55,7 +56,7 @@ namespace Yes.Interpreter.Model
         }
 
         [JsMember("push", Enumerable = true)]
-        public IJsValue JsPush(IJsValue[] argument)
+        public IJsValue JsPush(IList<IJsValue> argument)
         {
             Push(argument.FirstOrDefault() ?? JsUndefined.Value);
             return this;

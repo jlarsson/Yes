@@ -7,16 +7,16 @@ namespace Yes.Interpreter.Ast
 {
     public class Function : IAst
     {
-        public Function(IAst name, IEnumerable<IAst> arguments, IAst statements)
+        public Function(IAst name, IList<IAst> arguments, IAst statements)
         {
             Statements = statements;
-            Name = name == null ? null : ((IAstWithName) name).Name;
-            Arguments = arguments.Select(a => (IAstWithName) a).Select(n => n.Name).ToArray();
+            Name = name == null ? null : name.ReferenceCast<IAstWithName>().Name;
+            Arguments = arguments;
         }
 
         public IAst Statements { get; protected set; }
 
-        public string[] Arguments { get; protected set; }
+        public IList<IAst> Arguments { get; protected set; }
 
         public string Name { get; protected set; }
 
@@ -24,7 +24,10 @@ namespace Yes.Interpreter.Ast
 
         public IJsValue Evaluate(IEnvironment environment)
         {
-            var f = environment.CreateFunction(Name, Arguments, Statements);
+            var f = environment.CreateFunction(
+                Name, 
+                Arguments.Select(a => a.ReferenceCast<IAstWithName>().Name).ToList(), 
+                Statements);
             if (!string.IsNullOrEmpty(Name))
             {
                 environment.CreateReference(Name,f);

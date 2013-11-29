@@ -6,9 +6,9 @@ using Yes.Runtime.Environment;
 namespace Yes.Interpreter.Ast
 {
     public class ObjectLiteral: IAst{
-        public IEnumerable<Tuple<IAstWithName, IAst>> Members { get; set; }
+        public IList<Tuple<IAst, IAst>> Members { get; set; }
 
-        public ObjectLiteral(IEnumerable<Tuple<IAstWithName, IAst>> members)
+        public ObjectLiteral(IList<Tuple<IAst, IAst>> members)
         {
             Members = members;
         }
@@ -18,7 +18,8 @@ namespace Yes.Interpreter.Ast
             var obj = environment.CreateObject();
             foreach (var member in Members)
             {
-                obj.GetReference(member.Item1.Name).SetValue(obj, member.Item2.Evaluate(environment));
+                obj.GetReference(
+                    member.Item1.ReferenceCast<IAstWithName>().Name).SetValue(obj, member.Item2.Evaluate(environment));
             }
             return obj;
         }

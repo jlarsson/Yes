@@ -6,9 +6,9 @@ using Yes.Runtime.Environment;
 namespace Yes.Interpreter.Ast
 {
     public class Array: IAst {
-        public IEnumerable<IAst> Members { get; set; }
+        public IList<IAst> Members { get; set; }
 
-        public Array(IEnumerable<IAst> members)
+        public Array(IList<IAst> members)
         {
             Members = members;
         }

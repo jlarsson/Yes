@@ -75,29 +75,34 @@ namespace Yes.Interpreter.Ast
             return new String(value);
         }
 
-        public IAst Function(IAst name, IEnumerable<IAst> arguments, IAst statements)
+        public IAst Function(IAst name, IList<IAst> arguments, IAst statements)
         {
-            return new Function(name, arguments.ToArray(), statements);
+            return new Function(name, arguments, statements);
         }
 
-        public IAst Object(IEnumerable<Tuple<IAst, IAst>> members)
+        public IAst Object(IList<Tuple<IAst, IAst>> members)
         {
-            return new ObjectLiteral(members.Select(t => Tuple.Create((IAstWithName)t.Item1,t.Item2)));
+            return new ObjectLiteral(members);
         }
 
-        public IAst Array(IEnumerable<IAst> members)
+        public IAst Array(IList<IAst> members)
         {
             return new Array(members);
         }
 
-        public IAst Apply(IAst function, IEnumerable<IAst> arguments)
+        public IAst Apply(IAst function, IList<IAst> arguments)
         {
-            return new Apply(function, arguments.ToArray());
+            return new Apply(function, arguments);
         }
 
         public IAst Member(IAst instance, IAst name)
         {
             return new Member(instance, name);
+        }
+
+        public IAst IndexedMember(IAst instance, IAst name)
+        {
+            return new IndexedMember(instance, name);
         }
 
         public IAst Assign(IAst lhs, IAst rhs)
@@ -135,17 +140,16 @@ namespace Yes.Interpreter.Ast
             return new Conditional(test, trueValue, falseValue);
         }
 
-        public IAst Block(IEnumerable<IAst> statements)
+        public IAst Block(IList<IAst> statements)
         {
-            var l = statements.ToArray();
-            if (l.Length == 1)
+            if (statements.Count == 1)
             {
-                return l[0];
+                return statements[0];
             }
-            return new Block(l);
+            return new Block(statements);
         }
 
-        public IAst Seq(IEnumerable<IAst> statements)
+        public IAst Seq(IList<IAst> statements)
         {
             return Block(statements);
         }
@@ -190,13 +194,13 @@ namespace Yes.Interpreter.Ast
             return new ForIn(binding, inspected, block, declareBinding);
         }
 
-        public IAst Construct(IAst constructor, IEnumerable<IAst> arguments)
+        public IAst Construct(IAst constructor, IList<IAst> arguments)
         {
             if (constructor is IAstWithName)
             {
-                return new NamedConstruct((constructor as IAstWithName).Name, arguments.ToArray());
+                return new NamedConstruct((constructor as IAstWithName).Name, arguments);
             }
-            return new Construct(constructor, arguments.ToArray());
+            return new Construct(constructor, arguments);
         }
 
         public IAst Throw(IAst expression)

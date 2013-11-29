@@ -10,6 +10,38 @@ namespace Yes.Runtime.Classes
 {
     public class ReflectedPropertyDescriptors : IReflectedPropertyDescriptors
     {
+        public interface IMethodHelper
+        {
+            Func<IJsValue, IJsValue> CreateGetter(IEnvironment environment, MethodInfo method);
+            Func<IJsValue, IJsValue, IJsValue> CreateSetter(IEnvironment environment, MethodInfo method);
+            Func<IJsValue, IList<IJsValue>, IJsValue> CreateFunction(IEnvironment environment, MethodInfo method);
+        }
+        public class MethodHelper<T>: IMethodHelper where T : class
+        {
+            public Func<IJsValue,IJsValue> CreateGetter(IEnvironment environment, MethodInfo method)
+            {
+                var methodDelegate = (Func<T, IJsValue>)Delegate.CreateDelegate(typeof(Func<T, IJsValue>), method);
+                return @this => methodDelegate(@this.Cast<T>()) ?? JsUndefined.Value;
+            }
+            public Func<IJsValue, IJsValue, IJsValue> CreateSetter(IEnvironment environment, MethodInfo method)
+            {
+                var methodDelegate = (Action<T, IJsValue>)Delegate.CreateDelegate(typeof(Action<T, IJsValue>), method);
+                return (@this,value) =>
+                           {
+                               methodDelegate(@this.Cast<T>(),value);
+                               return JsUndefined.Value;
+                           };
+            }
+
+            public Func<IJsValue, IList<IJsValue>, IJsValue> CreateFunction(IEnvironment environment, MethodInfo method)
+            {
+                var methodDelegate = (Func<T, IList<IJsValue>, IJsValue>)Delegate.CreateDelegate(typeof(Func<T, IList<IJsValue>, IJsValue>), method);
+                return (@this, args) => methodDelegate(@this.Cast<T>(), args) ?? JsUndefined.Value;
+            }
+        }
+
+
+
         public IEnvironment Environment { get; set; }
         readonly Dictionary<Type,List<IPropertyDescriptor>> _propertiesByType = new Dictionary<Type,List<IPropertyDescriptor>>();
         readonly Dictionary<Type,Dictionary<string, IPropertyDescriptor>> _instanceDescriptorsByType = new Dictionary<Type, Dictionary<string, IPropertyDescriptor>>();
@@ -31,6 +63,10 @@ namespace Yes.Runtime.Classes
             List<IPropertyDescriptor> properties;
             if (!_propertiesByType.TryGetValue(type, out properties))
             {
+                var methodHelper = typeof (MethodHelper<>).MakeGenericType(type)
+                                                 .GetConstructor(Type.EmptyTypes)
+                                                 .Invoke(new object[0]) as IMethodHelper;
+
                 properties = new List<IPropertyDescriptor>();
                 properties.AddRange(
                     from prop in
@@ -40,8 +76,11 @@ namespace Yes.Runtime.Classes
                     let getMethod = prop.GetGetMethod()
                     let setMethod = prop.GetSetMethod()
                     from a in propertyAttributes.OfType<JsMemberAttribute>()
-                    select
-                        new InstancePropertyDescriptor(a.Name, getMethod, setMethod)
+
+                    let getter = getMethod == null ? null : methodHelper.CreateGetter(Environment, getMethod)
+                    let setter = setMethod == null ? null : methodHelper.CreateSetter(Environment, setMethod)
+
+                    select new AccessorPropertyDescriptor(a.Name,getter,setter)
                             {Enumerable = a.Enumerable, Configurable = a.Configurable}
                     );
 
@@ -50,8 +89,9 @@ namespace Yes.Runtime.Classes
                         type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
                     let methodAttributes = method.GetCustomAttributes(typeof (JsMemberAttribute), false)
                     where methodAttributes != null
-                    let hostFunction = CreateHostFunction(method)
                     from a in methodAttributes.OfType<JsMemberAttribute>()
+                    let function = methodHelper.CreateFunction(Environment, method)
+                    let hostFunction = new JsHostFunction(Environment,(env,@this,args) => function(@this,args))
                     select new ObjectPropertyDescriptor(null, a.Name,
                                                         hostFunction,
                                                         a.GetFlags())
@@ -74,23 +114,6 @@ namespace Yes.Runtime.Classes
                 _instanceDescriptorsByType.Add(type, descriptors);
             }
             return descriptors;
-        }
-
-        private IJsFunction CreateHostFunction(MethodInfo method)
-        {
-            Func<IEnvironment, IJsValue, IJsValue[], IJsValue> func =
-                (env, @this, args) =>
-                    {
-                        try
-                        {
-                            return (method.Invoke(@this, new object[] {args}) as IJsValue) ?? JsUndefined.Value;
-                        }
-                        catch (TargetInvocationException e)
-                        {
-                            throw e.InnerException;
-                        }
-                    };
-            return new JsHostFunction(Environment, func);
         }
     }
 }

@@ -44,6 +44,7 @@
     <Compile Include="ContextSyntax.cs" />
     <Compile Include="IContext.cs" />
     <Compile Include="Interpreter\Ast\AstExtensions.cs" />
+    <Compile Include="Interpreter\Ast\IndexedMember.cs" />
     <Compile Include="Interpreter\Ast\PostAssign.cs" />
     <Compile Include="Interpreter\Ast\PreAssign.cs" />
     <Compile Include="Interpreter\Ast\Throw.cs" />
@@ -53,6 +54,8 @@
     <Compile Include="Interpreter\Model\IErrorConstructor.cs" />
     <Compile Include="Interpreter\Model\JsArrayProtype.cs" />
     <Compile Include="Interpreter\Model\JsBooleanPrototype.cs" />
+    <Compile Include="Interpreter\Model\JsConstructorExtensions.cs" />
+    <Compile Include="Interpreter\Model\JsFunctionExtensions.cs" />
     <Compile Include="Interpreter\Model\JsError.cs" />
     <Compile Include="Interpreter\Model\JsErrorPrototype.cs" />
     <Compile Include="Interpreter\Model\JsEvalError.cs" />
